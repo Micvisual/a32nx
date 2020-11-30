@@ -21,6 +21,9 @@ build_behavior() {
 
 build_model() {
     node "${DIR}/../src/model/build.js"
+
+build_fbw() {
+    "${DIR}/../src/fbw/build.sh"
 }
 
 build_manifests() {
@@ -58,3 +61,4 @@ fi
 # always invoke manifest+metadata because fast and useful
 build_manifests
 build_metadata
+build_fbw
