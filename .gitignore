@@ -32,4 +32,5 @@ node_modules
 /A32NX/SimObjects/AirPlanes/Asobo_A320_NEO/model/*.gltf
 /A32NX/SimObjects/AirPlanes/Asobo_A320_NEO/model/*.bin
 /src/fdr2csv/*.exe
+/src/fbw/obj/
 /src/fdr2csv/build/
