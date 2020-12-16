@@ -113,3 +113,8 @@ struct SimInputClientDataAutopilot {
   double fmaVerticalMode;
   double fmaVerticalArmed;
 };
+
+struct SimOutputClientDataFlightGuidance {
+  double crossTrackError;
+  double trackAngleError;
+};

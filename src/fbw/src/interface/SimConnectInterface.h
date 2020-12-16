@@ -51,6 +51,8 @@ class SimConnectInterface {
 
   bool sendAutoThrustArmEvent();
 
+  bool setSimOutputClientDataFlightGuidance(SimOutputClientDataFlightGuidance output);
+
   SimData getSimData();
 
   SimInput getSimInput();
