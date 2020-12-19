@@ -123,6 +123,6 @@ class NXFlightGuidance {
             Math.sin(deg2rad * (distanceAC / earthRadius)) *
             Math.sin(deg2rad * (bearingAC - bearingAB))
         ) / deg2rad * earthRadius;
-        this.crossTrackError = Math.abs(desiredOffset - actualOffset);
+        this.crossTrackError = desiredOffset - actualOffset;
     }
 }
