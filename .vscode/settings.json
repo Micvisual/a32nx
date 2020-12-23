@@ -36,4 +36,7 @@
     "editor.formatOnSave": true,
     "editor.formatOnPaste": false
   },
+  "files.associations": {
+    "iostream": "cpp"
+  },
 }

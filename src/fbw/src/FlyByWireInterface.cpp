@@ -43,6 +43,13 @@ bool FlyByWireInterface::connect() {
   idThrottlePosition_1 = register_named_variable("A32NX_THROTTLE_POSITION_1");
   idThrottlePosition_2 = register_named_variable("A32NX_THROTTLE_POSITION_2");
 
+  // register L variable for custom fly-by-wire interface
+  idAutopilotUseLvar = register_named_variable("A32NX_AUTOPILOT_USE_LVAR");
+  idAutopilotOn = register_named_variable("A32NX_AUTOPILOT_ON");
+  idAutopilotPitch = register_named_variable("A32NX_AUTOPILOT_PITCH");
+  idAutopilotBank = register_named_variable("A32NX_AUTOPILOT_BANK");
+  idAutopilotYaw = register_named_variable("A32NX_AUTOPILOT_YAW");
+
   // register L variable for flight director
   idFlightDirectorBank = register_named_variable("A32NX_FLIGHT_DIRECTOR_BANK");
   idFlightDirectorPitch = register_named_variable("A32NX_FLIGHT_DIRECTOR_PITCH");
@@ -115,7 +122,12 @@ bool FlyByWireInterface::getModelInputDataFromSim(double sampleTime) {
   // get data from interface
   SimData simData = simConnectInterface.getSimData();
   SimInput simInput = simConnectInterface.getSimInput();
-  SimInputClientDataAutopilot clientDataAutopilot = simConnectInterface.getSimInputClientDataAutopilot();
+
+  bool autopilotOnLvar = (get_named_variable_value(idAutopilotUseLvar) == 1);
+  SimInputClientDataAutopilot clientDataAutopilot = {};
+  if (!autopilotOnLvar) {
+    clientDataAutopilot = simConnectInterface.getSimInputClientDataAutopilot();
+  }
 
   // detect pause
   bool isInPause = false;
@@ -124,9 +136,24 @@ bool FlyByWireInterface::getModelInputDataFromSim(double sampleTime) {
   }
   previousSimulationTime = simData.simulationTime;
 
-  // fill flight director variables
-  set_named_variable_value(idFlightDirectorBank, -1.0 * clientDataAutopilot.flightDirectorPhi);
-  set_named_variable_value(idFlightDirectorPitch, -1.0 * clientDataAutopilot.flightDirectorTheta);
+  // fill autopilot and flight director values
+  double autopilotOn;
+  double autopilotTheta;
+  double autopilotPhi;
+  double autopilotBeta;
+  if (autopilotOnLvar) {
+    autopilotOn = get_named_variable_value(idAutopilotOn);
+    autopilotTheta = get_named_variable_value(idAutopilotPitch);
+    autopilotPhi = get_named_variable_value(idAutopilotBank);
+    autopilotBeta = get_named_variable_value(idAutopilotYaw);
+  } else {
+    autopilotOn = clientDataAutopilot.enableAutopilot;
+    autopilotTheta = clientDataAutopilot.autopilotTheta;
+    autopilotPhi = clientDataAutopilot.autopilotPhi;
+    autopilotBeta = clientDataAutopilot.autopilotBeta;
+    set_named_variable_value(idFlightDirectorBank, -1.0 * clientDataAutopilot.flightDirectorPhi);
+    set_named_variable_value(idFlightDirectorPitch, -1.0 * clientDataAutopilot.flightDirectorTheta);
+  }
 
   // fill time into model
   model.FlyByWire_U.in.time.dt = sampleTime;
@@ -169,10 +196,10 @@ bool FlyByWireInterface::getModelInputDataFromSim(double sampleTime) {
   model.FlyByWire_U.in.data.autopilot_master_on = simData.autopilot_master_on;
   model.FlyByWire_U.in.data.slew_on = simData.slew_on;
   model.FlyByWire_U.in.data.pause_on = isInPause;
-  model.FlyByWire_U.in.data.autopilot_custom_on = clientDataAutopilot.enableAutopilot;
-  model.FlyByWire_U.in.data.autopilot_custom_Theta_c_deg = clientDataAutopilot.autopilotTheta;
-  model.FlyByWire_U.in.data.autopilot_custom_Phi_c_deg = clientDataAutopilot.autopilotPhi;
-  model.FlyByWire_U.in.data.autopilot_custom_Beta_c_deg = clientDataAutopilot.autopilotBeta;
+  model.FlyByWire_U.in.data.autopilot_custom_on = autopilotOn;
+  model.FlyByWire_U.in.data.autopilot_custom_Theta_c_deg = autopilotTheta;
+  model.FlyByWire_U.in.data.autopilot_custom_Phi_c_deg = autopilotPhi;
+  model.FlyByWire_U.in.data.autopilot_custom_Beta_c_deg = autopilotBeta;
   model.FlyByWire_U.in.data.tracking_mode_on_override = 0;
   model.FlyByWire_U.in.data.simulation_rate = simData.simulation_rate;
   model.FlyByWire_U.in.data.ice_structure_percent = simData.ice_structure_percent;

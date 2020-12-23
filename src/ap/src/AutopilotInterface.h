@@ -21,12 +21,10 @@
 #include <MSFS/Legacy/gauges.h>
 #include <SimConnect.h>
 
-#include "FlightDataRecorder.h"
-#include "FlyByWire.h"
-#include "InterpolatingLookupTable.h"
-#include "SimConnectInterface.h"
+#include "Autopilot.h"
+#include "SimConnectInterfaceAutopilot.h"
 
-class FlyByWireInterface {
+class AutopilotInterface {
  public:
   bool connect();
 
@@ -35,39 +33,10 @@ class FlyByWireInterface {
   bool update(double sampleTime);
 
  private:
-  const std::string THROTTLE_CONFIGURATION_FILEPATH = "\\work\\ThrottleConfiguration.ini";
-
-  bool isThrottleLoggingEnabled = false;
-  bool isThrottleHandlingEnabled = false;
-  bool useReverseOnAxis = false;
-  bool useReverseIdle = false;
-  double idleThrottleInput = 0;
-  double throttleDetentDeadZone = 2.0;
-
-  double lastThrottleInput_1 = -1;
-  double lastThrottleInput_2 = -1;
-
   double previousSimulationTime = 0;
 
-  FlightDataRecorder flightDataRecorder;
-
   SimConnectInterface simConnectInterface;
-  FlyByWireModelClass model;
-  InterpolatingLookupTable throttleLookupTable;
-
-  ID idSideStickPositionX;
-  ID idSideStickPositionY;
-  ID idSideStickLeftPositionX;
-  ID idSideStickLeftPositionY;
-  ID idSideStickRightPositionX;
-  ID idSideStickRightPositionY;
-
-  ID idRudderPositionOverrideOn;
-  ID idRudderPosition;
-
-  ID idThrottlePositionOverrideOn;
-  ID idThrottlePosition_1;
-  ID idThrottlePosition_2;
+  AutopilotModelClass model;
 
   ID idAutopilotUseLvar;
   ID idAutopilotOn;
@@ -84,11 +53,4 @@ class FlyByWireInterface {
   bool getModelInputDataFromSim(double sampleTime);
 
   bool writeModelOuputDataToSim();
-
-  void initializeThrottles();
-
-  bool processThrottles();
-
-  double calculateDeadzones(double deadzone, double input);
-  double calculateDeadzone(double deadzone, double target, double input);
 };
