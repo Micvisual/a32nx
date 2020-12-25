@@ -143,8 +143,10 @@ bool SimConnectInterface::prepareSimInputSimConnectDataDefinitions(bool isThrott
 
   result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_SET, "RUDDER_SET", true);
   result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_LEFT, "RUDDER_LEFT", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_AXIS_PLUS, "RUDDER_AXIS_PLUS", true);
   result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_CENTER, "RUDDER_CENTER", true);
   result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_RIGHT, "RUDDER_RIGHT", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_AXIS_MINUS, "RUDDER_AXIS_MINUS", true);
 
   result &= addInputDataDefinition(hSimConnect, 0, Events::AILERON_SET, "AILERON_SET", true);
   result &= addInputDataDefinition(hSimConnect, 0, Events::AILERONS_LEFT, "AILERONS_LEFT", true);
@@ -426,6 +428,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       break;
 
     case Events::RUDDER_LEFT:
+    case Events::RUDDER_AXIS_PLUS:
       simInput.inputs[AXIS_RUDDER_SET] = min(1.0, simInput.inputs[AXIS_RUDDER_SET] + 0.02);
       break;
 
@@ -434,6 +437,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       break;
 
     case Events::RUDDER_RIGHT:
+    case Events::RUDDER_AXIS_MINUS:
       simInput.inputs[AXIS_RUDDER_SET] = max(-1.0, simInput.inputs[AXIS_RUDDER_SET] - 0.02);
       break;
 
