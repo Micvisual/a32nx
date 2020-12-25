@@ -428,7 +428,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       break;
 
     case Events::RUDDER_LEFT:
-    case Events::RUDDER_AXIS_PLUS:
+    case Events::RUDDER_AXIS_MINUS:
       simInput.inputs[AXIS_RUDDER_SET] = min(1.0, simInput.inputs[AXIS_RUDDER_SET] + 0.02);
       break;
 
@@ -437,7 +437,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       break;
 
     case Events::RUDDER_RIGHT:
-    case Events::RUDDER_AXIS_MINUS:
+    case Events::RUDDER_AXIS_PLUS:
       simInput.inputs[AXIS_RUDDER_SET] = max(-1.0, simInput.inputs[AXIS_RUDDER_SET] - 0.02);
       break;
 
