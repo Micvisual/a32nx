@@ -137,44 +137,71 @@ bool SimConnectInterface::prepareSimDataSimConnectDataDefinitions() {
 bool SimConnectInterface::prepareSimInputSimConnectDataDefinitions(bool isThrottleHandlingEnabled) {
   bool result = true;
 
-  result &= addInputDataDefinition(hSimConnect, 0, 0, "AXIS_ELEVATOR_SET", true);
-  result &= addInputDataDefinition(hSimConnect, 0, 1, "AXIS_AILERONS_SET", true);
-  result &= addInputDataDefinition(hSimConnect, 0, 2, "AXIS_RUDDER_SET", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::AXIS_ELEVATOR_SET, "AXIS_ELEVATOR_SET", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::AXIS_AILERONS_SET, "AXIS_AILERONS_SET", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::AXIS_RUDDER_SET, "AXIS_RUDDER_SET", true);
+
+  result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_SET, "RUDDER_SET", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_LEFT, "RUDDER_LEFT", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_CENTER, "RUDDER_CENTER", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::RUDDER_RIGHT, "RUDDER_RIGHT", true);
+
+  result &= addInputDataDefinition(hSimConnect, 0, Events::AILERON_SET, "AILERON_SET", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::AILERONS_LEFT, "AILERONS_LEFT", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::AILERONS_RIGHT, "AILERONS_RIGHT", true);
+
+  result &= addInputDataDefinition(hSimConnect, 0, Events::CENTER_AILER_RUDDER, "CENTER_AILER_RUDDER", true);
+
+  result &= addInputDataDefinition(hSimConnect, 0, Events::ELEVATOR_SET, "ELEVATOR_SET", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::ELEV_DOWN, "ELEV_DOWN", true);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::ELEV_UP, "ELEV_UP", true);
 
   if (isThrottleHandlingEnabled) {
-    result &= addInputDataDefinition(hSimConnect, 0, 3, "AUTO_THROTTLE_ARM", false);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::AUTO_THROTTLE_ARM, "AUTO_THROTTLE_ARM", false);
 
-    result &= addInputDataDefinition(hSimConnect, 0, 4, "THROTTLE_SET", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 5, "THROTTLE1_SET", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 6, "THROTTLE2_SET", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_SET, "THROTTLE_SET", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE1_SET, "THROTTLE1_SET", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE2_SET, "THROTTLE2_SET", true);
 
-    result &= addInputDataDefinition(hSimConnect, 0, 7, "THROTTLE_AXIS_SET_EX1", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 8, "THROTTLE1_AXIS_SET_EX1", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 9, "THROTTLE2_AXIS_SET_EX1", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_AXIS_SET_EX1, "THROTTLE_AXIS_SET_EX1", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE1_AXIS_SET_EX1, "THROTTLE1_AXIS_SET_EX1", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE2_AXIS_SET_EX1, "THROTTLE2_AXIS_SET_EX1", true);
 
-    result &= addInputDataDefinition(hSimConnect, 0, 10, "THROTTLE_FULL", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 11, "THROTTLE_CUT", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 12, "THROTTLE_INCR", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 13, "THROTTLE_DECR", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 14, "THROTTLE_INCR_SMALL", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 15, "THROTTLE_DECR_SMALL", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_FULL, "THROTTLE_FULL", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_CUT, "THROTTLE_CUT", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_INCR, "THROTTLE_INCR", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_DECR, "THROTTLE_DECR", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_INCR_SMALL, "THROTTLE_INCR_SMALL", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_DECR_SMALL, "THROTTLE_DECR_SMALL", true);
 
-    result &= addInputDataDefinition(hSimConnect, 0, 16, "THROTTLE1_FULL", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 17, "THROTTLE1_CUT", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 18, "THROTTLE1_INCR", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 19, "THROTTLE1_DECR", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 20, "THROTTLE1_INCR_SMALL", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 21, "THROTTLE1_DECR_SMALL", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_10, "THROTTLE_10", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_20, "THROTTLE_20", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_30, "THROTTLE_30", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_40, "THROTTLE_40", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_50, "THROTTLE_50", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_60, "THROTTLE_60", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_70, "THROTTLE_70", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_80, "THROTTLE_80", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_90, "THROTTLE_90", true);
 
-    result &= addInputDataDefinition(hSimConnect, 0, 22, "THROTTLE2_FULL", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 23, "THROTTLE2_CUT", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 24, "THROTTLE2_INCR", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 25, "THROTTLE2_DECR", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 26, "THROTTLE2_INCR_SMALL", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 27, "THROTTLE2_DECR_SMALL", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE1_FULL, "THROTTLE1_FULL", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE1_CUT, "THROTTLE1_CUT", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE1_INCR, "THROTTLE1_INCR", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE1_DECR, "THROTTLE1_DECR", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE1_INCR_SMALL, "THROTTLE1_INCR_SMALL", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE1_DECR_SMALL, "THROTTLE1_DECR_SMALL", true);
 
-    result &= addInputDataDefinition(hSimConnect, 0, 28, "THROTTLE_REVERSE_THRUST_TOGGLE", true);
-    result &= addInputDataDefinition(hSimConnect, 0, 29, "THROTTLE_REVERSE_THRUST_HOLD", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE2_FULL, "THROTTLE2_FULL", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE2_CUT, "THROTTLE2_CUT", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE2_INCR, "THROTTLE2_INCR", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE2_DECR, "THROTTLE2_DECR", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE2_INCR_SMALL, "THROTTLE2_INCR_SMALL", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE2_DECR_SMALL, "THROTTLE2_DECR_SMALL", true);
+
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_REVERSE_THRUST_TOGGLE,
+                                     "THROTTLE_REVERSE_THRUST_TOGGLE", true);
+    result &= addInputDataDefinition(hSimConnect, 0, Events::THROTTLE_REVERSE_THRUST_HOLD,
+                                     "THROTTLE_REVERSE_THRUST_HOLD", true);
   }
 
   return result;
@@ -388,28 +415,73 @@ void SimConnectInterface::simConnectProcessDispatchMessage(SIMCONNECT_RECV* pDat
 void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* event) {
   // process depending on event id
   switch (event->uEventID) {
-    case 0:
-    case 1:
-    case 2:
+    case Events::AXIS_ELEVATOR_SET:
+    case Events::AXIS_AILERONS_SET:
+    case Events::AXIS_RUDDER_SET:
       simInput.inputs[event->uEventID] = static_cast<long>(event->dwData) / 16384.0;
       break;
 
-    case 3:
+    case Events::RUDDER_SET:
+      simInput.inputs[AXIS_RUDDER_SET] = static_cast<long>(event->dwData) / 16384.0;
+      break;
+
+    case Events::RUDDER_LEFT:
+      simInput.inputs[AXIS_RUDDER_SET] = min(1.0, simInput.inputs[AXIS_RUDDER_SET] + 0.02);
+      break;
+
+    case Events::RUDDER_CENTER:
+      simInput.inputs[AXIS_RUDDER_SET] = 0.0;
+      break;
+
+    case Events::RUDDER_RIGHT:
+      simInput.inputs[AXIS_RUDDER_SET] = max(-1.0, simInput.inputs[AXIS_RUDDER_SET] - 0.02);
+      break;
+
+    case Events::AILERON_SET:
+      simInput.inputs[AXIS_AILERONS_SET] = static_cast<long>(event->dwData) / 16384.0;
+      break;
+
+    case Events::AILERONS_LEFT:
+      simInput.inputs[AXIS_AILERONS_SET] = min(1.0, simInput.inputs[AXIS_AILERONS_SET] + 0.02);
+      break;
+
+    case Events::AILERONS_RIGHT:
+      simInput.inputs[AXIS_AILERONS_SET] = max(-1.0, simInput.inputs[AXIS_AILERONS_SET] - 0.02);
+      break;
+
+    case Events::CENTER_AILER_RUDDER:
+      simInput.inputs[AXIS_RUDDER_SET] = 0.0;
+      simInput.inputs[AXIS_AILERONS_SET] = 0.0;
+      break;
+
+    case Events::ELEVATOR_SET:
+      simInput.inputs[AXIS_ELEVATOR_SET] = static_cast<long>(event->dwData) / 16384.0;
+      break;
+
+    case Events::ELEV_DOWN:
+      simInput.inputs[AXIS_ELEVATOR_SET] = min(1.0, simInput.inputs[AXIS_ELEVATOR_SET] + 0.02);
+      break;
+
+    case Events::ELEV_UP:
+      simInput.inputs[AXIS_ELEVATOR_SET] = max(-1.0, simInput.inputs[AXIS_ELEVATOR_SET] - 0.02);
+      break;
+
+    case Events::AUTO_THROTTLE_ARM:
       isAutothrustArmed = !isAutothrustArmed;
       break;
 
-    case 4:
+    case Events::THROTTLE_SET:
       simInputThrottles.throttles[0] = static_cast<long>(event->dwData) / 16384.0;
       simInputThrottles.throttles[1] = static_cast<long>(event->dwData) / 16384.0;
       break;
-    case 5:
+    case Events::THROTTLE1_SET:
       simInputThrottles.throttles[0] = static_cast<long>(event->dwData) / 16384.0;
       break;
-    case 6:
+    case Events::THROTTLE2_SET:
       simInputThrottles.throttles[1] = static_cast<long>(event->dwData) / 16384.0;
       break;
 
-    case 7:
+    case Events::THROTTLE_AXIS_SET_EX1:
       if (!useReverseOnAxis && !isReverseToggleActive) {
         isReverseToggleKeyActive[0] = false;
         isReverseToggleKeyActive[1] = false;
@@ -417,31 +489,31 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       simInputThrottles.throttles[0] = static_cast<long>(event->dwData) / 16384.0;
       simInputThrottles.throttles[1] = static_cast<long>(event->dwData) / 16384.0;
       break;
-    case 8:
+    case Events::THROTTLE1_AXIS_SET_EX1:
       if (!useReverseOnAxis && !isReverseToggleActive) {
         isReverseToggleKeyActive[0] = false;
       }
       simInputThrottles.throttles[0] = static_cast<long>(event->dwData) / 16384.0;
       break;
-    case 9:
+    case Events::THROTTLE2_AXIS_SET_EX1:
       if (!useReverseOnAxis && !isReverseToggleActive) {
         isReverseToggleKeyActive[1] = false;
       }
       simInputThrottles.throttles[1] = static_cast<long>(event->dwData) / 16384.0;
       break;
 
-    case 10:
-      simInputThrottles.throttles[0] = 100.0;
-      simInputThrottles.throttles[1] = 100.0;
+    case Events::THROTTLE_FULL:
+      simInputThrottles.throttles[0] = 1.0;
+      simInputThrottles.throttles[1] = 1.0;
       break;
-    case 11:
+    case Events::THROTTLE_CUT:
       isReverseToggleActive = false;
       isReverseToggleKeyActive[0] = false;
       isReverseToggleKeyActive[1] = false;
       simInputThrottles.throttles[0] = idleThrottleInput;
       simInputThrottles.throttles[1] = idleThrottleInput;
       break;
-    case 12:
+    case Events::THROTTLE_INCR:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[0] == -1.0) {
@@ -462,7 +534,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
         simInputThrottles.throttles[1] = min(1.0, simInputThrottles.throttles[1] + 0.05);
       }
       break;
-    case 13:
+    case Events::THROTTLE_DECR:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[0] == -1.0) {
@@ -483,7 +555,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
         simInputThrottles.throttles[1] = max(-1.0, simInputThrottles.throttles[1] - 0.05);
       }
       break;
-    case 14:
+    case Events::THROTTLE_INCR_SMALL:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[0] == -1.0) {
@@ -504,7 +576,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
         simInputThrottles.throttles[1] = min(1.0, simInputThrottles.throttles[1] + 0.025);
       }
       break;
-    case 15:
+    case Events::THROTTLE_DECR_SMALL:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[0] == -1.0) {
@@ -526,15 +598,61 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       }
       break;
 
-    case 16:
-      simInputThrottles.throttles[0] = 100.0;
+    case Events::THROTTLE_10: {
+      simInputThrottles.throttles[0] = idleThrottleInput + (10 * (fabs(idleThrottleInput - 1) / 100.0));
+      simInputThrottles.throttles[1] = simInputThrottles.throttles[0];
       break;
-    case 17:
+    }
+
+    case Events::THROTTLE_20:
+      simInputThrottles.throttles[0] = idleThrottleInput + (20 * (fabs(idleThrottleInput - 1) / 100.0));
+      simInputThrottles.throttles[1] = simInputThrottles.throttles[0];
+      break;
+
+    case Events::THROTTLE_30:
+      simInputThrottles.throttles[0] = idleThrottleInput + (30 * (fabs(idleThrottleInput - 1) / 100.0));
+      simInputThrottles.throttles[1] = simInputThrottles.throttles[0];
+      break;
+
+    case Events::THROTTLE_40:
+      simInputThrottles.throttles[0] = idleThrottleInput + (40 * (fabs(idleThrottleInput - 1) / 100.0));
+      simInputThrottles.throttles[1] = simInputThrottles.throttles[0];
+      break;
+
+    case Events::THROTTLE_50:
+      simInputThrottles.throttles[0] = idleThrottleInput + (50 * (fabs(idleThrottleInput - 1) / 100.0));
+      simInputThrottles.throttles[1] = simInputThrottles.throttles[0];
+      break;
+
+    case Events::THROTTLE_60:
+      simInputThrottles.throttles[0] = idleThrottleInput + (60 * (fabs(idleThrottleInput - 1) / 100.0));
+      simInputThrottles.throttles[1] = simInputThrottles.throttles[0];
+      break;
+
+    case Events::THROTTLE_70:
+      simInputThrottles.throttles[0] = idleThrottleInput + (70 * (fabs(idleThrottleInput - 1) / 100.0));
+      simInputThrottles.throttles[1] = simInputThrottles.throttles[0];
+      break;
+
+    case Events::THROTTLE_80:
+      simInputThrottles.throttles[0] = idleThrottleInput + (80 * (fabs(idleThrottleInput - 1) / 100.0));
+      simInputThrottles.throttles[1] = simInputThrottles.throttles[0];
+      break;
+
+    case Events::THROTTLE_90:
+      simInputThrottles.throttles[0] = idleThrottleInput + (90 * (fabs(idleThrottleInput - 1) / 100.0));
+      simInputThrottles.throttles[1] = simInputThrottles.throttles[0];
+      break;
+
+    case Events::THROTTLE1_FULL:
+      simInputThrottles.throttles[0] = 1.0;
+      break;
+    case Events::THROTTLE1_CUT:
       isReverseToggleActive = false;
       isReverseToggleKeyActive[0] = false;
       simInputThrottles.throttles[0] = idleThrottleInput;
       break;
-    case 18:
+    case Events::THROTTLE1_INCR:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[0] == -1.0) {
@@ -547,7 +665,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
         simInputThrottles.throttles[0] = min(1.0, simInputThrottles.throttles[0] + 0.05);
       }
       break;
-    case 19:
+    case Events::THROTTLE1_DECR:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[0] == -1.0) {
@@ -560,7 +678,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
         simInputThrottles.throttles[0] = max(-1.0, simInputThrottles.throttles[0] - 0.05);
       }
       break;
-    case 20:
+    case Events::THROTTLE1_INCR_SMALL:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[0] == -1.0) {
@@ -573,7 +691,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
         simInputThrottles.throttles[0] = min(1.0, simInputThrottles.throttles[0] + 0.025);
       }
       break;
-    case 21:
+    case Events::THROTTLE1_DECR_SMALL:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[0] == -1.0) {
@@ -587,15 +705,15 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       }
       break;
 
-    case 22:
-      simInputThrottles.throttles[1] = 100.0;
+    case Events::THROTTLE2_FULL:
+      simInputThrottles.throttles[1] = 1.0;
       break;
-    case 23:
+    case Events::THROTTLE2_CUT:
       isReverseToggleActive = false;
       isReverseToggleKeyActive[1] = false;
       simInputThrottles.throttles[1] = idleThrottleInput;
       break;
-    case 24:
+    case Events::THROTTLE2_INCR:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[1] == -1.0) {
@@ -608,7 +726,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
         simInputThrottles.throttles[1] = min(1.0, simInputThrottles.throttles[1] + 0.05);
       }
       break;
-    case 25:
+    case Events::THROTTLE2_DECR:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[1] == -1.0) {
@@ -621,7 +739,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
         simInputThrottles.throttles[1] = max(-1.0, simInputThrottles.throttles[1] - 0.05);
       }
       break;
-    case 26:
+    case Events::THROTTLE2_INCR_SMALL:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[1] == -1.0) {
@@ -634,7 +752,7 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
         simInputThrottles.throttles[1] = min(1.0, simInputThrottles.throttles[1] + 0.025);
       }
       break;
-    case 27:
+    case Events::THROTTLE2_DECR_SMALL:
       if (!useReverseOnAxis) {
         // check if we have reached the minimum -> toggle reverse
         if (simInputThrottles.throttles[1] == -1.0) {
@@ -648,14 +766,14 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       }
       break;
 
-    case 28:
+    case Events::THROTTLE_REVERSE_THRUST_TOGGLE:
       isReverseToggleActive = !isReverseToggleActive;
       isReverseToggleKeyActive[0] = isReverseToggleActive;
       isReverseToggleKeyActive[1] = isReverseToggleActive;
       simInputThrottles.throttles[0] = idleThrottleInput;
       simInputThrottles.throttles[1] = idleThrottleInput;
       break;
-    case 29:
+    case Events::THROTTLE_REVERSE_THRUST_HOLD:
       isReverseToggleActive = static_cast<bool>(event->dwData);
       isReverseToggleKeyActive[0] = isReverseToggleActive;
       isReverseToggleKeyActive[1] = isReverseToggleActive;
