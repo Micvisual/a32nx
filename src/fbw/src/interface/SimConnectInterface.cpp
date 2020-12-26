@@ -418,9 +418,15 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
   // process depending on event id
   switch (event->uEventID) {
     case Events::AXIS_ELEVATOR_SET:
+      simInput.inputs[AXIS_ELEVATOR_SET] = static_cast<long>(event->dwData) / 16384.0;
+      break;
+
     case Events::AXIS_AILERONS_SET:
+      simInput.inputs[AXIS_AILERONS_SET] = static_cast<long>(event->dwData) / 16384.0;
+      break;
+
     case Events::AXIS_RUDDER_SET:
-      simInput.inputs[event->uEventID] = static_cast<long>(event->dwData) / 16384.0;
+      simInput.inputs[AXIS_RUDDER_SET] = static_cast<long>(event->dwData) / 16384.0;
       break;
 
     case Events::RUDDER_SET:
@@ -428,7 +434,6 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       break;
 
     case Events::RUDDER_LEFT:
-    case Events::RUDDER_AXIS_MINUS:
       simInput.inputs[AXIS_RUDDER_SET] = min(1.0, simInput.inputs[AXIS_RUDDER_SET] + 0.02);
       break;
 
@@ -437,8 +442,15 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       break;
 
     case Events::RUDDER_RIGHT:
-    case Events::RUDDER_AXIS_PLUS:
       simInput.inputs[AXIS_RUDDER_SET] = max(-1.0, simInput.inputs[AXIS_RUDDER_SET] - 0.02);
+      break;
+
+    case Events::RUDDER_AXIS_MINUS:
+      simInput.inputs[AXIS_RUDDER_SET] = +1.0 * (static_cast<long>(event->dwData) / 16384.0);
+      break;
+
+    case Events::RUDDER_AXIS_PLUS:
+      simInput.inputs[AXIS_RUDDER_SET] = -1.0 * (static_cast<long>(event->dwData) / 16384.0);
       break;
 
     case Events::AILERON_SET:
