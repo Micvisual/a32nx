@@ -257,8 +257,10 @@ void FlyByWireInterface::initializeThrottles() {
     configFile << "Log = true" << endl;
     configFile << "Enabled = true" << endl;
     configFile << "ReverseOnAxis = false" << endl;
+    configFile << "ReverseIdle = true" << endl;
     configFile << "DetentDeadZone = 2.0" << endl;
     configFile << "DetentReverseFull = -1.00" << endl;
+    configFile << "DetentReverseIdle = -0.90" << endl;
     configFile << "DetentIdle = -1.00" << endl;
     configFile << "DetentClimb = 0.89" << endl;
     configFile << "DetentFlexMct = 0.95" << endl;
@@ -270,11 +272,15 @@ void FlyByWireInterface::initializeThrottles() {
   isThrottleLoggingEnabled = configuration.GetBoolean("Throttle", "Log", true);
   isThrottleHandlingEnabled = configuration.GetBoolean("Throttle", "Enabled", true);
   useReverseOnAxis = configuration.GetBoolean("Throttle", "ReverseOnAxis", false);
+  useReverseIdle = configuration.GetBoolean("Throttle", "ReverseIdle", false);
   throttleDetentDeadZone = configuration.GetReal("Throttle", "DetentDeadZone", 0.0);
   // read mapping configuration
   vector<pair<double, double>> mappingTable;
   if (useReverseOnAxis) {
     mappingTable.emplace_back(configuration.GetReal("Throttle", "DetendReverseFull", -1.00), -20.00);
+    if (useReverseIdle) {
+      mappingTable.emplace_back(configuration.GetReal("Throttle", "DetentReverseIdle", -0.70), -5.00);
+    }
   }
   mappingTable.emplace_back(configuration.GetReal("Throttle", "DetentIdle", useReverseOnAxis ? 0.00 : -1.00), 0.00);
   mappingTable.emplace_back(configuration.GetReal("Throttle", "DetentClimb", 0.89), 89.00);
@@ -283,7 +289,11 @@ void FlyByWireInterface::initializeThrottles() {
 
   // remember idle throttle setting
   if (useReverseOnAxis) {
-    idleThrottleInput = mappingTable[1].first;
+    if (useReverseIdle) {
+      idleThrottleInput = mappingTable[2].first;
+    } else {
+      idleThrottleInput = mappingTable[1].first;
+    }
   } else {
     idleThrottleInput = mappingTable[0].first;
   }
@@ -292,9 +302,13 @@ void FlyByWireInterface::initializeThrottles() {
   cout << "WASM: Throttle Configuration : Log                   = " << isThrottleLoggingEnabled << endl;
   cout << "WASM: Throttle Configuration : Enabled               = " << isThrottleHandlingEnabled << endl;
   cout << "WASM: Throttle Configuration : ReverseOnAxis         = " << useReverseOnAxis << endl;
+  cout << "WASM: Throttle Configuration : ReverseIdle           = " << useReverseIdle << endl;
   int index = 0;
   if (useReverseOnAxis) {
     cout << "WASM: Throttle Configuration : DetentReverseFull     = " << mappingTable[index++].first << endl;
+    if (useReverseIdle) {
+      cout << "WASM: Throttle Configuration : DetentReverseIdle     = " << mappingTable[index++].first << endl;
+    }
   }
   cout << "WASM: Throttle Configuration : DetentIdle            = " << mappingTable[index++].first << endl;
   cout << "WASM: Throttle Configuration : DetentClimb           = " << mappingTable[index++].first << endl;
@@ -344,7 +358,7 @@ bool FlyByWireInterface::processThrottles() {
 
   // if enabled, print values
   if (isThrottleLoggingEnabled) {
-    if (lastUseReverseOnAxis != useReverseOnAxis || lastThrottleInput_1 != simInputThrottles.throttles[0] ||
+    if (lastThrottleInput_1 != simInputThrottles.throttles[0] ||
         lastThrottleInput_2 != simInputThrottles.throttles[1]) {
       // print values
       cout << fixed << setprecision(2) << "WASM";
@@ -355,7 +369,6 @@ bool FlyByWireInterface::processThrottles() {
       cout << endl;
 
       // store values for next iteration
-      lastUseReverseOnAxis = useReverseOnAxis;
       lastThrottleInput_1 = simInputThrottles.throttles[0];
       lastThrottleInput_2 = simInputThrottles.throttles[1];
     }
@@ -381,7 +394,13 @@ bool FlyByWireInterface::processThrottles() {
 }
 
 double FlyByWireInterface::calculateDeadzones(double deadzone, double input) {
-  double result = calculateDeadzone(deadzone, 0.0, input);
+  double result = input;
+  if (useReverseOnAxis) {
+    result = calculateDeadzone(deadzone, -20.0, result);
+    if (useReverseIdle) {
+      result = calculateDeadzone(deadzone, -5.0, result);
+    }
+  }
   result = calculateDeadzone(deadzone, 0.0, result);
   result = calculateDeadzone(deadzone, 89.0, result);
   result = calculateDeadzone(deadzone, 95.0, result);

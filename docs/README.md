@@ -33,8 +33,10 @@ This is the default configuration:
 Log = true
 Enabled = true
 ReverseOnAxis = false
+ReverseIdle = true
 DetentDeadZone = 2.0
 DetentReverseFull = -1.00
+DetentReverseIdle = -0.90
 DetentIdle = -1.00
 DetentClimb = 0.89
 DetentFlexMct = 0.95
@@ -51,8 +53,10 @@ The following values can be configured:
 |----------|-------------|
 | Enabled |  Enabled or disables throttle handling completely |
 | ReverseOnAxis | When true reverse will be mapped on throttle axis and parameter *DetentReverseFull* is used  |
+| ReverseIdle | When true a reverse idle detent is added and parameter *DetentReverseIdle* is used. Only works with *ReverseOnAxis* enabled |
 | DetentDeadZone | Deadzone around the detents, applies after mapping the values to range -20 to 100 |
-| DetentReverseFull | Configures the throttle value for full reverse |
+| DetentReverseFull | Configures the throttle value for REV FULL detent |
+| DetentReverseIdle | Configures the throttle value for REV IDLE detent |
 | DetentIdle | Configures the throttle value for IDLE detent |
 | DetentClimb | Configures the throttle value for CLB detent |
 | DetentFlexMct | Configures the throttle value for FLX/MCT detent |
@@ -103,6 +107,25 @@ DetentReverseFull = -1.00
 DetentIdle = 0.00
 DetentClimb = 0.66
 DetentFlexMct = 0.88
+DetentTakeOffGoAround = 1.00
+```
+
+#### Example for Thrustmaster TCA Quadrant Airbus Edition (2)
+
+This example shows a calibrated hardware with linear sensitity in Microsoft Flight Simulator (all values 0% with reactivity 100%). It uses also the idle reverse detent.
+
+```
+[Throttle]
+Log = true
+Enabled = true
+ReverseOnAxis = true
+ReverseIdle = true
+DetentDeadZone = 2.5
+DetentReverseIdle = -0.90
+DetentReverseFull = -1.00
+DetentIdle = -0.42
+DetentClimb = 0.06
+DetentFlexMct = 0.53
 DetentTakeOffGoAround = 1.00
 ```
 

@@ -40,10 +40,10 @@ class FlyByWireInterface {
   bool isThrottleLoggingEnabled = false;
   bool isThrottleHandlingEnabled = false;
   bool useReverseOnAxis = false;
+  bool useReverseIdle = false;
   double idleThrottleInput = 0;
   double throttleDetentDeadZone = 2.0;
 
-  bool lastUseReverseOnAxis = false;
   double lastThrottleInput_1 = -1;
   double lastThrottleInput_2 = -1;
 
