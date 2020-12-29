@@ -45,6 +45,8 @@ class SimConnectInterface {
 
   bool sendData(SimOutputEtaTrim output);
 
+  bool sendData(SimOutputZetaTrim output);
+
   bool sendData(SimOutputThrottles output);
 
   bool sendAutoThrustArmEvent();

@@ -55,6 +55,7 @@ typedef struct {
   real_T autopilot_custom_on;
   real_T autopilot_custom_Theta_c_deg;
   real_T autopilot_custom_Phi_c_deg;
+  real_T autopilot_custom_Beta_c_deg;
   real_T simulation_rate;
   real_T ice_structure_percent;
   real_T linear_cl_alpha_per_deg;
@@ -155,6 +156,7 @@ typedef struct {
   real_T autopilot_custom_on;
   real_T autopilot_custom_Theta_c_deg;
   real_T autopilot_custom_Phi_c_deg;
+  real_T autopilot_custom_Beta_c_deg;
   real_T simulation_rate;
   real_T ice_structure_percent;
   real_T linear_cl_alpha_per_deg;
@@ -280,6 +282,7 @@ typedef struct {
   real_T delta_zeta_deg;
   real_T in_flight;
   real_T in_flight_gain;
+  boolean_T zeta_trim_deg_should_write;
 } base_roll_data_computed;
 
 #endif
@@ -302,6 +305,7 @@ typedef struct {
 typedef struct {
   real_T xi_deg;
   real_T zeta_deg;
+  real_T zeta_trim_deg;
 } base_roll_output;
 
 #endif
@@ -327,6 +331,7 @@ typedef struct {
   real_T xi_pos;
   real_T zeta_pos;
   real_T zeta_trim_pos;
+  boolean_T zeta_trim_pos_should_write;
 } base_raw_output;
 
 #endif

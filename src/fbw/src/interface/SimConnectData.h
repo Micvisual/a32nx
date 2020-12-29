@@ -90,6 +90,10 @@ struct SimOutputEtaTrim {
   double eta_trim_deg;
 };
 
+struct SimOutputZetaTrim {
+  double zeta_trim_pos;
+};
+
 struct SimOutputThrottles {
   double throttleLeverPosition_1;
   double throttleLeverPosition_2;
@@ -101,4 +105,5 @@ struct SimInputClientDataAutopilot {
   double autopilotTheta;
   double flightDirectorPhi;
   double autopilotPhi;
+  double autopilotBeta;
 };

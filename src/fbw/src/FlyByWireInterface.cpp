@@ -160,6 +160,7 @@ bool FlyByWireInterface::getModelInputDataFromSim(double sampleTime) {
   model.FlyByWire_U.in.data.autopilot_custom_on = clientDataAutopilot.enableAutopilot;
   model.FlyByWire_U.in.data.autopilot_custom_Theta_c_deg = clientDataAutopilot.autopilotTheta;
   model.FlyByWire_U.in.data.autopilot_custom_Phi_c_deg = clientDataAutopilot.autopilotPhi;
+  model.FlyByWire_U.in.data.autopilot_custom_Beta_c_deg = clientDataAutopilot.autopilotBeta;
   model.FlyByWire_U.in.data.tracking_mode_on_override = 0;
   model.FlyByWire_U.in.data.simulation_rate = simData.simulation_rate;
   model.FlyByWire_U.in.data.ice_structure_percent = simData.ice_structure_percent;
@@ -235,6 +236,17 @@ bool FlyByWireInterface::writeModelOuputDataToSim() {
   if (model.FlyByWire_Y.out.output.eta_trim_deg_should_write) {
     // object to write without trim
     SimOutputEtaTrim output = {model.FlyByWire_Y.out.output.eta_trim_deg};
+
+    // send data via sim connect
+    if (!simConnectInterface.sendData(output)) {
+      cout << "WASM: Write data failed!" << endl;
+      return false;
+    }
+  }
+
+  if (model.FlyByWire_Y.out.output.zeta_trim_pos_should_write) {
+    // object to write without trim
+    SimOutputZetaTrim output = {model.FlyByWire_Y.out.output.zeta_trim_pos};
 
     // send data via sim connect
     if (!simConnectInterface.sendData(output)) {

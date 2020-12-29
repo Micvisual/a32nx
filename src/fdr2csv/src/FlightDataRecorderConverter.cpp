@@ -50,6 +50,7 @@ void FlightDataRecorderConverter::writeHeader(ofstream& out, const string& delim
   out << "sim.data.autopilot_custom_on" << delimiter;
   out << "sim.data.autopilot_custom_Theta_c_deg" << delimiter;
   out << "sim.data.autopilot_custom_Phi_c_deg" << delimiter;
+  out << "sim.data.autopilot_custom_Beta_c_deg" << delimiter;
   out << "sim.data.simulation_rate" << delimiter;
   out << "sim.data.ice_structure_percent" << delimiter;
   out << "sim.data.linear_cl_alpha_per_deg" << delimiter;
@@ -97,18 +98,21 @@ void FlightDataRecorderConverter::writeHeader(ofstream& out, const string& delim
   out << "roll.data_computed.delta_zeta_deg" << delimiter;
   out << "roll.data_computed.in_flight" << delimiter;
   out << "roll.data_computed.in_flight_gain" << delimiter;
+  out << "roll.data_computed.zeta_trim_deg_should_write" << delimiter;
   out << "roll.law_normal.pk_c_deg_s" << delimiter;
   out << "roll.law_normal.Phi_c_deg" << delimiter;
   out << "roll.law_normal.xi_deg" << delimiter;
   out << "roll.law_normal.zeta_deg" << delimiter;
   out << "roll.output.xi_deg" << delimiter;
   out << "roll.output.zeta_deg" << delimiter;
+  out << "roll.output.zeta_trim_deg" << delimiter;
   out << "output.eta_pos" << delimiter;
   out << "output.eta_trim_deg" << delimiter;
   out << "output.eta_trim_deg_should_write" << delimiter;
   out << "output.xi_pos" << delimiter;
   out << "output.zeta_pos" << delimiter;
-  out << "output.zeta_trim_pos";
+  out << "output.zeta_trim_pos" << delimiter;
+  out << "output.zeta_trim_pos_should_write";
   out << endl;
 }
 
@@ -160,6 +164,7 @@ void FlightDataRecorderConverter::writeStruct(ofstream& out, const string& delim
   out << data.sim.data.autopilot_custom_on << delimiter;
   out << data.sim.data.autopilot_custom_Theta_c_deg << delimiter;
   out << data.sim.data.autopilot_custom_Phi_c_deg << delimiter;
+  out << data.sim.data.autopilot_custom_Beta_c_deg << delimiter;
   out << data.sim.data.simulation_rate << delimiter;
   out << data.sim.data.ice_structure_percent << delimiter;
   out << data.sim.data.linear_cl_alpha_per_deg << delimiter;
@@ -207,17 +212,20 @@ void FlightDataRecorderConverter::writeStruct(ofstream& out, const string& delim
   out << data.roll.data_computed.delta_zeta_deg << delimiter;
   out << data.roll.data_computed.in_flight << delimiter;
   out << data.roll.data_computed.in_flight_gain << delimiter;
+  out << data.roll.data_computed.zeta_trim_deg_should_write << delimiter;
   out << data.roll.law_normal.pk_c_deg_s << delimiter;
   out << data.roll.law_normal.Phi_c_deg << delimiter;
   out << data.roll.law_normal.xi_deg << delimiter;
   out << data.roll.law_normal.zeta_deg << delimiter;
   out << data.roll.output.xi_deg << delimiter;
   out << data.roll.output.zeta_deg << delimiter;
+  out << data.roll.output.zeta_trim_deg << delimiter;
   out << data.output.eta_pos << delimiter;
   out << data.output.eta_trim_deg << delimiter;
   out << static_cast<unsigned int>(data.output.eta_trim_deg_should_write) << delimiter;
   out << data.output.xi_pos << delimiter;
   out << data.output.zeta_pos << delimiter;
-  out << data.output.zeta_trim_pos;
+  out << data.output.zeta_trim_pos << delimiter;
+  out << data.output.zeta_trim_pos_should_write;
   out << endl;
 }

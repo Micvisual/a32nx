@@ -218,9 +218,11 @@ bool SimConnectInterface::prepareSimOutputSimConnectDataDefinitions() {
 
   result &= addDataDefinition(hSimConnect, 2, SIMCONNECT_DATATYPE_FLOAT64, "ELEVATOR TRIM POSITION", "DEGREE");
 
-  result &= addDataDefinition(hSimConnect, 3, SIMCONNECT_DATATYPE_FLOAT64, "GENERAL ENG THROTTLE LEVER POSITION:1",
+  result &= addDataDefinition(hSimConnect, 3, SIMCONNECT_DATATYPE_FLOAT64, "RUDDER TRIM PCT", "PERCENT OVER 100");
+
+  result &= addDataDefinition(hSimConnect, 4, SIMCONNECT_DATATYPE_FLOAT64, "GENERAL ENG THROTTLE LEVER POSITION:1",
                               "PERCENT");
-  result &= addDataDefinition(hSimConnect, 3, SIMCONNECT_DATATYPE_FLOAT64, "GENERAL ENG THROTTLE LEVER POSITION:2",
+  result &= addDataDefinition(hSimConnect, 4, SIMCONNECT_DATATYPE_FLOAT64, "GENERAL ENG THROTTLE LEVER POSITION:2",
                               "PERCENT");
 
   return result;
@@ -238,6 +240,8 @@ bool SimConnectInterface::prepareClientDataDefinitions() {
   // add data definitions
   result &= SimConnect_AddToClientDataDefinition(hSimConnect, 0, SIMCONNECT_CLIENTDATAOFFSET_AUTO,
                                                  SIMCONNECT_CLIENTDATATYPE_INT64);
+  result &= SimConnect_AddToClientDataDefinition(hSimConnect, 0, SIMCONNECT_CLIENTDATAOFFSET_AUTO,
+                                                 SIMCONNECT_CLIENTDATATYPE_FLOAT64);
   result &= SimConnect_AddToClientDataDefinition(hSimConnect, 0, SIMCONNECT_CLIENTDATAOFFSET_AUTO,
                                                  SIMCONNECT_CLIENTDATATYPE_FLOAT64);
   result &= SimConnect_AddToClientDataDefinition(hSimConnect, 0, SIMCONNECT_CLIENTDATAOFFSET_AUTO,
@@ -320,9 +324,14 @@ bool SimConnectInterface::sendData(SimOutputEtaTrim output) {
   return sendData(2, sizeof(output), &output);
 }
 
-bool SimConnectInterface::sendData(SimOutputThrottles output) {
+bool SimConnectInterface::sendData(SimOutputZetaTrim output) {
   // write data and return result
   return sendData(3, sizeof(output), &output);
+}
+
+bool SimConnectInterface::sendData(SimOutputThrottles output) {
+  // write data and return result
+  return sendData(4, sizeof(output), &output);
 }
 
 bool SimConnectInterface::sendAutoThrustArmEvent() {
