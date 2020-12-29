@@ -55,10 +55,12 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
 
       {
         0.0,
+        0.0,
         0.0
       },
 
       {
+        0.0,
         0.0,
         0.0
       }
@@ -436,6 +438,8 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
   0.0,
 
   1.0,
+
+  0.0,
 
   0U,
 

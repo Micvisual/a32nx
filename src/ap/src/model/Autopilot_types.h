@@ -79,6 +79,7 @@ typedef struct {
 typedef struct {
   real_T Theta_c_deg;
   real_T Phi_c_deg;
+  real_T Beta_c_deg;
 } base_raw_output_command;
 
 #endif
