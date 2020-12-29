@@ -332,8 +332,9 @@ bool SimConnectInterface::sendAutoThrustArmEvent() {
   }
 
   // send event
-  HRESULT result = SimConnect_TransmitClientEvent(hSimConnect, 0, 3, 0, SIMCONNECT_GROUP_PRIORITY_HIGHEST,
-                                                  SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+  HRESULT result =
+      SimConnect_TransmitClientEvent(hSimConnect, 0, Events::AUTO_THROTTLE_ARM, 0, SIMCONNECT_GROUP_PRIORITY_HIGHEST,
+                                     SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
 
   // check result of data request
   if (result != S_OK) {
