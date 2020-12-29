@@ -122,6 +122,9 @@ bool AutopilotInterface::getModelInputDataFromSim(double sampleTime) {
   model.Autopilot_U.in.data.Psi_magnetic_deg = simData.Psi_magnetic_deg;
   model.Autopilot_U.in.data.Psi_magnetic_track_deg = simData.Psi_magnetic_track_deg;
   model.Autopilot_U.in.data.Psi_true_deg = simData.Psi_true_deg;
+  model.Autopilot_U.in.data.bx_m_s2 = simData.bx_m_s2;
+  model.Autopilot_U.in.data.by_m_s2 = simData.by_m_s2;
+  model.Autopilot_U.in.data.bz_m_s2 = simData.bz_m_s2;
   model.Autopilot_U.in.data.ap_V_c_kn = simData.ap_V_c_kn;
   model.Autopilot_U.in.data.ap_H_c_ft = simData.ap_H_c_ft;
   model.Autopilot_U.in.data.ap_Psi_c_deg = simData.ap_Psi_c_deg;

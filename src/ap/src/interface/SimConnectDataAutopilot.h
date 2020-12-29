@@ -35,6 +35,9 @@ struct SimData {
   double Psi_magnetic_deg;
   double Psi_magnetic_track_deg;
   double Psi_true_deg;
+  double bx_m_s2;
+  double by_m_s2;
+  double bz_m_s2;
   double ap_V_c_kn;
   double ap_H_c_ft;
   double ap_Psi_c_deg;

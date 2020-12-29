@@ -319,7 +319,7 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
 
   0.2,
 
-  3.0,
+  1.5,
 
   -1.0,
 
