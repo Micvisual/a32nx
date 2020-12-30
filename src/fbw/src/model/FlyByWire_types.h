@@ -72,6 +72,8 @@ typedef struct {
   real_T total_air_temperature_celsius;
   real_T latitude_deg;
   real_T longitude_deg;
+  real_T engine_1_thrust_lbf;
+  real_T engine_2_thrust_lbf;
 } base_raw_data;
 
 #endif
@@ -173,6 +175,8 @@ typedef struct {
   real_T total_air_temperature_celsius;
   real_T latitude_deg;
   real_T longitude_deg;
+  real_T engine_1_thrust_lbf;
+  real_T engine_2_thrust_lbf;
 } base_data;
 
 #endif
@@ -283,6 +287,7 @@ typedef struct {
   real_T in_flight;
   real_T in_flight_gain;
   boolean_T zeta_trim_deg_should_write;
+  real_T beta_target_deg;
 } base_roll_data_computed;
 
 #endif

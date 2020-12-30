@@ -178,6 +178,8 @@ bool FlyByWireInterface::getModelInputDataFromSim(double sampleTime) {
   model.FlyByWire_U.in.data.total_air_temperature_celsius = simData.total_air_temperature_celsius;
   model.FlyByWire_U.in.data.latitude_deg = simData.latitude_deg;
   model.FlyByWire_U.in.data.longitude_deg = simData.longitude_deg;
+  model.FlyByWire_U.in.data.engine_1_thrust_lbf = simData.engine_1_thrust_lbf;
+  model.FlyByWire_U.in.data.engine_2_thrust_lbf = simData.engine_2_thrust_lbf;
 
   // process the sidestick handling
   // use the values read from input as sidestick left

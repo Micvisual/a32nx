@@ -67,6 +67,8 @@ void FlightDataRecorderConverter::writeHeader(ofstream& out, const string& delim
   out << "sim.data.total_air_temperature_celsius" << delimiter;
   out << "sim.data.latitude_deg" << delimiter;
   out << "sim.data.longitude_deg" << delimiter;
+  out << "sim.data.engine_1_thrust_lbf" << delimiter;
+  out << "sim.data.engine_2_thrust_lbf" << delimiter;
   out << "sim.data_computed.on_ground" << delimiter;
   out << "sim.data_computed.tracking_mode_on" << delimiter;
   out << "sim.input.delta_eta_pos" << delimiter;
@@ -99,6 +101,7 @@ void FlightDataRecorderConverter::writeHeader(ofstream& out, const string& delim
   out << "roll.data_computed.in_flight" << delimiter;
   out << "roll.data_computed.in_flight_gain" << delimiter;
   out << "roll.data_computed.zeta_trim_deg_should_write" << delimiter;
+  out << "roll.data_computed.beta_target_deg" << delimiter;
   out << "roll.law_normal.pk_c_deg_s" << delimiter;
   out << "roll.law_normal.Phi_c_deg" << delimiter;
   out << "roll.law_normal.xi_deg" << delimiter;
@@ -181,6 +184,8 @@ void FlightDataRecorderConverter::writeStruct(ofstream& out, const string& delim
   out << data.sim.data.total_air_temperature_celsius << delimiter;
   out << data.sim.data.latitude_deg << delimiter;
   out << data.sim.data.longitude_deg << delimiter;
+  out << data.sim.data.engine_1_thrust_lbf << delimiter;
+  out << data.sim.data.engine_2_thrust_lbf << delimiter;
   out << data.sim.data_computed.on_ground << delimiter;
   out << data.sim.data_computed.tracking_mode_on << delimiter;
   out << data.sim.input.delta_eta_pos << delimiter;
@@ -213,6 +218,7 @@ void FlightDataRecorderConverter::writeStruct(ofstream& out, const string& delim
   out << data.roll.data_computed.in_flight << delimiter;
   out << data.roll.data_computed.in_flight_gain << delimiter;
   out << data.roll.data_computed.zeta_trim_deg_should_write << delimiter;
+  out << data.roll.data_computed.beta_target_deg << delimiter;
   out << data.roll.law_normal.pk_c_deg_s << delimiter;
   out << data.roll.law_normal.Phi_c_deg << delimiter;
   out << data.roll.law_normal.xi_deg << delimiter;
