@@ -24,6 +24,7 @@
 struct SimData {
   double Theta_deg;
   double Phi_deg;
+  SIMCONNECT_DATA_XYZ bodyRotationVelocity;
   double V_ias_kn;
   double V_tas_kn;
   double V_mach;

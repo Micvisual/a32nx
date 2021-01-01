@@ -32,6 +32,9 @@ typedef struct {
 typedef struct {
   real_T Theta_deg;
   real_T Phi_deg;
+  real_T q_rad_s;
+  real_T r_rad_s;
+  real_T p_rad_s;
   real_T V_ias_kn;
   real_T V_tas_kn;
   real_T V_mach;
@@ -81,6 +84,9 @@ typedef struct {
 typedef struct {
   real_T Theta_deg;
   real_T Phi_deg;
+  real_T qk_deg_s;
+  real_T rk_deg_s;
+  real_T pk_deg_s;
   real_T V_ias_kn;
   real_T V_tas_kn;
   real_T V_mach;

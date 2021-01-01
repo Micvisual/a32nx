@@ -112,6 +112,9 @@ bool AutopilotInterface::getModelInputDataFromSim(double sampleTime) {
   // fill data into model
   model.Autopilot_U.in.data.Theta_deg = simData.Theta_deg;
   model.Autopilot_U.in.data.Phi_deg = simData.Phi_deg;
+  model.Autopilot_U.in.data.q_rad_s = simData.bodyRotationVelocity.x;
+  model.Autopilot_U.in.data.r_rad_s = simData.bodyRotationVelocity.y;
+  model.Autopilot_U.in.data.p_rad_s = simData.bodyRotationVelocity.z;
   model.Autopilot_U.in.data.V_ias_kn = simData.V_ias_kn;
   model.Autopilot_U.in.data.V_tas_kn = simData.V_tas_kn;
   model.Autopilot_U.in.data.V_mach = simData.V_mach;
