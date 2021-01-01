@@ -35,6 +35,7 @@ bool AutopilotInterface::connect() {
   // register L variable for flight director
   idFlightDirectorBank = register_named_variable("A32NX_FLIGHT_DIRECTOR_BANK");
   idFlightDirectorPitch = register_named_variable("A32NX_FLIGHT_DIRECTOR_PITCH");
+  idFlightDirectorYaw = register_named_variable("A32NX_FLIGHT_DIRECTOR_YAW");
 
   // register L variables for flight guidance
   idFlightGuidanceCrossTrackError = register_named_variable("A32NX_FG_CROSS_TRACK_ERROR");
@@ -135,6 +136,8 @@ bool AutopilotInterface::getModelInputDataFromSim(double sampleTime) {
   model.Autopilot_U.in.data.nav_gs_error_deg = simData.nav_gs_error_deg;
   model.Autopilot_U.in.data.flight_guidance_xtk_nmi = get_named_variable_value(idFlightGuidanceCrossTrackError);
   model.Autopilot_U.in.data.flight_guidance_tae_deg = get_named_variable_value(idFlightGuidanceTrackAngleError);
+  model.Autopilot_U.in.data.gear_strut_compression_1 = simData.gear_strut_compression_1;
+  model.Autopilot_U.in.data.gear_strut_compression_2 = simData.gear_strut_compression_2;
   // TODO: add SLEW detection!
 
   // fill inputs into model
@@ -154,11 +157,13 @@ bool AutopilotInterface::writeModelOuputDataToSim() {
   // set flight director
   set_named_variable_value(idFlightDirectorPitch, -1.0 * model.Autopilot_Y.out.output.flight_director.Theta_c_deg);
   set_named_variable_value(idFlightDirectorBank, -1.0 * model.Autopilot_Y.out.output.flight_director.Phi_c_deg);
+  set_named_variable_value(idFlightDirectorYaw, model.Autopilot_Y.out.output.flight_director.Beta_c_deg);
 
   // set autopilot
   set_named_variable_value(idAutopilotOn, model.Autopilot_Y.out.output.ap_on);
   set_named_variable_value(idAutopilotPitch, model.Autopilot_Y.out.output.autopilot.Theta_c_deg);
   set_named_variable_value(idAutopilotBank, model.Autopilot_Y.out.output.autopilot.Phi_c_deg);
+  set_named_variable_value(idAutopilotYaw, model.Autopilot_Y.out.output.autopilot.Beta_c_deg);
 
   // success
   return true;

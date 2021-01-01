@@ -58,6 +58,8 @@ typedef struct {
   real_T flight_guidance_xtk_nmi;
   real_T flight_guidance_tae_deg;
   real_T V_c_srs_kn;
+  real_T gear_strut_compression_1;
+  real_T gear_strut_compression_2;
 } base_raw_data;
 
 #endif
@@ -70,6 +72,43 @@ typedef struct {
   base_raw_time time;
   base_raw_data data;
 } ap_input;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_data_
+#define DEFINED_TYPEDEF_FOR_base_data_
+
+typedef struct {
+  real_T Theta_deg;
+  real_T Phi_deg;
+  real_T V_ias_kn;
+  real_T V_tas_kn;
+  real_T V_mach;
+  real_T alpha_deg;
+  real_T H_ft;
+  real_T H_ind_ft;
+  real_T H_radio_ft;
+  real_T H_dot_ft_min;
+  real_T Psi_magnetic_deg;
+  real_T Psi_magnetic_track_deg;
+  real_T Psi_true_deg;
+  real_T bx_m_s2;
+  real_T by_m_s2;
+  real_T bz_m_s2;
+  real_T ap_V_c_kn;
+  real_T ap_H_c_ft;
+  real_T ap_Psi_c_deg;
+  real_T ap_H_dot_c_ft_min;
+  real_T ap_FPA_c_deg;
+  real_T nav_loc_deg;
+  real_T nav_radial_error_deg;
+  real_T nav_dme_nmi;
+  real_T nav_gs_error_deg;
+  real_T flight_guidance_xtk_nmi;
+  real_T flight_guidance_tae_deg;
+  real_T V_c_srs_kn;
+  real_T on_ground;
+} base_data;
 
 #endif
 
@@ -101,19 +140,9 @@ typedef struct {
 typedef struct {
   base_raw_time time;
   base_raw_input input;
-  base_raw_data data;
+  base_data data;
   base_raw_output output;
 } ap_output;
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_output_law_
-#define DEFINED_TYPEDEF_FOR_base_output_law_
-
-typedef struct {
-  real_T flight_director;
-  real_T autopilot;
-} base_output_law;
 
 #endif
 

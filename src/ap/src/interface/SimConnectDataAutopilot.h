@@ -46,6 +46,8 @@ struct SimData {
   double nav_radial_error_deg;
   double nav_dme_nmi;
   double nav_gs_error_deg;
+  double gear_strut_compression_1;
+  double gear_strut_compression_2;
   double simulation_time;
   bool slew_on;
 };

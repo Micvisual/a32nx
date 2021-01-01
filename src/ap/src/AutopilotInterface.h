@@ -46,6 +46,7 @@ class AutopilotInterface {
 
   ID idFlightDirectorBank;
   ID idFlightDirectorPitch;
+  ID idFlightDirectorYaw;
 
   ID idFlightGuidanceCrossTrackError;
   ID idFlightGuidanceTrackAngleError;
