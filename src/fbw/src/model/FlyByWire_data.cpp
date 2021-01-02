@@ -219,6 +219,8 @@ Parameters_FlyByWire_T FlyByWireModelClass::FlyByWire_P = {
 
   0.0,
 
+  0.0,
+
   -30.0,
 
   -11.0,
@@ -242,6 +244,8 @@ Parameters_FlyByWire_T FlyByWireModelClass::FlyByWire_P = {
 
   25.0,
 
+  100.0,
+
   -0.2,
 
   -2.0,
@@ -255,6 +259,8 @@ Parameters_FlyByWire_T FlyByWireModelClass::FlyByWire_P = {
   -15.0,
 
   -15.0,
+
+  1000.0,
 
   -5.0,
 
@@ -277,6 +283,8 @@ Parameters_FlyByWire_T FlyByWireModelClass::FlyByWire_P = {
   15.0,
 
   15.0,
+
+  1.0,
 
   5.0,
 
@@ -325,6 +333,8 @@ Parameters_FlyByWire_T FlyByWireModelClass::FlyByWire_P = {
   0.5,
 
   -1.0,
+
+  0.0,
 
   0.0,
 
@@ -528,6 +538,12 @@ Parameters_FlyByWire_T FlyByWireModelClass::FlyByWire_P = {
 
   -25.0,
 
+  1.0,
+
+  0.0,
+
+  1.0,
+
   0.0,
 
   2.0,
@@ -541,6 +557,12 @@ Parameters_FlyByWire_T FlyByWireModelClass::FlyByWire_P = {
   0.0,
 
   2.0,
+
+  1.0,
+
+  1.0,
+
+  0.0,
 
   1.0,
 
