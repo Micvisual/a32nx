@@ -118,6 +118,7 @@ bool AutopilotInterface::getModelInputDataFromSim(double sampleTime) {
   model.Autopilot_U.in.data.V_ias_kn = simData.V_ias_kn;
   model.Autopilot_U.in.data.V_tas_kn = simData.V_tas_kn;
   model.Autopilot_U.in.data.V_mach = simData.V_mach;
+  model.Autopilot_U.in.data.V_gnd_kn = simData.V_gnd_kn;
   model.Autopilot_U.in.data.alpha_deg = simData.alpha_deg;
   model.Autopilot_U.in.data.H_ft = simData.H_ft;
   model.Autopilot_U.in.data.H_ind_ft = simData.H_ind_ft;
@@ -141,7 +142,12 @@ bool AutopilotInterface::getModelInputDataFromSim(double sampleTime) {
   model.Autopilot_U.in.data.flight_guidance_tae_deg = get_named_variable_value(idFlightGuidanceTrackAngleError);
   model.Autopilot_U.in.data.gear_strut_compression_1 = simData.gear_strut_compression_1;
   model.Autopilot_U.in.data.gear_strut_compression_2 = simData.gear_strut_compression_2;
+  model.Autopilot_U.in.data.zeta_pos = simData.zeta_pos;
   // TODO: add SLEW detection!
+
+  // use interal state machine
+  model.Autopilot_U.in.mode.lateral_mode = 0;
+  model.Autopilot_U.in.mode.vertical_mode = 0;
 
   // fill inputs into model
   model.Autopilot_U.in.input.trigger_ap_master = simInput.trigger_ap_master;

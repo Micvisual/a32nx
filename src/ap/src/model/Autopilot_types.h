@@ -1,6 +1,16 @@
 #ifndef RTW_HEADER_Autopilot_types_h_
 #define RTW_HEADER_Autopilot_types_h_
 #include "rtwtypes.h"
+#ifndef DEFINED_TYPEDEF_FOR_base_raw_mode_
+#define DEFINED_TYPEDEF_FOR_base_raw_mode_
+
+typedef struct {
+  real_T lateral_mode;
+  real_T vertical_mode;
+} base_raw_mode;
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_raw_input_
 #define DEFINED_TYPEDEF_FOR_base_raw_input_
 
@@ -38,6 +48,7 @@ typedef struct {
   real_T V_ias_kn;
   real_T V_tas_kn;
   real_T V_mach;
+  real_T V_gnd_kn;
   real_T alpha_deg;
   real_T H_ft;
   real_T H_ind_ft;
@@ -63,6 +74,7 @@ typedef struct {
   real_T V_c_srs_kn;
   real_T gear_strut_compression_1;
   real_T gear_strut_compression_2;
+  real_T zeta_pos;
 } base_raw_data;
 
 #endif
@@ -71,6 +83,7 @@ typedef struct {
 #define DEFINED_TYPEDEF_FOR_ap_input_
 
 typedef struct {
+  base_raw_mode mode;
   base_raw_input input;
   base_raw_time time;
   base_raw_data data;
@@ -90,6 +103,7 @@ typedef struct {
   real_T V_ias_kn;
   real_T V_tas_kn;
   real_T V_mach;
+  real_T V_gnd_kn;
   real_T alpha_deg;
   real_T H_ft;
   real_T H_ind_ft;
@@ -114,6 +128,7 @@ typedef struct {
   real_T flight_guidance_tae_deg;
   real_T V_c_srs_kn;
   real_T on_ground;
+  real_T zeta_deg;
 } base_data;
 
 #endif
@@ -145,6 +160,7 @@ typedef struct {
 
 typedef struct {
   base_raw_time time;
+  base_raw_mode mode;
   base_raw_input input;
   base_data data;
   base_raw_output output;

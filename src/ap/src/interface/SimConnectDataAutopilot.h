@@ -28,6 +28,7 @@ struct SimData {
   double V_ias_kn;
   double V_tas_kn;
   double V_mach;
+  double V_gnd_kn;
   double alpha_deg;
   double H_ft;
   double H_ind_ft;
@@ -49,6 +50,7 @@ struct SimData {
   double nav_gs_error_deg;
   double gear_strut_compression_1;
   double gear_strut_compression_2;
+  double zeta_pos;
   double simulation_time;
   bool slew_on;
 };
