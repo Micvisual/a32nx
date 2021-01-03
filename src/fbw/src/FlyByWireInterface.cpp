@@ -291,7 +291,7 @@ void FlyByWireInterface::initializeThrottles() {
   // read mapping configuration
   vector<pair<double, double>> mappingTable;
   if (useReverseOnAxis) {
-    mappingTable.emplace_back(configuration.GetReal("Throttle", "DetendReverseFull", -1.00), -20.00);
+    mappingTable.emplace_back(configuration.GetReal("Throttle", "DetentReverseFull", -1.00), -20.00);
     if (useReverseIdle) {
       mappingTable.emplace_back(configuration.GetReal("Throttle", "DetentReverseIdle", -0.70), -5.00);
     }
