@@ -229,7 +229,7 @@ Parameters_FlyByWire_T FlyByWireModelClass::FlyByWire_P = {
 
   -10.0,
 
-  -25.0,
+  -20.0,
 
 
   { 0.00025833333333333334, 0.00025833333333333334, 5.8333333333333333E-5, 5.8333333333333333E-5 },
@@ -242,7 +242,7 @@ Parameters_FlyByWire_T FlyByWireModelClass::FlyByWire_P = {
 
   10.0,
 
-  25.0,
+  20.0,
 
   100.0,
 
