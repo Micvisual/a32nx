@@ -105,6 +105,8 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
 
   { 0.0, 50.0, 100.0, 1000.0, 2500.0 },
 
+  2.0,
+
   1.0,
 
   1.0,
@@ -141,13 +143,10 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
 
   0.0,
 
-  -10.0,
+  -3.0,
 
 
-  { 0.8, 0.4, 0.2 },
-
-
-  { 1.9, 1.9, 3.0, 3.0 },
+  { 0.8, 0.2, 0.2 },
 
 
   { 1.9, 1.9, 3.0, 3.0 },
@@ -156,13 +155,16 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
   { 1.9, 1.9, 3.0, 3.0 },
 
 
-  { 300.0, 300.0, 180.0, 90.0, 90.0 },
+  { 1.9, 1.9, 3.0, 3.0 },
+
+
+  { 180.0, 180.0, 140.0, 90.0, 90.0 },
 
 
   { 1.9, 1.9, 3.0, 3.0 },
 
 
-  { 5.0, 5.0, 10.0, 15.0, 15.0 },
+  { 5.0, 5.0, 13.0, 15.0, 15.0 },
 
 
   { 1.9, 1.9, 3.0, 3.0 },
@@ -170,7 +172,7 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
 
   { 0.0, 0.0, -0.4, -3.0, -3.0 },
 
-  10.0,
+  3.0,
 
   6.0,
 
@@ -192,13 +194,13 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
 
   -1.0,
 
-  1.0,
-
-  -1.2,
-
   0.0,
 
   -1.0,
+
+  1.0,
+
+  -1.2,
 
   0.0,
 
@@ -362,6 +364,12 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
 
   1.0,
 
+  0.0,
+
+  2.0,
+
+  0.0,
+
 
   { 15.0, 30.0, 30.0, 19.0, 19.0 },
 
@@ -437,8 +445,6 @@ Parameters_Autopilot_T AutopilotModelClass::Autopilot_P = {
   -1.0,
 
   1.0,
-
-  -1.0,
 
   5.0,
 
