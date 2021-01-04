@@ -241,8 +241,8 @@ void AutopilotModelClass::step()
   real_T result[3];
   real_T x[3];
   real_T rtb_Minup;
-  real_T rtb_Sum_bk;
-  real_T rtb_Product1_e;
+  real_T rtb_Sum_j;
+  real_T rtb_Product1_o;
   real_T rtb_GainTheta;
   real_T rtb_GainTheta1;
   real_T rtb_Saturation;
@@ -256,21 +256,21 @@ void AutopilotModelClass::step()
   real_T rtb_kntoms;
   real_T rtb_IC;
   real_T rtb_kntoms_o;
-  real_T rtb_IC_b;
+  real_T rtb_IC_c;
   real_T rtb_kntoms_k;
-  real_T rtb_IC_e;
+  real_T rtb_IC_n;
   real_T rtb_kntoms_i;
-  real_T rtb_IC_h;
+  real_T rtb_IC_k;
   real_T rtb_Sum4_f;
   real_T rtb_Switch_mx;
-  real_T rtb_Sum_fl;
-  real_T rtb_out_o;
-  real_T rtb_out_g;
-  real_T rtb_out_bj;
-  real_T rtb_out_h;
+  real_T rtb_Sum_p;
+  real_T rtb_out_lg;
+  real_T rtb_out_ii;
+  real_T rtb_out_f;
   real_T rtb_out_p;
+  real_T rtb_out_aa;
   int32_T rtb_LAW;
-  real_T rtb_Sum1_g;
+  real_T rtb_Sum1_l5;
   real_T tmp[9];
   rtb_GainTheta = Autopilot_P.GainTheta_Gain * Autopilot_U.in.data.Theta_deg;
   rtb_GainTheta1 = Autopilot_P.GainTheta1_Gain * Autopilot_U.in.data.Phi_deg;
@@ -278,19 +278,19 @@ void AutopilotModelClass::step()
   rtb_Mod2 = 0.017453292519943295 * rtb_GainTheta1;
   rtb_Mod1 = std::tan(rtb_Saturation1);
   rtb_Saturation = std::sin(rtb_Mod2);
-  rtb_Minup = std::cos(rtb_Mod2);
+  rtb_Mod2 = std::cos(rtb_Mod2);
   tmp[0] = 1.0;
   tmp[3] = rtb_Saturation * rtb_Mod1;
-  tmp[6] = rtb_Minup * rtb_Mod1;
+  tmp[6] = rtb_Mod2 * rtb_Mod1;
   tmp[1] = 0.0;
-  tmp[4] = rtb_Minup;
+  tmp[4] = rtb_Mod2;
   tmp[7] = -rtb_Saturation;
   tmp[2] = 0.0;
-  rtb_Mod2 = 1.0 / std::cos(rtb_Saturation1);
-  tmp[5] = rtb_Mod2 * rtb_Saturation;
-  tmp[8] = rtb_Mod2 * rtb_Minup;
-  rtb_Saturation = Autopilot_P.Gain_Gain_kc * Autopilot_U.in.data.p_rad_s * Autopilot_P.Gainpk_Gain;
-  rtb_Saturation1 = Autopilot_P.Gain_Gain_lv * Autopilot_U.in.data.q_rad_s * Autopilot_P.Gainqk_Gain;
+  rtb_Minup = 1.0 / std::cos(rtb_Saturation1);
+  tmp[5] = rtb_Minup * rtb_Saturation;
+  tmp[8] = rtb_Minup * rtb_Mod2;
+  rtb_Saturation = Autopilot_P.Gain_Gain_k * Autopilot_U.in.data.p_rad_s * Autopilot_P.Gainpk_Gain;
+  rtb_Saturation1 = Autopilot_P.Gain_Gain_l * Autopilot_U.in.data.q_rad_s * Autopilot_P.Gainqk_Gain;
   rtb_Mod1 = Autopilot_P.Gain_Gain_aq * Autopilot_U.in.data.r_rad_s;
   for (rtb_on_ground = 0; rtb_on_ground < 3; rtb_on_ground++) {
     result[rtb_on_ground] = tmp[rtb_on_ground + 6] * rtb_Mod1 + (tmp[rtb_on_ground + 3] * rtb_Saturation1 +
@@ -307,7 +307,7 @@ void AutopilotModelClass::step()
     }
   }
 
-  rtb_Saturation1 = Autopilot_P.Gain1_Gain_k * Autopilot_U.in.data.gear_strut_compression_2 -
+  rtb_Saturation1 = Autopilot_P.Gain1_Gain_k1 * Autopilot_U.in.data.gear_strut_compression_2 -
     Autopilot_P.Constant1_Value_p;
   if (rtb_Saturation1 > Autopilot_P.Saturation1_UpperSat) {
     rtb_Saturation1 = Autopilot_P.Saturation1_UpperSat;
@@ -457,14 +457,14 @@ void AutopilotModelClass::step()
   }
 
   if (Autopilot_U.in.data.nav_dme_nmi > Autopilot_P.Saturation_UpperSat_o) {
-    rtb_Mod2 = Autopilot_P.Saturation_UpperSat_o;
+    rtb_Minup = Autopilot_P.Saturation_UpperSat_o;
   } else if (Autopilot_U.in.data.nav_dme_nmi < Autopilot_P.Saturation_LowerSat_o) {
-    rtb_Mod2 = Autopilot_P.Saturation_LowerSat_o;
+    rtb_Minup = Autopilot_P.Saturation_LowerSat_o;
   } else {
-    rtb_Mod2 = Autopilot_U.in.data.nav_dme_nmi;
+    rtb_Minup = Autopilot_U.in.data.nav_dme_nmi;
   }
 
-  rtb_Minup = std::sin(Autopilot_P.Gain1_Gain_da * Autopilot_U.in.data.nav_radial_error_deg) * rtb_Mod2 *
+  rtb_Minup = std::sin(Autopilot_P.Gain1_Gain_b * Autopilot_U.in.data.nav_radial_error_deg) * rtb_Minup *
     Autopilot_P.Gain2_Gain_g;
   if (rtb_Minup > Autopilot_P.Saturation1_UpperSat_g) {
     rtb_Minup = Autopilot_P.Saturation1_UpperSat_g;
@@ -486,27 +486,27 @@ void AutopilotModelClass::step()
 
   rtb_Saturation1 = Autopilot_U.in.data.nav_radial_error_deg + Autopilot_U.in.data.nav_loc_deg;
   rtb_Mod1 = rt_modd((Autopilot_U.in.data.Psi_magnetic_deg - (rt_modd(rt_modd(rtb_Saturation1,
-    Autopilot_P.Constant3_Value_h) + Autopilot_P.Constant3_Value_h, Autopilot_P.Constant3_Value_h) +
+    Autopilot_P.Constant3_Value_b) + Autopilot_P.Constant3_Value_b, Autopilot_P.Constant3_Value_b) +
     Autopilot_P.Constant3_Value_i)) + Autopilot_P.Constant3_Value_i, Autopilot_P.Constant3_Value_i);
   rtb_Mod2 = rt_modd(Autopilot_P.Constant3_Value_i - rtb_Mod1, Autopilot_P.Constant3_Value_i);
   if (rtb_Mod1 < rtb_Mod2) {
-    rtb_Mod1 *= Autopilot_P.Gain1_Gain_h;
+    rtb_Mod1 *= Autopilot_P.Gain1_Gain_o;
   } else {
-    rtb_Mod1 = Autopilot_P.Gain_Gain_k * rtb_Mod2;
+    rtb_Mod1 = Autopilot_P.Gain_Gain_a1 * rtb_Mod2;
   }
 
   rtb_Mod1 = rt_modd((rt_modd(rt_modd(((rtb_Minup * look1_binlxpw(Autopilot_U.in.data.V_gnd_kn,
     Autopilot_P.ScheduledGain_BreakpointsForDimension1, Autopilot_P.ScheduledGain_Table, 2U) +
     Autopilot_DWork.Delay_DSTATE) + Autopilot_P.Gain1_Gain_f * rtb_Mod1) + Autopilot_U.in.data.Psi_magnetic_deg,
-    Autopilot_P.Constant3_Value_d) + Autopilot_P.Constant3_Value_d, Autopilot_P.Constant3_Value_d) -
-                      (Autopilot_U.in.data.Psi_magnetic_deg + Autopilot_P.Constant3_Value_p)) +
-                     Autopilot_P.Constant3_Value_p, Autopilot_P.Constant3_Value_p);
+    Autopilot_P.Constant3_Value_c) + Autopilot_P.Constant3_Value_c, Autopilot_P.Constant3_Value_c) -
+                      (Autopilot_U.in.data.Psi_magnetic_deg + Autopilot_P.Constant3_Value_g)) +
+                     Autopilot_P.Constant3_Value_g, Autopilot_P.Constant3_Value_g);
   rtb_Minup = rt_modd((Autopilot_U.in.data.nav_loc_deg - (Autopilot_U.in.data.Psi_magnetic_deg +
-    Autopilot_P.Constant3_Value_e)) + Autopilot_P.Constant3_Value_e, Autopilot_P.Constant3_Value_e);
-  Autopilot_Chart(rtb_Minup, Autopilot_P.Gain_Gain_mb * rt_modd(Autopilot_P.Constant3_Value_e - rtb_Minup,
-    Autopilot_P.Constant3_Value_e), Autopilot_P.Constant2_Value_l, &rtb_Mod2, &Autopilot_DWork.sf_Chart_l);
-  Autopilot_Chart(rtb_Mod1, Autopilot_P.Gain_Gain_i * rt_modd(Autopilot_P.Constant3_Value_p - rtb_Mod1,
-    Autopilot_P.Constant3_Value_p), Autopilot_P.Constant1_Value_e, &rtb_Minup, &Autopilot_DWork.sf_Chart_o);
+    Autopilot_P.Constant3_Value_o)) + Autopilot_P.Constant3_Value_o, Autopilot_P.Constant3_Value_o);
+  Autopilot_Chart(rtb_Minup, Autopilot_P.Gain_Gain_cw * rt_modd(Autopilot_P.Constant3_Value_o - rtb_Minup,
+    Autopilot_P.Constant3_Value_o), Autopilot_P.Constant2_Value_l, &rtb_Mod2, &Autopilot_DWork.sf_Chart_p);
+  Autopilot_Chart(rtb_Mod1, Autopilot_P.Gain_Gain_mt * rt_modd(Autopilot_P.Constant3_Value_g - rtb_Mod1,
+    Autopilot_P.Constant3_Value_g), Autopilot_P.Constant1_Value_e, &rtb_Minup, &Autopilot_DWork.sf_Chart_n);
   switch (static_cast<int32_T>(rtb_Switch)) {
    case 1:
     rtb_Mod2 = Autopilot_P.beta_Value_e;
@@ -540,14 +540,14 @@ void AutopilotModelClass::step()
   rtb_ROLLLIM1 = look1_binlxpw(Autopilot_U.in.data.V_tas_kn, Autopilot_P.ROLLLIM1_bp01Data,
     Autopilot_P.ROLLLIM1_tableData, 4U);
   rtb_Mod1 = rt_modd((Autopilot_U.in.data.ap_Psi_c_deg - (Autopilot_U.in.data.Psi_magnetic_deg +
-    Autopilot_P.Constant3_Value_ht)) + Autopilot_P.Constant3_Value_ht, Autopilot_P.Constant3_Value_ht);
-  Autopilot_Chart(rtb_Mod1, Autopilot_P.Gain_Gain_d * rt_modd(Autopilot_P.Constant3_Value_ht - rtb_Mod1,
-    Autopilot_P.Constant3_Value_ht), Autopilot_P.Constant_Value_c, &rtb_out_o, &Autopilot_DWork.sf_Chart_h);
+    Autopilot_P.Constant3_Value_nu)) + Autopilot_P.Constant3_Value_nu, Autopilot_P.Constant3_Value_nu);
+  Autopilot_Chart(rtb_Mod1, Autopilot_P.Gain_Gain_p * rt_modd(Autopilot_P.Constant3_Value_nu - rtb_Mod1,
+    Autopilot_P.Constant3_Value_nu), Autopilot_P.Constant_Value_c, &rtb_out_lg, &Autopilot_DWork.sf_Chart_f);
   rtb_Mod1 = rt_modd((Autopilot_U.in.data.ap_Psi_c_deg - (Autopilot_U.in.data.Psi_magnetic_track_deg +
-    Autopilot_P.Constant3_Value_b)) + Autopilot_P.Constant3_Value_b, Autopilot_P.Constant3_Value_b);
-  Autopilot_Chart(rtb_Mod1, Autopilot_P.Gain_Gain_p * rt_modd(Autopilot_P.Constant3_Value_b - rtb_Mod1,
-    Autopilot_P.Constant3_Value_b), Autopilot_P.Constant_Value_i, &rtb_out_g, &Autopilot_DWork.sf_Chart_p);
-  rtb_Minup = Autopilot_P.Gain_Gain_n * Autopilot_U.in.data.flight_guidance_xtk_nmi;
+    Autopilot_P.Constant3_Value_gl)) + Autopilot_P.Constant3_Value_gl, Autopilot_P.Constant3_Value_gl);
+  Autopilot_Chart(rtb_Mod1, Autopilot_P.Gain_Gain_ee * rt_modd(Autopilot_P.Constant3_Value_gl - rtb_Mod1,
+    Autopilot_P.Constant3_Value_gl), Autopilot_P.Constant_Value_i, &rtb_out_ii, &Autopilot_DWork.sf_Chart_nr);
+  rtb_Minup = Autopilot_P.Gain_Gain_nu * Autopilot_U.in.data.flight_guidance_xtk_nmi;
   if (rtb_Minup > Autopilot_P.Saturation_UpperSat_kr) {
     rtb_Minup = Autopilot_P.Saturation_UpperSat_kr;
   } else {
@@ -557,18 +557,26 @@ void AutopilotModelClass::step()
   }
 
   rtb_Mod1 = rt_modd((rt_modd(rt_modd((Autopilot_P.Gain2_Gain_f * Autopilot_U.in.data.flight_guidance_tae_deg +
-    rtb_Minup) * Autopilot_P.Gain1_Gain_n + Autopilot_U.in.data.Psi_magnetic_track_deg, Autopilot_P.Constant3_Value_pb)
-    + Autopilot_P.Constant3_Value_pb, Autopilot_P.Constant3_Value_pb) - (Autopilot_U.in.data.Psi_magnetic_track_deg +
-    Autopilot_P.Constant3_Value_f)) + Autopilot_P.Constant3_Value_f, Autopilot_P.Constant3_Value_f);
-  Autopilot_Chart(rtb_Mod1, Autopilot_P.Gain_Gain_fx * rt_modd(Autopilot_P.Constant3_Value_f - rtb_Mod1,
-    Autopilot_P.Constant3_Value_f), Autopilot_P.Constant_Value_cw, &rtb_out_bj, &Autopilot_DWork.sf_Chart_f);
+    rtb_Minup) * Autopilot_P.Gain1_Gain_n + Autopilot_U.in.data.Psi_magnetic_track_deg, Autopilot_P.Constant3_Value_cm)
+    + Autopilot_P.Constant3_Value_cm, Autopilot_P.Constant3_Value_cm) - (Autopilot_U.in.data.Psi_magnetic_track_deg +
+    Autopilot_P.Constant3_Value_ck)) + Autopilot_P.Constant3_Value_ck, Autopilot_P.Constant3_Value_ck);
+  Autopilot_Chart(rtb_Mod1, Autopilot_P.Gain_Gain_lb * rt_modd(Autopilot_P.Constant3_Value_ck - rtb_Mod1,
+    Autopilot_P.Constant3_Value_ck), Autopilot_P.Constant_Value_cw, &rtb_out_f, &Autopilot_DWork.sf_Chart_i);
   rtb_Saturation1 = rt_modd((Autopilot_U.in.data.Psi_magnetic_track_deg - (rt_modd(rt_modd(rtb_Saturation1,
-    Autopilot_P.Constant3_Value_n0w) + Autopilot_P.Constant3_Value_n0w, Autopilot_P.Constant3_Value_n0w) +
-    Autopilot_P.Constant3_Value_n0)) + Autopilot_P.Constant3_Value_n0, Autopilot_P.Constant3_Value_n0);
-  rtb_Mod1 = rt_modd(Autopilot_P.Constant3_Value_n0 - rtb_Saturation1, Autopilot_P.Constant3_Value_n0);
-  rtb_Minup = std::sin(Autopilot_P.Gain1_Gain_fp * Autopilot_U.in.data.nav_radial_error_deg) *
-    Autopilot_U.in.data.nav_dme_nmi * look1_binlxpw(Autopilot_U.in.data.nav_dme_nmi,
-    Autopilot_P.ScheduledGain_BreakpointsForDimension1_a, Autopilot_P.ScheduledGain_Table_p, 4U);
+    Autopilot_P.Constant3_Value_be) + Autopilot_P.Constant3_Value_be, Autopilot_P.Constant3_Value_be) +
+    Autopilot_P.Constant3_Value_h)) + Autopilot_P.Constant3_Value_h, Autopilot_P.Constant3_Value_h);
+  rtb_Mod1 = rt_modd(Autopilot_P.Constant3_Value_h - rtb_Saturation1, Autopilot_P.Constant3_Value_h);
+  if (Autopilot_U.in.data.nav_dme_nmi > Autopilot_P.Saturation_UpperSat_m) {
+    rtb_Minup = Autopilot_P.Saturation_UpperSat_m;
+  } else if (Autopilot_U.in.data.nav_dme_nmi < Autopilot_P.Saturation_LowerSat_k) {
+    rtb_Minup = Autopilot_P.Saturation_LowerSat_k;
+  } else {
+    rtb_Minup = Autopilot_U.in.data.nav_dme_nmi;
+  }
+
+  rtb_Minup = std::sin(Autopilot_P.Gain1_Gain_m * Autopilot_U.in.data.nav_radial_error_deg) * rtb_Minup * look1_binlxpw
+    (Autopilot_U.in.data.nav_dme_nmi, Autopilot_P.ScheduledGain_BreakpointsForDimension1_a,
+     Autopilot_P.ScheduledGain_Table_p, 4U);
   if (rtb_Minup > Autopilot_P.Saturation1_UpperSat_i) {
     rtb_Minup = Autopilot_P.Saturation1_UpperSat_i;
   } else {
@@ -584,66 +592,66 @@ void AutopilotModelClass::step()
   }
 
   rtb_Saturation1 = rt_modd((rt_modd(rt_modd((rtb_Minup + rtb_Saturation1) * Autopilot_P.Gain3_Gain +
-    Autopilot_U.in.data.Psi_magnetic_track_deg, Autopilot_P.Constant3_Value_pf) + Autopilot_P.Constant3_Value_pf,
-    Autopilot_P.Constant3_Value_pf) - (Autopilot_U.in.data.Psi_magnetic_track_deg + Autopilot_P.Constant3_Value_g)) +
-    Autopilot_P.Constant3_Value_g, Autopilot_P.Constant3_Value_g);
-  Autopilot_Chart(rtb_Saturation1, Autopilot_P.Gain_Gain_pb * rt_modd(Autopilot_P.Constant3_Value_g - rtb_Saturation1,
-    Autopilot_P.Constant3_Value_g), Autopilot_P.Constant_Value_e, &rtb_out_h, &Autopilot_DWork.sf_Chart_n);
+    Autopilot_U.in.data.Psi_magnetic_track_deg, Autopilot_P.Constant3_Value_bd) + Autopilot_P.Constant3_Value_bd,
+    Autopilot_P.Constant3_Value_bd) - (Autopilot_U.in.data.Psi_magnetic_track_deg + Autopilot_P.Constant3_Value_d)) +
+    Autopilot_P.Constant3_Value_d, Autopilot_P.Constant3_Value_d);
+  Autopilot_Chart(rtb_Saturation1, Autopilot_P.Gain_Gain_av * rt_modd(Autopilot_P.Constant3_Value_d - rtb_Saturation1,
+    Autopilot_P.Constant3_Value_d), Autopilot_P.Constant_Value_e, &rtb_out_p, &Autopilot_DWork.sf_Chart_g);
   rtb_Saturation1 = Autopilot_P.DiscreteDerivativeVariableTs_Gain * Autopilot_U.in.data.nav_radial_error_deg;
-  rtb_Mod1 = (rtb_Saturation1 - Autopilot_DWork.Delay_DSTATE_e) / Autopilot_U.in.time.dt * Autopilot_P.Gain3_Gain_i +
+  rtb_Mod1 = (rtb_Saturation1 - Autopilot_DWork.Delay_DSTATE_i) / Autopilot_U.in.time.dt * Autopilot_P.Gain3_Gain_i +
     Autopilot_U.in.data.nav_radial_error_deg;
-  rtb_out_p = Autopilot_U.in.time.dt * Autopilot_P.LagFilter_C1;
-  rtb_Minup = rtb_out_p + Autopilot_P.Constant_Value_pj;
-  Autopilot_DWork.Delay1_DSTATE = 1.0 / rtb_Minup * (Autopilot_P.Constant_Value_pj - rtb_out_p) *
-    Autopilot_DWork.Delay1_DSTATE + (rtb_Mod1 + Autopilot_DWork.Delay_DSTATE_l) * (rtb_out_p / rtb_Minup);
+  rtb_out_aa = Autopilot_U.in.time.dt * Autopilot_P.LagFilter_C1;
+  rtb_Minup = rtb_out_aa + Autopilot_P.Constant_Value_h;
+  Autopilot_DWork.Delay1_DSTATE = 1.0 / rtb_Minup * (Autopilot_P.Constant_Value_h - rtb_out_aa) *
+    Autopilot_DWork.Delay1_DSTATE + (rtb_Mod1 + Autopilot_DWork.Delay_DSTATE_k) * (rtb_out_aa / rtb_Minup);
   rtb_Minup = rt_modd((rt_modd(rt_modd(Autopilot_DWork.Delay1_DSTATE * look1_binlxpw(Autopilot_U.in.data.H_radio_ft,
     Autopilot_P.ScheduledGain_BreakpointsForDimension1_e, Autopilot_P.ScheduledGain_Table_pf, 4U) +
-    Autopilot_U.in.data.Psi_magnetic_track_deg, Autopilot_P.Constant3_Value_dh) + Autopilot_P.Constant3_Value_dh,
-    Autopilot_P.Constant3_Value_dh) - (Autopilot_U.in.data.Psi_magnetic_track_deg + Autopilot_P.Constant3_Value_p0)) +
-                      Autopilot_P.Constant3_Value_p0, Autopilot_P.Constant3_Value_p0);
-  Autopilot_Chart(rtb_Minup, Autopilot_P.Gain_Gain_k0 * rt_modd(Autopilot_P.Constant3_Value_p0 - rtb_Minup,
-    Autopilot_P.Constant3_Value_p0), Autopilot_P.Constant_Value_p1, &rtb_out_p, &Autopilot_DWork.sf_Chart_e);
+    Autopilot_U.in.data.Psi_magnetic_track_deg, Autopilot_P.Constant3_Value_hd) + Autopilot_P.Constant3_Value_hd,
+    Autopilot_P.Constant3_Value_hd) - (Autopilot_U.in.data.Psi_magnetic_track_deg + Autopilot_P.Constant3_Value_oy)) +
+                      Autopilot_P.Constant3_Value_oy, Autopilot_P.Constant3_Value_oy);
+  Autopilot_Chart(rtb_Minup, Autopilot_P.Gain_Gain_nd * rt_modd(Autopilot_P.Constant3_Value_oy - rtb_Minup,
+    Autopilot_P.Constant3_Value_oy), Autopilot_P.Constant_Value_p1, &rtb_out_aa, &Autopilot_DWork.sf_Chart_gi);
   switch (static_cast<int32_T>(rtb_Switch)) {
    case 1:
-    rtb_out_p = rtb_out_o * look1_binlxpw(Autopilot_U.in.data.V_tas_kn,
-      Autopilot_P.ScheduledGain_BreakpointsForDimension1_p, Autopilot_P.ScheduledGain_Table_h, 3U);
+    rtb_out_aa = rtb_out_lg * look1_binlxpw(Autopilot_U.in.data.V_tas_kn,
+      Autopilot_P.ScheduledGain_BreakpointsForDimension1_j, Autopilot_P.ScheduledGain_Table_k, 3U);
     break;
 
    case 2:
-    rtb_out_p = rtb_out_g * look1_binlxpw(Autopilot_U.in.data.V_tas_kn,
-      Autopilot_P.ScheduledGain_BreakpointsForDimension1_pd, Autopilot_P.ScheduledGain_Table_a, 3U);
+    rtb_out_aa = rtb_out_ii * look1_binlxpw(Autopilot_U.in.data.V_tas_kn,
+      Autopilot_P.ScheduledGain_BreakpointsForDimension1_o, Autopilot_P.ScheduledGain_Table_h, 3U);
     break;
 
    case 3:
-    rtb_out_p = rtb_out_bj * look1_binlxpw(Autopilot_U.in.data.V_tas_kn,
-      Autopilot_P.ScheduledGain_BreakpointsForDimension1_i, Autopilot_P.ScheduledGain_Table_m, 3U);
+    rtb_out_aa = rtb_out_f * look1_binlxpw(Autopilot_U.in.data.V_tas_kn,
+      Autopilot_P.ScheduledGain_BreakpointsForDimension1_j5, Autopilot_P.ScheduledGain_Table_l, 3U);
     break;
 
    case 4:
-    rtb_out_p = rtb_out_h * look1_binlxpw(Autopilot_U.in.data.V_tas_kn,
-      Autopilot_P.ScheduledGain_BreakpointsForDimension1_ak, Autopilot_P.ScheduledGain_Table_ai, 3U);
+    rtb_out_aa = rtb_out_p * look1_binlxpw(Autopilot_U.in.data.V_tas_kn,
+      Autopilot_P.ScheduledGain_BreakpointsForDimension1_k, Autopilot_P.ScheduledGain_Table_g, 3U);
     break;
 
    case 5:
-    rtb_out_p *= look1_binlxpw(Autopilot_U.in.data.V_tas_kn, Autopilot_P.ScheduledGain_BreakpointsForDimension1_n,
-      Autopilot_P.ScheduledGain_Table_c, 3U);
+    rtb_out_aa *= look1_binlxpw(Autopilot_U.in.data.V_tas_kn, Autopilot_P.ScheduledGain_BreakpointsForDimension1_m,
+      Autopilot_P.ScheduledGain_Table_hb, 3U);
     break;
 
    default:
-    rtb_out_p = Autopilot_P.Constant3_Value;
+    rtb_out_aa = Autopilot_P.Constant3_Value;
     break;
   }
 
-  if (rtb_out_p > rtb_ROLLLIM1) {
-    rtb_out_p = rtb_ROLLLIM1;
+  if (rtb_out_aa > rtb_ROLLLIM1) {
+    rtb_out_aa = rtb_ROLLLIM1;
   } else {
     rtb_Minup = Autopilot_P.Gain1_Gain_l * rtb_ROLLLIM1;
-    if (rtb_out_p < rtb_Minup) {
-      rtb_out_p = rtb_Minup;
+    if (rtb_out_aa < rtb_Minup) {
+      rtb_out_aa = rtb_Minup;
     }
   }
 
-  rtb_Switch = Autopilot_P.Gain_Gain_dl * rtb_GainTheta1;
+  rtb_Switch = Autopilot_P.Gain_Gain_d * rtb_GainTheta1;
   if (rtb_out == 0) {
     Autopilot_DWork.icLoad = 1U;
   }
@@ -652,7 +660,7 @@ void AutopilotModelClass::step()
     Autopilot_DWork.Delay_DSTATE_h = rtb_Switch;
   }
 
-  rtb_Minup = rtb_out_p - Autopilot_DWork.Delay_DSTATE_h;
+  rtb_Minup = rtb_out_aa - Autopilot_DWork.Delay_DSTATE_h;
   rtb_kntoms_o = Autopilot_P.Constant2_Value_h * Autopilot_U.in.time.dt;
   if (rtb_Minup < rtb_kntoms_o) {
     rtb_kntoms_o = rtb_Minup;
@@ -664,12 +672,12 @@ void AutopilotModelClass::step()
   }
 
   Autopilot_DWork.Delay_DSTATE_h += rtb_Minup;
-  rtb_Sum_bk = Autopilot_U.in.time.dt * Autopilot_P.LagFilter_C1_l;
-  rtb_Minup = rtb_Sum_bk + Autopilot_P.Constant_Value_h;
-  Autopilot_DWork.Delay1_DSTATE_l = 1.0 / rtb_Minup * (Autopilot_P.Constant_Value_h - rtb_Sum_bk) *
-    Autopilot_DWork.Delay1_DSTATE_l + (Autopilot_DWork.Delay_DSTATE_h + Autopilot_DWork.Delay_DSTATE_j) * (rtb_Sum_bk /
+  rtb_Sum_j = Autopilot_U.in.time.dt * Autopilot_P.LagFilter_C1_l;
+  rtb_Minup = rtb_Sum_j + Autopilot_P.Constant_Value_cq;
+  Autopilot_DWork.Delay1_DSTATE_b = 1.0 / rtb_Minup * (Autopilot_P.Constant_Value_cq - rtb_Sum_j) *
+    Autopilot_DWork.Delay1_DSTATE_b + (Autopilot_DWork.Delay_DSTATE_h + Autopilot_DWork.Delay_DSTATE_g) * (rtb_Sum_j /
     rtb_Minup);
-  rtb_Minup = static_cast<real_T>(rtb_out) - Autopilot_DWork.Delay_DSTATE_p;
+  rtb_Minup = static_cast<real_T>(rtb_out) - Autopilot_DWork.Delay_DSTATE_c;
   rtb_kntoms_o = Autopilot_P.RateLimiterVariableTs_up * Autopilot_U.in.time.dt;
   if (rtb_Minup < rtb_kntoms_o) {
     rtb_kntoms_o = rtb_Minup;
@@ -680,20 +688,20 @@ void AutopilotModelClass::step()
     rtb_Minup = rtb_kntoms_o;
   }
 
-  Autopilot_DWork.Delay_DSTATE_p += rtb_Minup;
-  if (Autopilot_DWork.Delay_DSTATE_p > Autopilot_P.Saturation_UpperSat_m) {
-    rtb_Sum_fl = Autopilot_P.Saturation_UpperSat_m;
-  } else if (Autopilot_DWork.Delay_DSTATE_p < Autopilot_P.Saturation_LowerSat_mf) {
-    rtb_Sum_fl = Autopilot_P.Saturation_LowerSat_mf;
+  Autopilot_DWork.Delay_DSTATE_c += rtb_Minup;
+  if (Autopilot_DWork.Delay_DSTATE_c > Autopilot_P.Saturation_UpperSat_d) {
+    rtb_Sum_p = Autopilot_P.Saturation_UpperSat_d;
+  } else if (Autopilot_DWork.Delay_DSTATE_c < Autopilot_P.Saturation_LowerSat_a) {
+    rtb_Sum_p = Autopilot_P.Saturation_LowerSat_a;
   } else {
-    rtb_Sum_fl = Autopilot_DWork.Delay_DSTATE_p;
+    rtb_Sum_p = Autopilot_DWork.Delay_DSTATE_c;
   }
 
-  rtb_out_o = Autopilot_DWork.Delay1_DSTATE_l * rtb_Sum_fl;
-  rtb_Product1_e = (Autopilot_P.Constant_Value_ex - rtb_Sum_fl) * rtb_Switch;
+  rtb_out_lg = Autopilot_DWork.Delay1_DSTATE_b * rtb_Sum_p;
+  rtb_Product1_o = (Autopilot_P.Constant_Value_l - rtb_Sum_p) * rtb_Switch;
   Autopilot_Y.out.output.flight_director.Beta_c_deg = rtb_Mod2;
   Autopilot_Y.out.output.autopilot.Beta_c_deg = rtb_Mod2;
-  Autopilot_Y.out.output.flight_director.Phi_c_deg = rtb_out_p;
+  Autopilot_Y.out.output.flight_director.Phi_c_deg = rtb_out_aa;
   if (Autopilot_DWork.is_active_c10_Autopilot == 0U) {
     Autopilot_DWork.is_active_c10_Autopilot = 1U;
     Autopilot_DWork.is_c10_Autopilot = Autopilot_IN_ALT_HOLD;
@@ -701,11 +709,11 @@ void AutopilotModelClass::step()
   } else {
     switch (Autopilot_DWork.is_c10_Autopilot) {
      case Autopilot_IN_ALT_ACQ:
-      rtb_Mod2 = std::abs(Autopilot_U.in.data.ap_H_c_ft - Autopilot_U.in.data.H_ind_ft);
-      if (rtb_Mod2 <= 20.0) {
+      rtb_Minup = std::abs(Autopilot_U.in.data.ap_H_c_ft - Autopilot_U.in.data.H_ind_ft);
+      if (rtb_Minup <= 20.0) {
         Autopilot_DWork.is_c10_Autopilot = Autopilot_IN_ALT_HOLD;
         rtb_LAW = 1;
-      } else if (rtb_Mod2 > 1000.0) {
+      } else if (rtb_Minup > 1000.0) {
         Autopilot_DWork.is_c10_Autopilot = Autopilot_IN_SPD_MACH;
         rtb_LAW = 3;
       } else {
@@ -784,13 +792,13 @@ void AutopilotModelClass::step()
   }
 
   if (Autopilot_P.ManualSwitch_CurrentSetting_b == 1) {
-    rtb_Sum_fl = Autopilot_P.Constant_Value_m;
+    rtb_Sum_p = Autopilot_P.Constant_Value_m;
   } else {
-    rtb_Sum_fl = Autopilot_U.in.mode.vertical_mode;
+    rtb_Sum_p = Autopilot_U.in.mode.vertical_mode;
   }
 
-  if (rtb_Sum_fl > Autopilot_P.Switch_Threshold_d) {
-    rtb_Switch_mx = rtb_Sum_fl;
+  if (rtb_Sum_p > Autopilot_P.Switch_Threshold_d) {
+    rtb_Switch_mx = rtb_Sum_p;
   } else {
     rtb_Switch_mx = rtb_LAW;
   }
@@ -804,21 +812,21 @@ void AutopilotModelClass::step()
   }
 
   rtb_kntoms_o = Autopilot_P.kntoms_Gain_e * Autopilot_U.in.data.V_tas_kn;
-  if (Autopilot_DWork.IC_FirstOutputTime_o) {
-    Autopilot_DWork.IC_FirstOutputTime_o = false;
-    rtb_IC_b = Autopilot_P.IC_Value_g;
+  if (Autopilot_DWork.IC_FirstOutputTime_n) {
+    Autopilot_DWork.IC_FirstOutputTime_n = false;
+    rtb_IC_c = Autopilot_P.IC_Value_m;
   } else {
-    rtb_IC_b = rtb_kntoms_o;
+    rtb_IC_c = rtb_kntoms_o;
   }
 
   rtb_Switch = Autopilot_P.DiscreteDerivativeVariableTs_Gain_m * Autopilot_U.in.data.V_ias_kn;
-  rtb_ROLLLIM1 = (rtb_Switch - Autopilot_DWork.Delay_DSTATE_f) / Autopilot_U.in.time.dt * Autopilot_P.Gain3_Gain_f +
+  rtb_ROLLLIM1 = (rtb_Switch - Autopilot_DWork.Delay_DSTATE_ky) / Autopilot_U.in.time.dt * Autopilot_P.Gain3_Gain_f +
     Autopilot_U.in.data.V_ias_kn;
-  rtb_Sum_fl = Autopilot_U.in.time.dt * Autopilot_P.LagFilter1_C1;
-  rtb_Sum_bk = rtb_Sum_fl + Autopilot_P.Constant_Value_k;
-  Autopilot_DWork.Delay1_DSTATE_b = 1.0 / rtb_Sum_bk * (Autopilot_P.Constant_Value_k - rtb_Sum_fl) *
-    Autopilot_DWork.Delay1_DSTATE_b + (rtb_ROLLLIM1 + Autopilot_DWork.Delay_DSTATE_fv) * (rtb_Sum_fl / rtb_Sum_bk);
-  rtb_Minup = Autopilot_DWork.Delay1_DSTATE_b - Autopilot_U.in.data.ap_V_c_kn;
+  rtb_Sum_p = Autopilot_U.in.time.dt * Autopilot_P.LagFilter1_C1;
+  rtb_Sum_j = rtb_Sum_p + Autopilot_P.Constant_Value_lq;
+  Autopilot_DWork.Delay1_DSTATE_k = 1.0 / rtb_Sum_j * (Autopilot_P.Constant_Value_lq - rtb_Sum_p) *
+    Autopilot_DWork.Delay1_DSTATE_k + (rtb_ROLLLIM1 + Autopilot_DWork.Delay_DSTATE_o) * (rtb_Sum_p / rtb_Sum_j);
+  rtb_Minup = Autopilot_DWork.Delay1_DSTATE_k - Autopilot_U.in.data.ap_V_c_kn;
   if (rtb_Minup > Autopilot_P.Saturation_UpperSat_h) {
     rtb_Minup = Autopilot_P.Saturation_UpperSat_h;
   } else {
@@ -827,76 +835,76 @@ void AutopilotModelClass::step()
     }
   }
 
-  rtb_Sum_fl = Autopilot_P.Gain1_Gain_bz * rtb_Minup;
-  rtb_out_p = Autopilot_P.Gain1_Gain_c2 * Autopilot_U.in.data.alpha_deg;
-  rtb_Mod2 = Autopilot_U.in.data.bz_m_s2 * std::sin(rtb_out_p);
-  rtb_out_p = std::cos(rtb_out_p);
-  rtb_out_p *= Autopilot_U.in.data.bx_m_s2;
-  rtb_out_p = (rtb_Mod2 + rtb_out_p) * Autopilot_P.Gain_Gain_a2 * Autopilot_P.Gain_Gain_mf;
-  rtb_Minup = Autopilot_P.Gain1_Gain_k0 * std::abs(Autopilot_P.Constant_Value_em) + std::abs(rtb_out_p);
+  rtb_Sum_p = Autopilot_P.Gain1_Gain_bz * rtb_Minup;
+  rtb_out_aa = Autopilot_P.Gain1_Gain_a * Autopilot_U.in.data.alpha_deg;
+  rtb_Mod2 = Autopilot_U.in.data.bz_m_s2 * std::sin(rtb_out_aa);
+  rtb_out_aa = std::cos(rtb_out_aa);
+  rtb_out_aa *= Autopilot_U.in.data.bx_m_s2;
+  rtb_out_aa = (rtb_Mod2 + rtb_out_aa) * Autopilot_P.Gain_Gain_fr * Autopilot_P.Gain_Gain_dg;
+  rtb_Minup = Autopilot_P.Gain1_Gain_k0 * std::abs(Autopilot_P.Constant_Value_em) + std::abs(rtb_out_aa);
   if (rtb_Minup <= Autopilot_P.Constant1_Value_ef) {
     rtb_Minup = Autopilot_P.Constant1_Value_ef;
   }
 
-  rtb_Mod2 = std::abs(rtb_Sum_fl);
+  rtb_Mod2 = std::abs(rtb_Sum_p);
   if (rtb_Mod2 < rtb_Minup) {
     rtb_Minup = rtb_Mod2;
   }
 
-  if (rtb_out_p < 0.0) {
-    rtb_out_p = -1.0;
+  if (rtb_out_aa < 0.0) {
+    rtb_out_aa = -1.0;
   } else {
-    if (rtb_out_p > 0.0) {
-      rtb_out_p = 1.0;
+    if (rtb_out_aa > 0.0) {
+      rtb_out_aa = 1.0;
     }
   }
 
-  rtb_Sum1_g = rtb_Sum_fl - rtb_Minup * rtb_out_p * Autopilot_P.Gain_Gain_h;
-  rtb_Sum_fl = Autopilot_P.kntoms_Gain_i * Autopilot_U.in.data.V_tas_kn;
-  rtb_Mod2 = std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_gq * rtb_GainTheta1) *
-                       Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_ni) * rtb_Sum_fl *
-    Autopilot_P.msftmin_Gain_er;
-  if (Autopilot_DWork.IC_FirstOutputTime_m) {
-    Autopilot_DWork.IC_FirstOutputTime_m = false;
-    rtb_Sum_fl = Autopilot_P.IC_Value_n;
+  rtb_Sum1_l5 = rtb_Sum_p - rtb_Minup * rtb_out_aa * Autopilot_P.Gain_Gain_h;
+  rtb_Sum_p = Autopilot_P.kntoms_Gain_i * Autopilot_U.in.data.V_tas_kn;
+  rtb_Mod2 = std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_p * rtb_GainTheta1) *
+                       Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_kh) * rtb_Sum_p *
+    Autopilot_P.msftmin_Gain_j;
+  if (Autopilot_DWork.IC_FirstOutputTime_i) {
+    Autopilot_DWork.IC_FirstOutputTime_i = false;
+    rtb_Sum_p = Autopilot_P.IC_Value_l;
   }
 
-  rtb_Minup = (Autopilot_P.Constant_Value_ke - rtb_Mod2) * Autopilot_P.ftmintoms_Gain_o / rtb_Sum_fl;
+  rtb_Minup = (Autopilot_P.Constant_Value_k - rtb_Mod2) * Autopilot_P.ftmintoms_Gain_f / rtb_Sum_p;
   rtb_kntoms_k = Autopilot_P.kntoms_Gain_a * Autopilot_U.in.data.V_tas_kn;
-  if (Autopilot_DWork.IC_FirstOutputTime_f) {
-    Autopilot_DWork.IC_FirstOutputTime_f = false;
-    rtb_IC_e = Autopilot_P.IC_Value_j;
+  if (Autopilot_DWork.IC_FirstOutputTime_d) {
+    Autopilot_DWork.IC_FirstOutputTime_d = false;
+    rtb_IC_n = Autopilot_P.IC_Value_k;
   } else {
-    rtb_IC_e = rtb_kntoms_k;
+    rtb_IC_n = rtb_kntoms_k;
   }
 
-  rtb_out_g = Autopilot_P.DiscreteDerivativeVariableTs_Gain_l * Autopilot_U.in.data.nav_gs_error_deg;
-  rtb_out_bj = (rtb_out_g - Autopilot_DWork.Delay_DSTATE_lu) / Autopilot_U.in.time.dt * Autopilot_P.Gain3_Gain_o +
+  rtb_out_ii = Autopilot_P.DiscreteDerivativeVariableTs_Gain_l * Autopilot_U.in.data.nav_gs_error_deg;
+  rtb_out_f = (rtb_out_ii - Autopilot_DWork.Delay_DSTATE_e) / Autopilot_U.in.time.dt * Autopilot_P.Gain3_Gain_o +
     Autopilot_P.Gain1_Gain_j * Autopilot_U.in.data.nav_gs_error_deg;
-  rtb_Sum_fl = Autopilot_U.in.time.dt * Autopilot_P.LagFilter_C1_n;
-  rtb_Sum_bk = rtb_Sum_fl + Autopilot_P.Constant_Value_e2;
-  Autopilot_DWork.Delay1_DSTATE_bd = 1.0 / rtb_Sum_bk * (Autopilot_P.Constant_Value_e2 - rtb_Sum_fl) *
-    Autopilot_DWork.Delay1_DSTATE_bd + (rtb_out_bj + Autopilot_DWork.Delay_DSTATE_jh) * (rtb_Sum_fl / rtb_Sum_bk);
+  rtb_Sum_p = Autopilot_U.in.time.dt * Autopilot_P.LagFilter_C1_n;
+  rtb_Sum_j = rtb_Sum_p + Autopilot_P.Constant_Value_ik;
+  Autopilot_DWork.Delay1_DSTATE_l = 1.0 / rtb_Sum_j * (Autopilot_P.Constant_Value_ik - rtb_Sum_p) *
+    Autopilot_DWork.Delay1_DSTATE_l + (rtb_out_f + Autopilot_DWork.Delay_DSTATE_b) * (rtb_Sum_p / rtb_Sum_j);
   if (Autopilot_U.in.data.H_radio_ft <= Autopilot_P.CompareToConstant_const_j) {
     Autopilot_B.u = Autopilot_U.in.data.H_dot_ft_min;
   }
 
   rtb_kntoms_i = Autopilot_P.kntoms_Gain_av * Autopilot_U.in.data.V_tas_kn;
-  if (Autopilot_DWork.IC_FirstOutputTime_g) {
-    Autopilot_DWork.IC_FirstOutputTime_g = false;
-    rtb_IC_h = Autopilot_P.IC_Value_p;
+  if (Autopilot_DWork.IC_FirstOutputTime_b) {
+    Autopilot_DWork.IC_FirstOutputTime_b = false;
+    rtb_IC_k = Autopilot_P.IC_Value_i;
   } else {
-    rtb_IC_h = rtb_kntoms_i;
+    rtb_IC_k = rtb_kntoms_i;
   }
 
-  rtb_out_h = Autopilot_P.DiscreteDerivativeVariableTs_Gain_lf * Autopilot_U.in.data.V_ias_kn;
-  rtb_Sum4_f = (rtb_out_h - Autopilot_DWork.Delay_DSTATE_a) / Autopilot_U.in.time.dt * Autopilot_P.Gain3_Gain_fd +
+  rtb_out_p = Autopilot_P.DiscreteDerivativeVariableTs_Gain_lf * Autopilot_U.in.data.V_ias_kn;
+  rtb_Sum4_f = (rtb_out_p - Autopilot_DWork.Delay_DSTATE_ob) / Autopilot_U.in.time.dt * Autopilot_P.Gain3_Gain_fd +
     Autopilot_U.in.data.V_ias_kn;
-  rtb_Sum_fl = Autopilot_U.in.time.dt * Autopilot_P.LagFilter1_C1_p;
-  rtb_Sum_bk = rtb_Sum_fl + Autopilot_P.Constant_Value_j;
-  Autopilot_DWork.Delay1_DSTATE_o = 1.0 / rtb_Sum_bk * (Autopilot_P.Constant_Value_j - rtb_Sum_fl) *
-    Autopilot_DWork.Delay1_DSTATE_o + (rtb_Sum4_f + Autopilot_DWork.Delay_DSTATE_b) * (rtb_Sum_fl / rtb_Sum_bk);
-  rtb_Mod2 = Autopilot_DWork.Delay1_DSTATE_o - Autopilot_U.in.data.V_c_srs_kn;
+  rtb_Sum_p = Autopilot_U.in.time.dt * Autopilot_P.LagFilter1_C1_p;
+  rtb_Sum_j = rtb_Sum_p + Autopilot_P.Constant_Value_md;
+  Autopilot_DWork.Delay1_DSTATE_lp = 1.0 / rtb_Sum_j * (Autopilot_P.Constant_Value_md - rtb_Sum_p) *
+    Autopilot_DWork.Delay1_DSTATE_lp + (rtb_Sum4_f + Autopilot_DWork.Delay_DSTATE_ed) * (rtb_Sum_p / rtb_Sum_j);
+  rtb_Mod2 = Autopilot_DWork.Delay1_DSTATE_lp - Autopilot_U.in.data.V_c_srs_kn;
   if (rtb_Mod2 > Autopilot_P.Saturation_UpperSat_n) {
     rtb_Mod2 = Autopilot_P.Saturation_UpperSat_n;
   } else {
@@ -905,43 +913,43 @@ void AutopilotModelClass::step()
     }
   }
 
-  rtb_Sum_fl = Autopilot_P.Gain1_Gain_p * rtb_Mod2;
-  rtb_out_p = Autopilot_P.Gain1_Gain_jh * Autopilot_U.in.data.alpha_deg;
-  rtb_Mod2 = Autopilot_U.in.data.bz_m_s2 * std::sin(rtb_out_p);
-  rtb_out_p = std::cos(rtb_out_p);
-  rtb_out_p *= Autopilot_U.in.data.bx_m_s2;
-  rtb_out_p = (rtb_Mod2 + rtb_out_p) * Autopilot_P.Gain_Gain_d5 * Autopilot_P.Gain_Gain_kg;
-  rtb_Mod2 = Autopilot_P.Gain1_Gain_k4 * std::abs(Autopilot_P.Constant_Value_jb) + std::abs(rtb_out_p);
+  rtb_Sum_p = Autopilot_P.Gain1_Gain_pc * rtb_Mod2;
+  rtb_out_aa = Autopilot_P.Gain1_Gain_kw * Autopilot_U.in.data.alpha_deg;
+  rtb_Mod2 = Autopilot_U.in.data.bz_m_s2 * std::sin(rtb_out_aa);
+  rtb_out_aa = std::cos(rtb_out_aa);
+  rtb_out_aa *= Autopilot_U.in.data.bx_m_s2;
+  rtb_out_aa = (rtb_Mod2 + rtb_out_aa) * Autopilot_P.Gain_Gain_eg * Autopilot_P.Gain_Gain_hq;
+  rtb_Mod2 = Autopilot_P.Gain1_Gain_k4 * std::abs(Autopilot_P.Constant_Value_j) + std::abs(rtb_out_aa);
   if (rtb_Mod2 <= Autopilot_P.Constant1_Value_l) {
     rtb_Mod2 = Autopilot_P.Constant1_Value_l;
   }
 
-  rtb_Sum_bk = std::abs(rtb_Sum_fl);
-  if (rtb_Sum_bk < rtb_Mod2) {
-    rtb_Mod2 = rtb_Sum_bk;
+  rtb_Sum_j = std::abs(rtb_Sum_p);
+  if (rtb_Sum_j < rtb_Mod2) {
+    rtb_Mod2 = rtb_Sum_j;
   }
 
-  if (rtb_out_p < 0.0) {
-    rtb_out_p = -1.0;
+  if (rtb_out_aa < 0.0) {
+    rtb_out_aa = -1.0;
   } else {
-    if (rtb_out_p > 0.0) {
-      rtb_out_p = 1.0;
+    if (rtb_out_aa > 0.0) {
+      rtb_out_aa = 1.0;
     }
   }
 
-  rtb_out_p = rtb_Sum_fl - rtb_Mod2 * rtb_out_p * Autopilot_P.Gain_Gain_hk;
-  rtb_Sum_fl = Autopilot_P.kntoms_Gain_f * Autopilot_U.in.data.V_tas_kn;
-  rtb_Mod2 = std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_h2 * rtb_GainTheta1) *
-                       Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_a1) * rtb_Sum_fl;
-  if (Autopilot_DWork.IC_FirstOutputTime_d) {
-    Autopilot_DWork.IC_FirstOutputTime_d = false;
-    rtb_Sum_fl = Autopilot_P.IC_Value_b;
+  rtb_out_aa = rtb_Sum_p - rtb_Mod2 * rtb_out_aa * Autopilot_P.Gain_Gain_hk;
+  rtb_Sum_p = Autopilot_P.kntoms_Gain_f * Autopilot_U.in.data.V_tas_kn;
+  rtb_Mod2 = std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_fq * rtb_GainTheta1) *
+                       Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_mn) * rtb_Sum_p;
+  if (Autopilot_DWork.IC_FirstOutputTime_j) {
+    Autopilot_DWork.IC_FirstOutputTime_j = false;
+    rtb_Sum_p = Autopilot_P.IC_Value_e;
   }
 
-  rtb_Mod2 = (Autopilot_P.Constant_Value_in - Autopilot_P.msftmin_Gain_c * rtb_Mod2) * Autopilot_P.ftmintoms_Gain_d /
-    rtb_Sum_fl;
+  rtb_Mod2 = (Autopilot_P.Constant_Value_in - Autopilot_P.msftmin_Gain_ia * rtb_Mod2) * Autopilot_P.ftmintoms_Gain_i /
+    rtb_Sum_p;
   x[0] = Autopilot_P.Constant1_Value_d - rtb_GainTheta;
-  x[1] = rtb_out_p;
+  x[1] = rtb_out_aa;
   if (rtb_Mod2 > 1.0) {
     rtb_Mod2 = 1.0;
   } else {
@@ -950,10 +958,10 @@ void AutopilotModelClass::step()
     }
   }
 
-  x[2] = Autopilot_P.Gain_Gain_n1 * std::asin(rtb_Mod2) * Autopilot_P.Gain_Gain_j;
+  x[2] = Autopilot_P.Gain_Gain_ic * std::asin(rtb_Mod2) * Autopilot_P.Gain_Gain_kp;
   switch (static_cast<int32_T>(rtb_Switch_mx)) {
    case 1:
-    rtb_Minup = (Autopilot_U.in.data.ap_H_c_ft - Autopilot_U.in.data.H_ind_ft) * Autopilot_P.Gain_Gain_ft;
+    rtb_Minup = (Autopilot_U.in.data.ap_H_c_ft - Autopilot_U.in.data.H_ind_ft) * Autopilot_P.Gain_Gain_f;
     if (rtb_Minup > Autopilot_P.Saturation_UpperSat) {
       rtb_Minup = Autopilot_P.Saturation_UpperSat;
     } else {
@@ -962,8 +970,8 @@ void AutopilotModelClass::step()
       }
     }
 
-    rtb_Minup = (rtb_Minup - std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_es * rtb_GainTheta1) *
-      Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_g) * rtb_kntoms * Autopilot_P.msftmin_Gain_e) *
+    rtb_Minup = (rtb_Minup - std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_it * rtb_GainTheta1) *
+      Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_iu) * rtb_kntoms * Autopilot_P.msftmin_Gain_i) *
       Autopilot_P.ftmintoms_Gain_m / rtb_IC;
     if (rtb_Minup > 1.0) {
       rtb_Minup = 1.0;
@@ -973,7 +981,7 @@ void AutopilotModelClass::step()
       }
     }
 
-    rtb_Sum_fl = Autopilot_P.Gain_Gain_fw * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_mk;
+    rtb_Sum_p = Autopilot_P.Gain_Gain_j4 * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_bk;
     break;
 
    case 2:
@@ -987,9 +995,9 @@ void AutopilotModelClass::step()
     }
 
     rtb_Minup = ((Autopilot_P.Constant_Value_b * rtb_Minup + rtb_Mod2) * Autopilot_P.Gain_Gain_e - std::sin
-                 ((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_o * rtb_GainTheta1) * Autopilot_U.in.data.alpha_deg) *
-                  Autopilot_P.Gain1_Gain_e) * rtb_kntoms_o * Autopilot_P.msftmin_Gain_n) * Autopilot_P.ftmintoms_Gain_h /
-      rtb_IC_b;
+                 ((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_e * rtb_GainTheta1) * Autopilot_U.in.data.alpha_deg) *
+                  Autopilot_P.Gain1_Gain_h5) * rtb_kntoms_o * Autopilot_P.msftmin_Gain_o) * Autopilot_P.ftmintoms_Gain_l
+      / rtb_IC_c;
     if (rtb_Minup > 1.0) {
       rtb_Minup = 1.0;
     } else {
@@ -998,7 +1006,7 @@ void AutopilotModelClass::step()
       }
     }
 
-    rtb_Sum_fl = Autopilot_P.Gain_Gain_f * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_bc;
+    rtb_Sum_p = Autopilot_P.Gain_Gain_o * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_js;
     break;
 
    case 3:
@@ -1011,9 +1019,9 @@ void AutopilotModelClass::step()
         }
       }
 
-      rtb_Sum_fl = Autopilot_P.Gain_Gain_iw * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_c3;
-      if (rtb_Sum1_g > rtb_Sum_fl) {
-        rtb_Sum_fl = rtb_Sum1_g;
+      rtb_Sum_p = Autopilot_P.Gain_Gain_cy * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_a2;
+      if (rtb_Sum1_l5 > rtb_Sum_p) {
+        rtb_Sum_p = rtb_Sum1_l5;
       }
     } else {
       if (rtb_Minup > 1.0) {
@@ -1024,17 +1032,17 @@ void AutopilotModelClass::step()
         }
       }
 
-      rtb_Sum_fl = Autopilot_P.Gain_Gain_iw * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_c3;
-      if (rtb_Sum1_g < rtb_Sum_fl) {
-        rtb_Sum_fl = rtb_Sum1_g;
+      rtb_Sum_p = Autopilot_P.Gain_Gain_cy * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_a2;
+      if (rtb_Sum1_l5 < rtb_Sum_p) {
+        rtb_Sum_p = rtb_Sum1_l5;
       }
     }
     break;
 
    case 4:
-    rtb_Minup = (Autopilot_U.in.data.ap_H_dot_c_ft_min - std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_a *
-      rtb_GainTheta1) * Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_b) * rtb_kntoms_k *
-                 Autopilot_P.msftmin_Gain_o) * Autopilot_P.ftmintoms_Gain_n / rtb_IC_e;
+    rtb_Minup = (Autopilot_U.in.data.ap_H_dot_c_ft_min - std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_o4 *
+      rtb_GainTheta1) * Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_i) * rtb_kntoms_k *
+                 Autopilot_P.msftmin_Gain_k) * Autopilot_P.ftmintoms_Gain_g / rtb_IC_n;
     if (rtb_Minup > 1.0) {
       rtb_Minup = 1.0;
     } else {
@@ -1043,31 +1051,31 @@ void AutopilotModelClass::step()
       }
     }
 
-    rtb_Sum_fl = Autopilot_P.Gain_Gain_o * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_my;
+    rtb_Sum_p = Autopilot_P.Gain_Gain_m * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_i;
     break;
 
    case 5:
-    rtb_Sum_fl = (Autopilot_U.in.data.ap_FPA_c_deg - (rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_h5 *
-      rtb_GainTheta1) * Autopilot_U.in.data.alpha_deg)) * Autopilot_P.Gain_Gain_c;
+    rtb_Sum_p = (Autopilot_U.in.data.ap_FPA_c_deg - (rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_ld * rtb_GainTheta1)
+      * Autopilot_U.in.data.alpha_deg)) * Autopilot_P.Gain_Gain_c;
     break;
 
    case 6:
-    rtb_Sum_fl = Autopilot_DWork.Delay1_DSTATE_bd * look1_binlxpw(Autopilot_U.in.data.H_radio_ft,
+    rtb_Sum_p = Autopilot_DWork.Delay1_DSTATE_l * look1_binlxpw(Autopilot_U.in.data.H_radio_ft,
       Autopilot_P.ScheduledGain_BreakpointsForDimension1_h, Autopilot_P.ScheduledGain_Table_i, 4U);
     break;
 
    case 7:
     if (rtb_on_ground > Autopilot_P.Switch_Threshold) {
-      rtb_Sum_fl = (rtb_GainTheta - Autopilot_P.Constant2_Value) * Autopilot_P.Gain4_Gain;
+      rtb_Sum_p = (rtb_GainTheta - Autopilot_P.Constant2_Value) * Autopilot_P.Gain4_Gain;
     } else {
       rtb_kntoms_o = Autopilot_B.u / Autopilot_P.Constant_Value_p * Autopilot_U.in.data.H_radio_ft;
       if (Autopilot_P.Constant3_Value_n < rtb_kntoms_o) {
         rtb_kntoms_o = Autopilot_P.Constant3_Value_n;
       }
 
-      rtb_Minup = (rtb_kntoms_o - std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_d * rtb_GainTheta1) *
-        Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_c) * rtb_kntoms_i * Autopilot_P.msftmin_Gain) *
-        Autopilot_P.ftmintoms_Gain / rtb_IC_h;
+      rtb_Minup = (rtb_kntoms_o - std::sin((rtb_GainTheta - std::cos(Autopilot_P.Gain1_Gain_h * rtb_GainTheta1) *
+        Autopilot_U.in.data.alpha_deg) * Autopilot_P.Gain1_Gain_k) * rtb_kntoms_i * Autopilot_P.msftmin_Gain) *
+        Autopilot_P.ftmintoms_Gain / rtb_IC_k;
       if (rtb_Minup > 1.0) {
         rtb_Minup = 1.0;
       } else {
@@ -1076,13 +1084,13 @@ void AutopilotModelClass::step()
         }
       }
 
-      rtb_Sum_fl = Autopilot_P.Gain_Gain_m * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_l;
+      rtb_Sum_p = Autopilot_P.Gain_Gain_j * std::asin(rtb_Minup) * Autopilot_P.Gain_Gain_n;
     }
     break;
 
    default:
-    if (x[0] < rtb_out_p) {
-      if (rtb_out_p < x[2]) {
+    if (x[0] < rtb_out_aa) {
+      if (rtb_out_aa < x[2]) {
         rtb_LAW = 1;
       } else if (x[0] < x[2]) {
         rtb_LAW = 2;
@@ -1091,52 +1099,52 @@ void AutopilotModelClass::step()
       }
     } else if (x[0] < x[2]) {
       rtb_LAW = 0;
-    } else if (rtb_out_p < x[2]) {
+    } else if (rtb_out_aa < x[2]) {
       rtb_LAW = 2;
     } else {
       rtb_LAW = 1;
     }
 
-    rtb_Sum_fl = x[rtb_LAW];
+    rtb_Sum_p = x[rtb_LAW];
     break;
   }
 
-  rtb_Sum_fl += rtb_GainTheta;
-  if (rtb_Sum_fl > Autopilot_P.Constant1_Value_i) {
-    rtb_Sum_fl = Autopilot_P.Constant1_Value_i;
+  rtb_Sum_p += rtb_GainTheta;
+  if (rtb_Sum_p > Autopilot_P.Constant1_Value_i) {
+    rtb_Sum_p = Autopilot_P.Constant1_Value_i;
   } else {
-    rtb_Mod2 = Autopilot_P.Gain1_Gain_eg * Autopilot_P.Constant1_Value_i;
-    if (rtb_Sum_fl < rtb_Mod2) {
-      rtb_Sum_fl = rtb_Mod2;
+    rtb_Mod2 = Autopilot_P.Gain1_Gain_c * Autopilot_P.Constant1_Value_i;
+    if (rtb_Sum_p < rtb_Mod2) {
+      rtb_Sum_p = rtb_Mod2;
     }
   }
 
   if (rtb_out == 0) {
-    Autopilot_DWork.icLoad_k = 1U;
+    Autopilot_DWork.icLoad_h = 1U;
   }
 
-  if (Autopilot_DWork.icLoad_k != 0) {
-    Autopilot_DWork.Delay_DSTATE_l3 = rtb_GainTheta;
+  if (Autopilot_DWork.icLoad_h != 0) {
+    Autopilot_DWork.Delay_DSTATE_ip = rtb_GainTheta;
   }
 
-  rtb_Minup = rtb_Sum_fl - Autopilot_DWork.Delay_DSTATE_l3;
+  rtb_Minup = rtb_Sum_p - Autopilot_DWork.Delay_DSTATE_ip;
   rtb_kntoms_o = Autopilot_P.Constant2_Value_h1 * Autopilot_U.in.time.dt;
   if (rtb_Minup < rtb_kntoms_o) {
     rtb_kntoms_o = rtb_Minup;
   }
 
-  rtb_Minup = Autopilot_P.Gain1_Gain_nh * Autopilot_P.Constant2_Value_h1 * Autopilot_U.in.time.dt;
+  rtb_Minup = Autopilot_P.Gain1_Gain_g * Autopilot_P.Constant2_Value_h1 * Autopilot_U.in.time.dt;
   if (rtb_kntoms_o > rtb_Minup) {
     rtb_Minup = rtb_kntoms_o;
   }
 
-  Autopilot_DWork.Delay_DSTATE_l3 += rtb_Minup;
-  rtb_Sum_bk = Autopilot_U.in.time.dt * Autopilot_P.LagFilter_C1_e;
-  rtb_out_p = rtb_Sum_bk + Autopilot_P.Constant_Value_jr;
-  Autopilot_DWork.Delay1_DSTATE_p = 1.0 / rtb_out_p * (Autopilot_P.Constant_Value_jr - rtb_Sum_bk) *
-    Autopilot_DWork.Delay1_DSTATE_p + (Autopilot_DWork.Delay_DSTATE_l3 + Autopilot_DWork.Delay_DSTATE_n) * (rtb_Sum_bk /
-    rtb_out_p);
-  rtb_Minup = static_cast<real_T>(rtb_out) - Autopilot_DWork.Delay_DSTATE_pf;
+  Autopilot_DWork.Delay_DSTATE_ip += rtb_Minup;
+  rtb_Sum_j = Autopilot_U.in.time.dt * Autopilot_P.LagFilter_C1_k;
+  rtb_out_aa = rtb_Sum_j + Autopilot_P.Constant_Value_iy;
+  Autopilot_DWork.Delay1_DSTATE_b1 = 1.0 / rtb_out_aa * (Autopilot_P.Constant_Value_iy - rtb_Sum_j) *
+    Autopilot_DWork.Delay1_DSTATE_b1 + (Autopilot_DWork.Delay_DSTATE_ip + Autopilot_DWork.Delay_DSTATE_f) * (rtb_Sum_j /
+    rtb_out_aa);
+  rtb_Minup = static_cast<real_T>(rtb_out) - Autopilot_DWork.Delay_DSTATE_l;
   rtb_kntoms_o = Autopilot_P.RateLimiterVariableTs_up_i * Autopilot_U.in.time.dt;
   if (rtb_Minup < rtb_kntoms_o) {
     rtb_kntoms_o = rtb_Minup;
@@ -1147,19 +1155,19 @@ void AutopilotModelClass::step()
     rtb_Minup = rtb_kntoms_o;
   }
 
-  Autopilot_DWork.Delay_DSTATE_pf += rtb_Minup;
-  if (Autopilot_DWork.Delay_DSTATE_pf > Autopilot_P.Saturation_UpperSat_kh) {
-    rtb_Sum_bk = Autopilot_P.Saturation_UpperSat_kh;
-  } else if (Autopilot_DWork.Delay_DSTATE_pf < Autopilot_P.Saturation_LowerSat_e) {
-    rtb_Sum_bk = Autopilot_P.Saturation_LowerSat_e;
+  Autopilot_DWork.Delay_DSTATE_l += rtb_Minup;
+  if (Autopilot_DWork.Delay_DSTATE_l > Autopilot_P.Saturation_UpperSat_f) {
+    rtb_Sum_j = Autopilot_P.Saturation_UpperSat_f;
+  } else if (Autopilot_DWork.Delay_DSTATE_l < Autopilot_P.Saturation_LowerSat_a2) {
+    rtb_Sum_j = Autopilot_P.Saturation_LowerSat_a2;
   } else {
-    rtb_Sum_bk = Autopilot_DWork.Delay_DSTATE_pf;
+    rtb_Sum_j = Autopilot_DWork.Delay_DSTATE_l;
   }
 
-  rtb_Mod2 = Autopilot_DWork.Delay1_DSTATE_p * rtb_Sum_bk;
-  rtb_Sum_bk = Autopilot_P.Constant_Value_hc - rtb_Sum_bk;
-  rtb_Sum_bk *= rtb_GainTheta;
-  Autopilot_Y.out.output.autopilot.Theta_c_deg = rtb_Mod2 + rtb_Sum_bk;
+  rtb_Mod2 = Autopilot_DWork.Delay1_DSTATE_b1 * rtb_Sum_j;
+  rtb_Sum_j = Autopilot_P.Constant_Value_ha - rtb_Sum_j;
+  rtb_Sum_j *= rtb_GainTheta;
+  Autopilot_Y.out.output.autopilot.Theta_c_deg = rtb_Mod2 + rtb_Sum_j;
   Autopilot_Y.out.time = Autopilot_U.in.time;
   Autopilot_Y.out.mode = Autopilot_U.in.mode;
   Autopilot_Y.out.input = Autopilot_U.in.input;
@@ -1198,20 +1206,20 @@ void AutopilotModelClass::step()
   Autopilot_Y.out.data.on_ground = rtb_on_ground;
   Autopilot_Y.out.data.zeta_deg = rtb_Saturation;
   Autopilot_Y.out.output.ap_on = rtb_out;
-  Autopilot_Y.out.output.flight_director.Theta_c_deg = rtb_Sum_fl;
-  Autopilot_Y.out.output.autopilot.Phi_c_deg = rtb_out_o + rtb_Product1_e;
-  Autopilot_DWork.Delay_DSTATE_e = rtb_Saturation1;
-  Autopilot_DWork.Delay_DSTATE_l = rtb_Mod1;
+  Autopilot_Y.out.output.flight_director.Theta_c_deg = rtb_Sum_p;
+  Autopilot_Y.out.output.autopilot.Phi_c_deg = rtb_out_lg + rtb_Product1_o;
+  Autopilot_DWork.Delay_DSTATE_i = rtb_Saturation1;
+  Autopilot_DWork.Delay_DSTATE_k = rtb_Mod1;
   Autopilot_DWork.icLoad = 0U;
-  Autopilot_DWork.Delay_DSTATE_j = Autopilot_DWork.Delay_DSTATE_h;
-  Autopilot_DWork.Delay_DSTATE_f = rtb_Switch;
-  Autopilot_DWork.Delay_DSTATE_fv = rtb_ROLLLIM1;
-  Autopilot_DWork.Delay_DSTATE_lu = rtb_out_g;
-  Autopilot_DWork.Delay_DSTATE_jh = rtb_out_bj;
-  Autopilot_DWork.Delay_DSTATE_a = rtb_out_h;
-  Autopilot_DWork.Delay_DSTATE_b = rtb_Sum4_f;
-  Autopilot_DWork.icLoad_k = 0U;
-  Autopilot_DWork.Delay_DSTATE_n = Autopilot_DWork.Delay_DSTATE_l3;
+  Autopilot_DWork.Delay_DSTATE_g = Autopilot_DWork.Delay_DSTATE_h;
+  Autopilot_DWork.Delay_DSTATE_ky = rtb_Switch;
+  Autopilot_DWork.Delay_DSTATE_o = rtb_ROLLLIM1;
+  Autopilot_DWork.Delay_DSTATE_e = rtb_out_ii;
+  Autopilot_DWork.Delay_DSTATE_b = rtb_out_f;
+  Autopilot_DWork.Delay_DSTATE_ob = rtb_out_p;
+  Autopilot_DWork.Delay_DSTATE_ed = rtb_Sum4_f;
+  Autopilot_DWork.icLoad_h = 0U;
+  Autopilot_DWork.Delay_DSTATE_f = Autopilot_DWork.Delay_DSTATE_ip;
 }
 
 void AutopilotModelClass::initialize()
@@ -1223,32 +1231,32 @@ void AutopilotModelClass::initialize()
   Autopilot_U.in = Autopilot_rtZap_input;
   Autopilot_Y.out = Autopilot_rtZap_output;
   Autopilot_DWork.IC_FirstOutputTime = true;
-  Autopilot_DWork.IC_FirstOutputTime_o = true;
-  Autopilot_DWork.IC_FirstOutputTime_m = true;
-  Autopilot_DWork.IC_FirstOutputTime_f = true;
-  Autopilot_DWork.IC_FirstOutputTime_g = true;
+  Autopilot_DWork.IC_FirstOutputTime_n = true;
+  Autopilot_DWork.IC_FirstOutputTime_i = true;
   Autopilot_DWork.IC_FirstOutputTime_d = true;
+  Autopilot_DWork.IC_FirstOutputTime_b = true;
+  Autopilot_DWork.IC_FirstOutputTime_j = true;
   Autopilot_DWork.Delay_DSTATE = Autopilot_P.DiscreteTimeIntegratorVariableTs_InitialCondition;
-  Autopilot_DWork.Delay_DSTATE_e = Autopilot_P.DiscreteDerivativeVariableTs_InitialCondition;
-  Autopilot_DWork.Delay_DSTATE_l = Autopilot_P.Delay_InitialCondition;
+  Autopilot_DWork.Delay_DSTATE_i = Autopilot_P.DiscreteDerivativeVariableTs_InitialCondition;
+  Autopilot_DWork.Delay_DSTATE_k = Autopilot_P.Delay_InitialCondition;
   Autopilot_DWork.Delay1_DSTATE = Autopilot_P.Delay1_InitialCondition;
   Autopilot_DWork.icLoad = 1U;
-  Autopilot_DWork.Delay_DSTATE_j = Autopilot_P.Delay_InitialCondition_c;
-  Autopilot_DWork.Delay1_DSTATE_l = Autopilot_P.Delay1_InitialCondition_j;
-  Autopilot_DWork.Delay_DSTATE_p = Autopilot_P.RateLimiterVariableTs_InitialCondition;
-  Autopilot_DWork.Delay_DSTATE_f = Autopilot_P.DiscreteDerivativeVariableTs_InitialCondition_e;
-  Autopilot_DWork.Delay_DSTATE_fv = Autopilot_P.Delay_InitialCondition_g;
-  Autopilot_DWork.Delay1_DSTATE_b = Autopilot_P.Delay1_InitialCondition_h;
-  Autopilot_DWork.Delay_DSTATE_lu = Autopilot_P.DiscreteDerivativeVariableTs_InitialCondition_h;
-  Autopilot_DWork.Delay_DSTATE_jh = Autopilot_P.Delay_InitialCondition_f;
-  Autopilot_DWork.Delay1_DSTATE_bd = Autopilot_P.Delay1_InitialCondition_i;
-  Autopilot_DWork.Delay_DSTATE_a = Autopilot_P.DiscreteDerivativeVariableTs_InitialCondition_b;
-  Autopilot_DWork.Delay_DSTATE_b = Autopilot_P.Delay_InitialCondition_m;
-  Autopilot_DWork.Delay1_DSTATE_o = Autopilot_P.Delay1_InitialCondition_g;
-  Autopilot_DWork.icLoad_k = 1U;
-  Autopilot_DWork.Delay_DSTATE_n = Autopilot_P.Delay_InitialCondition_o;
-  Autopilot_DWork.Delay1_DSTATE_p = Autopilot_P.Delay1_InitialCondition_b;
-  Autopilot_DWork.Delay_DSTATE_pf = Autopilot_P.RateLimiterVariableTs_InitialCondition_p;
+  Autopilot_DWork.Delay_DSTATE_g = Autopilot_P.Delay_InitialCondition_m;
+  Autopilot_DWork.Delay1_DSTATE_b = Autopilot_P.Delay1_InitialCondition_i;
+  Autopilot_DWork.Delay_DSTATE_c = Autopilot_P.RateLimiterVariableTs_InitialCondition;
+  Autopilot_DWork.Delay_DSTATE_ky = Autopilot_P.DiscreteDerivativeVariableTs_InitialCondition_e;
+  Autopilot_DWork.Delay_DSTATE_o = Autopilot_P.Delay_InitialCondition_my;
+  Autopilot_DWork.Delay1_DSTATE_k = Autopilot_P.Delay1_InitialCondition_m;
+  Autopilot_DWork.Delay_DSTATE_e = Autopilot_P.DiscreteDerivativeVariableTs_InitialCondition_h;
+  Autopilot_DWork.Delay_DSTATE_b = Autopilot_P.Delay_InitialCondition_i;
+  Autopilot_DWork.Delay1_DSTATE_l = Autopilot_P.Delay1_InitialCondition_g;
+  Autopilot_DWork.Delay_DSTATE_ob = Autopilot_P.DiscreteDerivativeVariableTs_InitialCondition_b;
+  Autopilot_DWork.Delay_DSTATE_ed = Autopilot_P.Delay_InitialCondition_j;
+  Autopilot_DWork.Delay1_DSTATE_lp = Autopilot_P.Delay1_InitialCondition_d;
+  Autopilot_DWork.icLoad_h = 1U;
+  Autopilot_DWork.Delay_DSTATE_f = Autopilot_P.Delay_InitialCondition_k;
+  Autopilot_DWork.Delay1_DSTATE_b1 = Autopilot_P.Delay1_InitialCondition_e;
+  Autopilot_DWork.Delay_DSTATE_l = Autopilot_P.RateLimiterVariableTs_InitialCondition_p;
   Autopilot_DWork.is_active_c5_Autopilot = 0U;
   Autopilot_DWork.is_c5_Autopilot = Autopilot_IN_NO_ACTIVE_CHILD_j;
   Autopilot_DWork.is_active_c3_Autopilot = 0U;
@@ -1256,13 +1264,13 @@ void AutopilotModelClass::initialize()
   Autopilot_DWork.is_LOC = Autopilot_IN_NO_ACTIVE_CHILD_j;
   Autopilot_DWork.is_active_c6_Autopilot = 0U;
   Autopilot_DWork.is_c6_Autopilot = Autopilot_IN_NO_ACTIVE_CHILD_j;
-  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_l);
-  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_o);
-  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_h);
   Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_p);
-  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_f);
   Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_n);
-  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_e);
+  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_f);
+  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_nr);
+  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_i);
+  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_g);
+  Autopilot_Chart_Init(&Autopilot_DWork.sf_Chart_gi);
   Autopilot_DWork.is_active_c10_Autopilot = 0U;
   Autopilot_DWork.is_c10_Autopilot = Autopilot_IN_NO_ACTIVE_CHILD_j;
   Autopilot_B.u = Autopilot_P.Y_Y0;
