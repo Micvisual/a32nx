@@ -21,6 +21,7 @@ build_behavior() {
 
 build_model() {
     node "${DIR}/../src/model/build.js"
+}
 
 build_fbw() {
     "${DIR}/../src/fbw/build.sh"
