@@ -1062,7 +1062,7 @@ var Airbus_FMA;
                             break;
                         }
                         case Column2.ROW_1_STATE.ALT_CAPTURED: {
-                            this.setRowText(0, "ALT*", Airbus_FMA.MODE_STATE.CAPTURED);
+                            this.setRowText(0, "ALT *", Airbus_FMA.MODE_STATE.CAPTURED);
                             break;
                         }
                         case Column2.ROW_1_STATE.ALT_CST_ENGAGED: {
@@ -1071,7 +1071,7 @@ var Airbus_FMA;
                             break;
                         }
                         case Column2.ROW_1_STATE.ALT_CST_CAPTURED: {
-                            this.setRowText(0, "ALT CST*", Airbus_FMA.MODE_STATE.CAPTURED);
+                            this.setRowText(0, "ALT CST *", Airbus_FMA.MODE_STATE.CAPTURED);
                             isCst = true;
                             break;
                         }
@@ -1109,7 +1109,7 @@ var Airbus_FMA;
                             break;
                         }
                         case Column2.ROW_1_STATE.GS_CAPTURED: {
-                            this.setRowText(0, "G/S*", Airbus_FMA.MODE_STATE.CAPTURED);
+                            this.setRowText(0, "G/S *", Airbus_FMA.MODE_STATE.CAPTURED);
                             break;
                         }
                         case Column2.ROW_1_STATE.OP_CLB: {
@@ -1179,61 +1179,62 @@ var Airbus_FMA;
         }
 
         getTargetRow1State() {
-            const srsModeState = this.GetModeState_SRS();
-            if (srsModeState == Airbus_FMA.MODE_STATE.ARMED) {
-                return Column2.ROW_1_STATE.SRS_ARMED;
-            } else if (srsModeState == Airbus_FMA.MODE_STATE.ENGAGED) {
-                return Column2.ROW_1_STATE.SRS_ENGAGED;
-            }
-            const gsModeState = Column2.GetModeState_GS();
-            if (gsModeState == Airbus_FMA.MODE_STATE.ENGAGED) {
-                return Column2.ROW_1_STATE.GS_ENGAGED;
-            } else if (gsModeState == Airbus_FMA.MODE_STATE.CAPTURED) {
-                return Column2.ROW_1_STATE.GS_CAPTURED;
-            }
-            const altModeState = Column2.GetModeState_ALT();
-            if (altModeState == Airbus_FMA.MODE_STATE.ENGAGED) {
-                if (Airbus_FMA.CurrentPlaneState.flightPhase == FlightPhase.FLIGHT_PHASE_CRUISE) {
-                    return Column2.ROW_1_STATE.ALT_CRZ;
-                } else {
-                    return this.currentConstrained ? Column2.ROW_1_STATE.ALT_CST_ENGAGED : Column2.ROW_1_STATE.ALT_ENGAGED;
-                }
-            } else if (altModeState == Airbus_FMA.MODE_STATE.CAPTURED) {
-                return this.currentConstrained ? Column2.ROW_1_STATE.ALT_CST_CAPTURED : Column2.ROW_1_STATE.ALT_CAPTURED;
-            }
-            if (Column2.IsActive_VS()) {
-                return Column2.ROW_1_STATE.VS;
-            } else if (Column2.IsActive_FPA()) {
-                return Column2.ROW_1_STATE.FPA;
-            } else if (this.IsActive_EXPCLB()) {
-                return Column2.ROW_1_STATE.EXP_CLB;
-            } else if (this.IsActive_EXPDES()) {
-                return Column2.ROW_1_STATE.EXP_DES;
-            }
-            if (Column2.IsActive_OPCLB()) {
-                return Column2.ROW_1_STATE.OP_CLB;
-            } else if (Column2.IsActive_OPDES()) {
-                return Column2.ROW_1_STATE.OP_DES;
-            } else if (Column2.GetModeState_CLB() == Airbus_FMA.MODE_STATE.ENGAGED) {
-                return Column2.ROW_1_STATE.CLB_ENGAGED;
-            } else if (Column2.IsActive_DES()) {
-                return Column2.ROW_1_STATE.DES;
-            } else {
-                return Column2.ROW_1_STATE.NONE;
+            const mode = SimVar.GetSimVarValue("L:A32NX_FMA_VERTICAL_MODE", "number");
+            switch (mode) {
+                case 10:
+                    return Column2.ROW_1_STATE.ALT_ENGAGED;
+                case 11:
+                    return Column2.ROW_1_STATE.ALT_CAPTURED;
+                case 12:
+                    return Column2.ROW_1_STATE.OP_CLB;
+                case 13:
+                    return Column2.ROW_1_STATE.OP_DES;
+                case 14:
+                    return Column2.ROW_1_STATE.VS;
+                case 20:
+                    return Column2.ROW_1_STATE.ALT_CST_ENGAGED;
+                case 21:
+                    return Column2.ROW_1_STATE.ALT_CST_CAPTURED;
+                case 22:
+                    return Column2.ROW_1_STATE.CLB_ENGAGED;
+                case 23:
+                    return Column2.ROW_1_STATE.DES;
+                case 30:
+                    return Column2.ROW_1_STATE.GS_CAPTURED;
+                case 31:
+                    return Column2.ROW_1_STATE.GS_ENGAGED;
+                case 32:
+                    return Column2.ROW_1_STATE.LAND;
+                case 33:
+                    return Column2.ROW_1_STATE.FLARE;
+                case 34:
+                    return Column2.ROW_1_STATE.ROLL_OUT;
+                case 40:
+                    return Column2.ROW_1_STATE.SRS_ENGAGED;
+                default:
+                    return Column2.ROW_1_STATE.NONE;
             }
         }
 
         getTargetRow2State() {
-            if (Column2.GetModeState_ALT() == Airbus_FMA.MODE_STATE.ARMED) {
+            const armed = SimVar.GetSimVarValue("L:A32NX_FMA_VERTICAL_ARMED", "number");
+            const ALT_armed = (armed >> 0) & 1;
+            const ALT_CST_armed = (armed >> 1) & 1;
+            const CLB_armed = (armed >> 2) & 1;
+            const DES_armed = (armed >> 3) & 1;
+            const GS_armed = (armed >> 4) & 1;
+            if (ALT_armed && !GS_armed) {
                 return Column2.ROW_2_STATE.ALT_ARMED;
-            } else if (Column2.GetModeState_GS() == Airbus_FMA.MODE_STATE.ARMED) {
-                return Column2.ROW_2_STATE.GS_ARMED;
-            } else if (this.IsActive_FinalArmed()) {
-                return Column2.ROW_2_STATE.GS_FINAL_ARMED;
-            } else if (Column2.GetModeState_CLB() == Airbus_FMA.MODE_STATE.ARMED) {
+            } else if (ALT_CST_armed) {
+                return Column2.ROW_2_STATE.ALT_CST_CONSTRAINED;
+            } else if (CLB_armed) {
                 return Column2.ROW_2_STATE.CLB_ARMED;
-            } else if (Column2.IsArmed_OPCLB_MA()) {
-                return Column2.ROW_2_STATE.OP_CLB_ARMED;
+            } else if (DES_armed) {
+                return Column2.ROW_2_STATE.DES;
+            } else if (!ALT_armed && GS_armed) {
+                return Column2.ROW_2_STATE.GS_ARMED;
+            } else if (ALT_armed && GS_armed) {
+                return Column2.ROW_2_STATE.ALT_GS_ARMED;
             } else {
                 return Column2.ROW_2_STATE.NONE;
             }
@@ -1573,45 +1574,45 @@ var Airbus_FMA;
         }
 
         getTargetRow1State() {
-            const locModeState = this.GetModeState_LOC();
-            if (locModeState == Airbus_FMA.MODE_STATE.ENGAGED) {
-                return Column3.ROW_1_STATE.LOC_ENGAGED;
-            } else if (locModeState == Airbus_FMA.MODE_STATE.CAPTURED) {
-                return Column3.ROW_1_STATE.LOC_CAPTURED;
+            const mode = SimVar.GetSimVarValue("L:A32NX_FMA_LATERAL_MODE", "number");
+            switch (mode) {
+                case 0:
+                    return Column3.ROW_1_STATE.NONE;
+                case 10:
+                    return Column3.ROW_1_STATE.HDG;
+                case 11:
+                    return Column3.ROW_1_STATE.TRACK;
+                case 20:
+                    return Column3.ROW_1_STATE.NAV_ENGAGED;
+                case 30:
+                    return Column3.ROW_1_STATE.LOC_CAPTURED;
+                case 31:
+                    return Column3.ROW_1_STATE.LOC_ENGAGED;
+                case 32:
+                    return Column3.ROW_1_STATE.LAND;
+                case 33:
+                    return Column3.ROW_1_STATE.FLARE;
+                case 34:
+                    return Column3.ROW_1_STATE.ROLLOUT;
+                case 40:
+                    return Column3.ROW_1_STATE.RWY;
+                case 41:
+                    return Column3.ROW_1_STATE.RWY_TRK;
+                case 50:
+                    return Column3.ROW_1_STATE.GA_TRK;
+                default:
+                    return Column3.ROW_1_STATE.NONE;
             }
-            if (this.GetModeState_APPNAV() == Airbus_FMA.MODE_STATE.ENGAGED) {
-                return Column3.ROW_1_STATE.APPNAV_ENGAGED;
-            }
-            if (this.IsActive_RWY()) {
-                return Column3.ROW_1_STATE.RWY;
-            } else if (this.IsActive_HDG()) {
-                return Column3.ROW_1_STATE.HDG;
-            } else if (this.IsActive_TRACK()) {
-                return Column3.ROW_1_STATE.TRACK;
-            }
-            const navModeState = this.GetModeState_NAV();
-            if (navModeState == Airbus_FMA.MODE_STATE.ENGAGED) {
-                return Column3.ROW_1_STATE.NAV_ENGAGED;
-            } else if (navModeState == Airbus_FMA.MODE_STATE.CAPTURED) {
-                return Column3.ROW_1_STATE.NAV_CAPTURED;
-            }
-            if (this.IsActive_RWYTRK()) {
-                return Column3.ROW_1_STATE.RWY_TRK;
-            } else if (this.IsActive_GATRK()) {
-                return Column3.ROW_1_STATE.GA_TRK;
-            }
-            return Column3.ROW_1_STATE.NONE;
         }
 
         getTargetRow2State() {
-            if (this.GetModeState_LOC() == Airbus_FMA.MODE_STATE.ARMED) {
-                return Column3.ROW_2_STATE.LOC_ARMED;
-            } else if (this.GetModeState_APPNAV() == Airbus_FMA.MODE_STATE.ARMED) {
-                return Column3.ROW_2_STATE.APPNAV_ARMED;
-            } else if (this.GetModeState_NAV() == Airbus_FMA.MODE_STATE.ARMED) {
+            const armed = SimVar.GetSimVarValue("L:A32NX_FMA_LATERAL_ARMED", "number");
+            const NAV_armed = (armed >> 0) & 1;
+            const LOC_armed = (armed >> 1) & 1;
+            if (NAV_armed) {
                 return Column3.ROW_2_STATE.NAV_ARMED;
-            } else if (this.IsArmed_HDG()) {
-                return Column3.ROW_1_STATE.HDG_ARMED;
+            } else if (LOC_armed) {
+                return Column3.ROW_2_STATE.LOC_ARMED;
             } else {
                 return Column3.ROW_2_STATE.NONE;
             }
@@ -2096,25 +2097,16 @@ var Airbus_FMA;
         update(_deltaTime) {
             let targetState = VerticalAndLateral.STATE.NONE;
             if (this.msg != null) {
-                if (Airbus_FMA.VerticalAndLateral.IsActive_FinalApp()) {
-                    targetState = VerticalAndLateral.STATE.FINAL_APP;
-                } else if (Airbus_FMA.CurrentPlaneState.isILSApproachActive) {
-                    if (Airbus_FMA.CurrentPlaneState.radioAltitude <= 1.5) {
-                        this.rolloutDelay += _deltaTime;
-                        if (this.rolloutDelay >= 1000) {
-                            targetState = VerticalAndLateral.STATE.ROLLOUT;
-                        } else {
-                            targetState = VerticalAndLateral.STATE.FLARE;
-                        }
-                    } else if (Airbus_FMA.CurrentPlaneState.radioAltitude < 40) {
-                        this.rolloutDelay = 0;
-                        targetState = VerticalAndLateral.STATE.FLARE;
-                    } else if (Airbus_FMA.CurrentPlaneState.radioAltitude < 400 ||
-                        (this._previousState === VerticalAndLateral.STATE.LAND && Airbus_FMA.CurrentPlaneState.radioAltitude < 400 * 1.1) && Airbus_FMA.CurrentPlaneState.highestThrottleDetent != ThrottleMode.TOGA) {
-                        targetState = VerticalAndLateral.STATE.LAND;
-                    }
-                }
-                if (!Airbus_FMA.CurrentPlaneState.thisFlightDirectorActive || Simplane.getGroundSpeed() < 40) {
+                const lateralMode = SimVar.GetSimVarValue("L:A32NX_FMA_LATERAL_MODE", "number");
+                const verticalMode = SimVar.GetSimVarValue("L:A32NX_FMA_VERTICAL_MODE", "number");
+                targetState = VerticalAndLateral.STATE.NONE;
+                if (lateralMode == 32 && verticalMode == 32) {
+                    targetState = VerticalAndLateral.STATE.LAND;
+                } else if (lateralMode == 33 && verticalMode == 33) {
+                    targetState = VerticalAndLateral.STATE.FLARE;
+                } else if (lateralMode == 34 && verticalMode == 34) {
+                    targetState = VerticalAndLateral.STATE.ROLLOUT;
+                } else if (!Airbus_FMA.CurrentPlaneState.thisFlightDirectorActive || Simplane.getGroundSpeed() < 40) {
                     targetState = VerticalAndLateral.STATE.NONE;
                 }
                 if (targetState != this.currentState) {
