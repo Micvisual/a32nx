@@ -40,10 +40,12 @@ struct SimData {
   double bx_m_s2;
   double by_m_s2;
   double bz_m_s2;
+  bool ap_fd_active;
   double ap_V_c_kn;
   double ap_H_c_ft;
   double ap_Psi_c_deg;
   double ap_H_dot_c_ft_min;
+  bool nav_valid;
   double nav_loc_deg;
   double nav_radial_error_deg;
   double nav_dme_nmi;
@@ -51,6 +53,8 @@ struct SimData {
   double gear_strut_compression_1;
   double gear_strut_compression_2;
   double zeta_pos;
+  double throttle_lever_1_pos;
+  double throttle_lever_2_pos;
   double simulation_time;
   bool slew_on;
 };

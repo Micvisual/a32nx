@@ -51,6 +51,17 @@ class AutopilotInterface {
   ID idFlightGuidanceCrossTrackError;
   ID idFlightGuidanceTrackAngleError;
 
+  ID idFlightPhase;
+  // ID idFmgcFlightPlanAvailable;
+  ID idFmgcV2;
+  ID idFmgcThrustReductionAltitude;
+  ID idFmgcThrustReductionAltitudeGoAround;
+
+  ID idFmaLateralMode;
+  ID idFmaLateralArmed;
+  ID idFmaVerticalMode;
+  ID idFmaVerticalArmed;
+
   bool getModelInputDataFromSim(double sampleTime);
 
   bool writeModelOuputDataToSim();

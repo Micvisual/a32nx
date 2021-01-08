@@ -50,11 +50,22 @@ bool FlyByWireInterface::connect() {
   idAutopilotBank = register_named_variable("A32NX_AUTOPILOT_BANK");
   idAutopilotYaw = register_named_variable("A32NX_AUTOPILOT_YAW");
 
+  // register L variable for custom fly-by-wire interface
+  idFmaLateralMode = register_named_variable("A32NX_FMA_LATERAL_MODE");
+  idFmaLateralArmed = register_named_variable("A32NX_FMA_LATERAL_ARMED");
+  idFmaVerticalMode = register_named_variable("A32NX_FMA_VERTICAL_MODE");
+  idFmaVerticalArmed = register_named_variable("A32NX_FMA_VERTICAL_ARMED");
+
   // register L variable for flight director
   idFlightDirectorBank = register_named_variable("A32NX_FLIGHT_DIRECTOR_BANK");
   idFlightDirectorPitch = register_named_variable("A32NX_FLIGHT_DIRECTOR_PITCH");
 
   // register L variables for flight guidance
+  idFlightPhase = register_named_variable("A32NX_FWC_FLIGHT_PHASE");
+  idFmgcV2 = register_named_variable("AIRLINER_V2_SPEED");
+  // idFmgcFlightPlanAvailable = register_named_variable("X");
+  idFmgcThrustReductionAltitude = register_named_variable("AIRLINER_THR_RED_ALT");
+  idFmgcThrustReductionAltitudeGoAround = register_named_variable("AIRLINER_THR_RED_ALT_GOAROUND");
   idFlightGuidanceCrossTrackError = register_named_variable("A32NX_FG_CROSS_TRACK_ERROR");
   idFlightGuidanceTrackAngleError = register_named_variable("A32NX_FG_TRACK_ANGLE_ERROR");
 
@@ -153,6 +164,10 @@ bool FlyByWireInterface::getModelInputDataFromSim(double sampleTime) {
     autopilotBeta = clientDataAutopilot.autopilotBeta;
     set_named_variable_value(idFlightDirectorBank, -1.0 * clientDataAutopilot.flightDirectorPhi);
     set_named_variable_value(idFlightDirectorPitch, -1.0 * clientDataAutopilot.flightDirectorTheta);
+    set_named_variable_value(idFmaLateralMode, clientDataAutopilot.fmaLateralMode);
+    set_named_variable_value(idFmaLateralArmed, clientDataAutopilot.fmaLateralArmed);
+    set_named_variable_value(idFmaVerticalMode, clientDataAutopilot.fmaVerticalMode);
+    set_named_variable_value(idFmaVerticalArmed, clientDataAutopilot.fmaVerticalArmed);
   }
 
   // fill time into model
@@ -256,6 +271,11 @@ bool FlyByWireInterface::getModelInputDataFromSim(double sampleTime) {
 
   // update client data for flight guidance
   SimOutputClientDataFlightGuidance clientDataFlightGuidance = {
+      get_named_variable_value(idFlightPhase),
+      get_named_variable_value(idFmgcV2),
+      0.0,
+      get_named_variable_value(idFmgcThrustReductionAltitude),
+      get_named_variable_value(idFmgcThrustReductionAltitudeGoAround),
       get_named_variable_value(idFlightGuidanceCrossTrackError),
       get_named_variable_value(idFlightGuidanceTrackAngleError)};
   simConnectInterface.setSimOutputClientDataFlightGuidance(clientDataFlightGuidance);

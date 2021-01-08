@@ -41,6 +41,19 @@ bool AutopilotInterface::connect() {
   idFlightGuidanceCrossTrackError = register_named_variable("A32NX_FG_CROSS_TRACK_ERROR");
   idFlightGuidanceTrackAngleError = register_named_variable("A32NX_FG_TRACK_ANGLE_ERROR");
 
+  // register L variables for fmgc
+  idFlightPhase = register_named_variable("A32NX_FWC_FLIGHT_PHASE");
+  idFmgcV2 = register_named_variable("AIRLINER_V2_SPEED");
+  // idFmgcFlightPlanAvailable = register_named_variable("X");
+  idFmgcThrustReductionAltitude = register_named_variable("AIRLINER_THR_RED_ALT");
+  idFmgcThrustReductionAltitudeGoAround = register_named_variable("AIRLINER_THR_RED_ALT_GOAROUND");
+
+  // register L variables for FMA
+  idFmaLateralMode = register_named_variable("A32NX_FMA_LATERAL_MODE");
+  idFmaLateralArmed = register_named_variable("A32NX_FMA_LATERAL_ARMED");
+  idFmaVerticalMode = register_named_variable("A32NX_FMA_VERTICAL_MODE");
+  idFmaVerticalArmed = register_named_variable("A32NX_FMA_VERTICAL_ARMED");
+
   // initialize model
   model.initialize();
 
@@ -130,16 +143,25 @@ bool AutopilotInterface::getModelInputDataFromSim(double sampleTime) {
   model.Autopilot_U.in.data.bx_m_s2 = simData.bx_m_s2;
   model.Autopilot_U.in.data.by_m_s2 = simData.by_m_s2;
   model.Autopilot_U.in.data.bz_m_s2 = simData.bz_m_s2;
+  model.Autopilot_U.in.data.ap_fd_active = simData.ap_fd_active;
   model.Autopilot_U.in.data.ap_V_c_kn = simData.ap_V_c_kn;
   model.Autopilot_U.in.data.ap_H_c_ft = simData.ap_H_c_ft;
   model.Autopilot_U.in.data.ap_Psi_c_deg = simData.ap_Psi_c_deg;
   model.Autopilot_U.in.data.ap_H_dot_c_ft_min = simData.ap_H_dot_c_ft_min;
+  model.Autopilot_U.in.data.nav_valid = (simData.nav_valid != 0);
   model.Autopilot_U.in.data.nav_loc_deg = simData.nav_loc_deg;
   model.Autopilot_U.in.data.nav_radial_error_deg = simData.nav_radial_error_deg;
   model.Autopilot_U.in.data.nav_dme_nmi = simData.nav_dme_nmi;
   model.Autopilot_U.in.data.nav_gs_error_deg = simData.nav_gs_error_deg;
   model.Autopilot_U.in.data.flight_guidance_xtk_nmi = get_named_variable_value(idFlightGuidanceCrossTrackError);
   model.Autopilot_U.in.data.flight_guidance_tae_deg = get_named_variable_value(idFlightGuidanceTrackAngleError);
+  model.Autopilot_U.in.data.V2_kn = get_named_variable_value(idFmgcV2);
+  model.Autopilot_U.in.data.is_flight_plan_available = 0;
+  model.Autopilot_U.in.data.thrust_reduction_altitude = get_named_variable_value(idFmgcThrustReductionAltitude);
+  model.Autopilot_U.in.data.thrust_reduction_altitude_go_around =
+      get_named_variable_value(idFmgcThrustReductionAltitudeGoAround);
+  model.Autopilot_U.in.data.throttle_lever_1_pos = simData.throttle_lever_1_pos;
+  model.Autopilot_U.in.data.throttle_lever_2_pos = simData.throttle_lever_2_pos;
   model.Autopilot_U.in.data.gear_strut_compression_1 = simData.gear_strut_compression_1;
   model.Autopilot_U.in.data.gear_strut_compression_2 = simData.gear_strut_compression_2;
   model.Autopilot_U.in.data.zeta_pos = simData.zeta_pos;
@@ -150,13 +172,22 @@ bool AutopilotInterface::getModelInputDataFromSim(double sampleTime) {
   model.Autopilot_U.in.mode.vertical_mode = 0;
 
   // fill inputs into model
-  model.Autopilot_U.in.input.trigger_ap_master = simInput.trigger_ap_master;
-  model.Autopilot_U.in.input.trigger_ap_off = simInput.trigger_ap_off;
-  model.Autopilot_U.in.input.trigger_hdg_mode = simInput.trigger_hdg_mode;
-  model.Autopilot_U.in.input.trigger_alt_mode = simInput.trigger_alt_mode;
-  model.Autopilot_U.in.input.trigger_vs_mode = simInput.trigger_vs_mode;
-  model.Autopilot_U.in.input.trigger_loc = simInput.trigger_loc;
-  model.Autopilot_U.in.input.trigger_appr = simInput.trigger_appr;
+  model.Autopilot_U.in.input.AP_1_push = simInput.trigger_ap_master;
+  model.Autopilot_U.in.input.AP_2_push = simInput.trigger_ap_master;
+  model.Autopilot_U.in.input.AP_DISCONNECT_push = simInput.trigger_ap_off;
+  model.Autopilot_U.in.input.HDG_push = (simInput.trigger_hdg_mode == 2);
+  model.Autopilot_U.in.input.HDG_pull = (simInput.trigger_hdg_mode == 1);
+  model.Autopilot_U.in.input.ALT_push = simInput.trigger_alt_mode == 2;
+  model.Autopilot_U.in.input.ALT_pull = simInput.trigger_alt_mode == 1;
+  model.Autopilot_U.in.input.VS_push = simInput.trigger_vs_mode == 2;
+  model.Autopilot_U.in.input.VS_pull = simInput.trigger_vs_mode == 1;
+  model.Autopilot_U.in.input.LOC_push = simInput.trigger_loc;
+  model.Autopilot_U.in.input.APPR_push = simInput.trigger_appr;
+
+  model.Autopilot_U.in.input.H_fcu_ft = simData.ap_H_c_ft;
+  model.Autopilot_U.in.input.H_dot_fcu_fpm = simData.ap_H_dot_c_ft_min;
+  model.Autopilot_U.in.input.FPA_fcu_deg = 0;
+  model.Autopilot_U.in.input.Psi_fcu_deg = simData.ap_Psi_c_deg;
 
   // success
   return true;
@@ -173,6 +204,21 @@ bool AutopilotInterface::writeModelOuputDataToSim() {
   set_named_variable_value(idAutopilotPitch, model.Autopilot_Y.out.output.autopilot.Theta_c_deg);
   set_named_variable_value(idAutopilotBank, model.Autopilot_Y.out.output.autopilot.Phi_c_deg);
   set_named_variable_value(idAutopilotYaw, model.Autopilot_Y.out.output.autopilot.Beta_c_deg);
+
+  set_named_variable_value(idFmaLateralMode, model.Autopilot_Y.out.lateral.output.mode);
+  int lateralArmed = 0;
+  lateralArmed |= model.Autopilot_Y.out.lateral.armed.NAV << 0;
+  lateralArmed |= model.Autopilot_Y.out.lateral.armed.LOC << 1;
+  set_named_variable_value(idFmaLateralArmed, lateralArmed);
+
+  set_named_variable_value(idFmaVerticalMode, model.Autopilot_Y.out.vertical.output.mode);
+  int verticalArmed = 0;
+  verticalArmed |= model.Autopilot_Y.out.vertical.armed.ALT << 0;
+  verticalArmed |= model.Autopilot_Y.out.vertical.armed.ALT_CST << 1;
+  verticalArmed |= model.Autopilot_Y.out.vertical.armed.CLB << 2;
+  verticalArmed |= model.Autopilot_Y.out.vertical.armed.DES << 3;
+  verticalArmed |= model.Autopilot_Y.out.vertical.armed.GS << 4;
+  set_named_variable_value(idFmaVerticalArmed, verticalArmed);
 
   // success
   return true;

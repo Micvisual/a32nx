@@ -115,6 +115,11 @@ struct SimInputClientDataAutopilot {
 };
 
 struct SimOutputClientDataFlightGuidance {
+  double flightPhase;
+  double V2;
+  double flightPlanAvailable;
+  double thrustReductionAltitude;
+  double thrustReductionAltitudeGoAround;
   double crossTrackError;
   double trackAngleError;
 };

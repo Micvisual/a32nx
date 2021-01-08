@@ -74,12 +74,22 @@ class FlyByWireInterface {
   ID idAutopilotPitch;
   ID idAutopilotBank;
   ID idAutopilotYaw;
+  ID idFmaLateralMode;
+  ID idFmaLateralArmed;
+  ID idFmaVerticalMode;
+  ID idFmaVerticalArmed;
 
   ID idFlightDirectorBank;
   ID idFlightDirectorPitch;
 
   ID idFlightGuidanceCrossTrackError;
   ID idFlightGuidanceTrackAngleError;
+
+  ID idFlightPhase;
+  // ID idFmgcFlightPlanAvailable;
+  ID idFmgcV2;
+  ID idFmgcThrustReductionAltitude;
+  ID idFmgcThrustReductionAltitudeGoAround;
 
   bool getModelInputDataFromSim(double sampleTime);
 
