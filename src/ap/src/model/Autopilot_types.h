@@ -81,6 +81,7 @@ typedef struct {
   real_T nav_gs_error_deg;
   real_T flight_guidance_xtk_nmi;
   real_T flight_guidance_tae_deg;
+  real_T flight_phase;
   real_T V2_kn;
   boolean_T is_flight_plan_available;
   real_T thrust_reduction_altitude;
@@ -231,6 +232,7 @@ typedef struct {
   real_T nav_gs_error_deg;
   real_T flight_guidance_xtk_nmi;
   real_T flight_guidance_tae_deg;
+  real_T flight_phase;
   real_T V2_kn;
   boolean_T is_flight_plan_available;
   real_T thrust_reduction_altitude;

@@ -40,7 +40,8 @@ struct SimData {
   double bx_m_s2;
   double by_m_s2;
   double bz_m_s2;
-  bool ap_fd_active;
+  bool ap_fd_1_active;
+  bool ap_fd_2_active;
   double ap_V_c_kn;
   double ap_H_c_ft;
   double ap_Psi_c_deg;

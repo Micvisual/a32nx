@@ -143,7 +143,7 @@ bool AutopilotInterface::getModelInputDataFromSim(double sampleTime) {
   model.Autopilot_U.in.data.bx_m_s2 = simData.bx_m_s2;
   model.Autopilot_U.in.data.by_m_s2 = simData.by_m_s2;
   model.Autopilot_U.in.data.bz_m_s2 = simData.bz_m_s2;
-  model.Autopilot_U.in.data.ap_fd_active = simData.ap_fd_active;
+  model.Autopilot_U.in.data.ap_fd_active = simData.ap_fd_1_active | simData.ap_fd_2_active;
   model.Autopilot_U.in.data.ap_V_c_kn = simData.ap_V_c_kn;
   model.Autopilot_U.in.data.ap_H_c_ft = simData.ap_H_c_ft;
   model.Autopilot_U.in.data.ap_Psi_c_deg = simData.ap_Psi_c_deg;
@@ -155,6 +155,7 @@ bool AutopilotInterface::getModelInputDataFromSim(double sampleTime) {
   model.Autopilot_U.in.data.nav_gs_error_deg = simData.nav_gs_error_deg;
   model.Autopilot_U.in.data.flight_guidance_xtk_nmi = get_named_variable_value(idFlightGuidanceCrossTrackError);
   model.Autopilot_U.in.data.flight_guidance_tae_deg = get_named_variable_value(idFlightGuidanceTrackAngleError);
+  model.Autopilot_U.in.data.flight_phase = get_named_variable_value(idFlightPhase);
   model.Autopilot_U.in.data.V2_kn = get_named_variable_value(idFmgcV2);
   model.Autopilot_U.in.data.is_flight_plan_available = 0;
   model.Autopilot_U.in.data.thrust_reduction_altitude = get_named_variable_value(idFmgcThrustReductionAltitude);
