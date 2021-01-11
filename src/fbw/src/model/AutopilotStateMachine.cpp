@@ -1426,17 +1426,16 @@ void AutopilotStateMachineModelClass::step()
   rtb_GainTheta = std::abs(AutopilotStateMachine_B.BusAssignment.data.nav_radial_error_deg);
   rtb_Compare_i = ((rtb_GainTheta < AutopilotStateMachine_P.CompareToConstant_const) &&
                    AutopilotStateMachine_B.BusAssignment.data.nav_valid);
-  rtb_AND3 = !AutopilotStateMachine_B.BusAssignment.data.nav_valid;
-  if ((!(AutopilotStateMachine_DWork.Delay_DSTATE.lateral.output.mode ==
-         AutopilotStateMachine_P.CompareToConstant5_const_o)) || (rtb_GainTheta >=
-       AutopilotStateMachine_P.CompareToConstant1_const) || rtb_AND3) {
+  rtb_RelationalOperator = ((AutopilotStateMachine_DWork.Delay_DSTATE.lateral.output.mode ==
+    AutopilotStateMachine_P.CompareToConstant3_const_f) || (AutopilotStateMachine_DWork.Delay_DSTATE.lateral.output.mode
+    == AutopilotStateMachine_P.CompareToConstant4_const_k));
+  rtb_AND10 = !AutopilotStateMachine_B.BusAssignment.data.nav_valid;
+  if ((!rtb_RelationalOperator) || (rtb_GainTheta >= AutopilotStateMachine_P.CompareToConstant1_const) || rtb_AND10) {
     AutopilotStateMachine_B.in = AutopilotStateMachine_B.BusAssignment.time.simulation_time;
   }
 
   rtb_RelationalOperator = ((AutopilotStateMachine_B.BusAssignment.time.simulation_time - AutopilotStateMachine_B.in >=
-    AutopilotStateMachine_P.CompareToConstant2_const) && ((AutopilotStateMachine_DWork.Delay_DSTATE.lateral.output.mode ==
-    AutopilotStateMachine_P.CompareToConstant3_const_f) || (AutopilotStateMachine_DWork.Delay_DSTATE.lateral.output.mode
-    == AutopilotStateMachine_P.CompareToConstant4_const_k)));
+    AutopilotStateMachine_P.CompareToConstant2_const) && rtb_RelationalOperator);
   rtb_AND6 = (((AutopilotStateMachine_DWork.Delay_DSTATE.lateral.output.mode ==
                 AutopilotStateMachine_P.CompareToConstant12_const) ||
                (AutopilotStateMachine_DWork.Delay_DSTATE.lateral.output.mode ==
@@ -1570,18 +1569,16 @@ void AutopilotStateMachineModelClass::step()
   rtb_AND5 = ((AutopilotStateMachine_B.BusAssignment.data.nav_gs_error_deg >=
                AutopilotStateMachine_P.CompareToConstant19_const) && (rtb_GainTheta <
     AutopilotStateMachine_P.CompareToConstant6_const) && AutopilotStateMachine_B.BusAssignment.data.nav_valid);
-  if ((!(AutopilotStateMachine_DWork.Delay_DSTATE.vertical.output.mode ==
-         AutopilotStateMachine_P.CompareToConstant30_const)) || (rtb_GainTheta >=
-       AutopilotStateMachine_P.CompareToConstant7_const) || rtb_AND3) {
+  rtb_AND3 = ((AutopilotStateMachine_DWork.Delay_DSTATE.vertical.output.mode ==
+               AutopilotStateMachine_P.CompareToConstant9_const) ||
+              (AutopilotStateMachine_DWork.Delay_DSTATE.vertical.output.mode ==
+               AutopilotStateMachine_P.CompareToConstant10_const));
+  if ((!rtb_AND3) || (rtb_GainTheta >= AutopilotStateMachine_P.CompareToConstant7_const) || rtb_AND10) {
     AutopilotStateMachine_B.in_i = AutopilotStateMachine_B.BusAssignment.time.simulation_time;
   }
 
   rtb_AND3 = ((AutopilotStateMachine_B.BusAssignment.time.simulation_time - AutopilotStateMachine_B.in_i >=
-               AutopilotStateMachine_P.CompareToConstant8_const) &&
-              ((AutopilotStateMachine_DWork.Delay_DSTATE.vertical.output.mode ==
-                AutopilotStateMachine_P.CompareToConstant9_const) ||
-               (AutopilotStateMachine_DWork.Delay_DSTATE.vertical.output.mode ==
-                AutopilotStateMachine_P.CompareToConstant10_const)));
+               AutopilotStateMachine_P.CompareToConstant8_const) && rtb_AND3);
   if (AutopilotStateMachine_B.BusAssignment.data.on_ground == 0.0) {
     AutopilotStateMachine_B.in_l = AutopilotStateMachine_B.BusAssignment.time.simulation_time;
   }

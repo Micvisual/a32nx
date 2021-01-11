@@ -83,7 +83,6 @@ struct Parameters_AutopilotStateMachine_T_ {
   real_T CompareToConstant3_const;
   real_T CompareToConstant4_const;
   real_T CompareToConstant32_const;
-  lateral_mode CompareToConstant5_const_o;
   lateral_mode CompareToConstant3_const_f;
   lateral_mode CompareToConstant4_const_k;
   lateral_mode CompareToConstant12_const;
@@ -102,7 +101,6 @@ struct Parameters_AutopilotStateMachine_T_ {
   vertical_mode CompareToConstant27_const;
   vertical_mode CompareToConstant28_const;
   vertical_mode CompareToConstant29_const;
-  vertical_mode CompareToConstant30_const;
   vertical_mode CompareToConstant9_const;
   vertical_mode CompareToConstant10_const;
   boolean_T DetectIncrease_vinit;

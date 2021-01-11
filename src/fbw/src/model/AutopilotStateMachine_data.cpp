@@ -207,8 +207,6 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
 
   lateral_mode_LOC_CPT,
 
-  lateral_mode_LOC_CPT,
-
   lateral_mode_LOC_TRACK,
 
   lateral_mode_LOC_TRACK,
@@ -242,8 +240,6 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
   vertical_mode_GS_CPT,
 
   vertical_mode_GS_TRACK,
-
-  vertical_mode_GS_CPT,
 
   vertical_mode_GS_CPT,
 
