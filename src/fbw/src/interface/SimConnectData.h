@@ -27,8 +27,12 @@ struct SimData {
   double Phi_deg;
   SIMCONNECT_DATA_XYZ bodyRotationVelocity;
   SIMCONNECT_DATA_XYZ bodyRotationAcceleration;
-  double psi_magnetic_deg;
-  double psi_true_deg;
+  double bx_m_s2;
+  double by_m_s2;
+  double bz_m_s2;
+  double Psi_magnetic_deg;
+  double Psi_true_deg;
+  double Psi_magnetic_track_deg;
   double eta_pos;
   double eta_trim_deg;
   double xi_pos;
@@ -40,9 +44,11 @@ struct SimData {
   double V_ias_kn;
   double V_tas_kn;
   double V_mach;
+  double V_gnd_kn;
   double H_ft;
   double H_ind_ft;
   double H_radio_ft;
+  double H_dot_fpm;
   double CG_percent_MAC;
   double total_weight_kg;
   double gear_animation_pos_0;
@@ -51,8 +57,14 @@ struct SimData {
   double flaps_handle_index;
   double spoilers_left_pos;
   double spoilers_right_pos;
-  bool autopilot_master_on;
-  bool slew_on;
+  unsigned long long slew_on;
+  unsigned long long autopilot_master_on;
+  unsigned long long ap_fd_1_active;
+  unsigned long long ap_fd_2_active;
+  double ap_V_c_kn;
+  double ap_H_c_ft;
+  double ap_Psi_c_deg;
+  double ap_H_dot_c_ft_min;
   double simulationTime;
   double simulation_rate;
   double ice_structure_percent;
@@ -70,12 +82,29 @@ struct SimData {
   double total_air_temperature_celsius;
   double latitude_deg;
   double longitude_deg;
+  double throttle_lever_1_pos;
+  double throttle_lever_2_pos;
   double engine_1_thrust_lbf;
   double engine_2_thrust_lbf;
+  unsigned long long nav_valid;
+  double nav_loc_deg;
+  double nav_radial_error_deg;
+  double nav_dme_nmi;
+  double nav_gs_error_deg;
 };
 
 struct SimInput {
   double inputs[3];
+};
+
+struct SimInputAutopilot {
+  double trigger_ap_master;
+  double trigger_ap_off;
+  double trigger_hdg_mode;
+  double trigger_alt_mode;
+  double trigger_vs_mode;
+  double trigger_loc;
+  double trigger_appr;
 };
 
 struct SimInputThrottles {
@@ -101,20 +130,30 @@ struct SimOutputThrottles {
   double throttleLeverPosition_2;
 };
 
-struct SimInputClientDataAutopilot {
-  bool enableAutopilot;
+struct ClientDataAutopilotStateMachine {
+  unsigned long long enabled;
+  double lateral_law;
+  double lateral_mode;
+  double lateral_mode_armed;
+  double vertical_law;
+  double vertical_mode;
+  double vertical_mode_armed;
+  double Psi_c_deg;
+  double H_c_ft;
+  double H_dot_c_fpm;
+  double FPA_c_deg;
+};
+
+struct ClientDataAutopilotLaws {
+  unsigned long long enableAutopilot;
   double flightDirectorTheta;
   double autopilotTheta;
   double flightDirectorPhi;
   double autopilotPhi;
   double autopilotBeta;
-  double fmaLateralMode;
-  double fmaLateralArmed;
-  double fmaVerticalMode;
-  double fmaVerticalArmed;
 };
 
-struct SimOutputClientDataFlightGuidance {
+struct ClientDataLocalVariables {
   double flightPhase;
   double V2;
   double flightPlanAvailable;

@@ -31,7 +31,12 @@ class SimConnectInterface {
 
   ~SimConnectInterface() = default;
 
-  bool connect(bool isThrottleHandlingEnabled, double idleThrottleInput, bool useReverseOnAxis);
+  bool connect(bool isThrottleHandlingEnabled,
+               double idleThrottleInput,
+               bool useReverseOnAxis,
+               bool autopilotStateMachineEnabled,
+               bool autopilotLawsEnabled,
+               bool flyByWireEnabled);
 
   void disconnect();
 
@@ -51,21 +56,35 @@ class SimConnectInterface {
 
   bool sendAutoThrustArmEvent();
 
-  bool setSimOutputClientDataFlightGuidance(SimOutputClientDataFlightGuidance output);
+  bool setClientDataLocalVariables(ClientDataLocalVariables output);
+
+  void resetSimInputAutopilot();
 
   SimData getSimData();
 
   SimInput getSimInput();
 
+  SimInputAutopilot getSimInputAutopilot();
+
   SimInputThrottles getSimInputThrottles();
 
-  SimInputClientDataAutopilot getSimInputClientDataAutopilot();
+  bool setClientDataAutopilotStateMachine(ClientDataAutopilotStateMachine output);
+  ClientDataAutopilotStateMachine getClientDataAutopilotStateMachine();
+
+  bool setClientDataAutopilotLaws(ClientDataAutopilotLaws output);
+  ClientDataAutopilotLaws getClientDataAutopilotLaws();
 
   bool getIsAnyReverseToggleActive();
   bool getIsReverseToggleActive(int index);
   bool getIsAutothrottlesArmed();
 
  private:
+  enum ClientData {
+    AUTOPILOT_STATE_MACHINE,
+    AUTOPILOT_LAWS,
+    LOCAL_VARIABLES,
+  };
+
   enum Events {
     AXIS_ELEVATOR_SET,
     AXIS_AILERONS_SET,
@@ -83,6 +102,14 @@ class SimConnectInterface {
     ELEVATOR_SET,
     ELEV_DOWN,
     ELEV_UP,
+    AP_MASTER,
+    AUTOPILOT_OFF,
+    HEADING_SLOT_INDEX_SET,
+    ALTITUDE_SLOT_INDEX_SET,
+    AP_PANEL_VS_ON,
+    AP_LOC_HOLD,
+    AP_LOC_HOLD_OFF,
+    AP_APR_HOLD_ON,
     AUTO_THROTTLE_ARM,
     THROTTLE_SET,
     THROTTLE1_SET,
@@ -126,6 +153,7 @@ class SimConnectInterface {
 
   SimData simData = {};
   SimInput simInput = {};
+  SimInputAutopilot simInputAutopilot = {};
 
   SimInputThrottles simInputThrottles = {};
   bool useReverseOnAxis = false;
@@ -134,11 +162,15 @@ class SimConnectInterface {
   bool isAutothrustArmed = false;
   double idleThrottleInput = -1.0;
 
-  SimInputClientDataAutopilot clientDataAutopilot = {};
+  ClientDataAutopilotStateMachine clientDataAutopilotStateMachine = {};
+  ClientDataAutopilotLaws clientDataAutopilotLaws = {};
 
   bool prepareSimDataSimConnectDataDefinitions();
 
-  bool prepareSimInputSimConnectDataDefinitions(bool isThrottleHandlingEnabled);
+  bool prepareSimInputSimConnectDataDefinitions(bool isThrottleHandlingEnabled,
+                                                bool autopilotStateMachineEnabled,
+                                                bool autopilotLawsEnabled,
+                                                bool flyByWireEnabled);
 
   bool prepareSimOutputSimConnectDataDefinitions();
 
@@ -152,6 +184,7 @@ class SimConnectInterface {
 
   void simConnectProcessClientData(const SIMCONNECT_RECV_CLIENT_DATA* data);
 
+  bool sendClientData(SIMCONNECT_DATA_DEFINITION_ID id, DWORD size, void* data);
   bool sendData(SIMCONNECT_DATA_DEFINITION_ID id, DWORD size, void* data);
 
   static bool addDataDefinition(const HANDLE connectionHandle,

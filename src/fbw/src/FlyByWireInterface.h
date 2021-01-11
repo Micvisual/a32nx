@@ -21,6 +21,8 @@
 #include <MSFS/Legacy/gauges.h>
 #include <SimConnect.h>
 
+#include "AutopilotLaws.h"
+#include "AutopilotStateMachine.h"
 #include "FlightDataRecorder.h"
 #include "FlyByWire.h"
 #include "InterpolatingLookupTable.h"
@@ -35,6 +37,7 @@ class FlyByWireInterface {
   bool update(double sampleTime);
 
  private:
+  const std::string MODEL_CONFIGURATION_FILEPATH = "\\work\\ModelConfiguration.ini";
   const std::string THROTTLE_CONFIGURATION_FILEPATH = "\\work\\ThrottleConfiguration.ini";
 
   bool isThrottleLoggingEnabled = false;
@@ -49,10 +52,18 @@ class FlyByWireInterface {
 
   double previousSimulationTime = 0;
 
+  bool autopilotStateMachineEnabled = false;
+  bool autopilotLawsEnabled = false;
+  bool flyByWireEnabled = false;
+
+  bool pauseDetected = false;
+
   FlightDataRecorder flightDataRecorder;
 
   SimConnectInterface simConnectInterface;
-  FlyByWireModelClass model;
+  FlyByWireModelClass flyByWire;
+  AutopilotStateMachineModelClass autopilotStateMachine;
+  AutopilotLawsModelClass autopilotLaws;
   InterpolatingLookupTable throttleLookupTable;
 
   ID idSideStickPositionX;
@@ -69,11 +80,6 @@ class FlyByWireInterface {
   ID idThrottlePosition_1;
   ID idThrottlePosition_2;
 
-  ID idAutopilotUseLvar;
-  ID idAutopilotOn;
-  ID idAutopilotPitch;
-  ID idAutopilotBank;
-  ID idAutopilotYaw;
   ID idFmaLateralMode;
   ID idFmaLateralArmed;
   ID idFmaVerticalMode;
@@ -81,6 +87,7 @@ class FlyByWireInterface {
 
   ID idFlightDirectorBank;
   ID idFlightDirectorPitch;
+  ID idFlightDirectorYaw;
 
   ID idFlightGuidanceCrossTrackError;
   ID idFlightGuidanceTrackAngleError;
@@ -91,9 +98,16 @@ class FlyByWireInterface {
   ID idFmgcThrustReductionAltitude;
   ID idFmgcThrustReductionAltitudeGoAround;
 
-  bool getModelInputDataFromSim(double sampleTime);
+  ap_raw_laws_input autopilotStateMachineOutput;
+  ap_raw_output autopilotLawsOutput;
 
-  bool writeModelOuputDataToSim();
+  bool readDataAndLocalVariables(double sampleTime);
+
+  bool updateAutopilotStateMachine(double sampleTime);
+
+  bool updateAutopilotLaws(double sampleTime);
+
+  bool updateFlyByWire(double sampleTime);
 
   void initializeThrottles();
 

@@ -1,5 +1,6 @@
 #ifndef RTWTYPES_H
 #define RTWTYPES_H
+
 #if (!defined(__cplusplus))
 #  ifndef false
 #   define false                       (0U)
@@ -41,3 +42,4 @@ typedef char_T byte_T;
 typedef void * pointer_T;
 
 #endif
+

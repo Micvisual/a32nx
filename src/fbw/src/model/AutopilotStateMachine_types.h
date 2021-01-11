@@ -1,51 +1,19 @@
-#ifndef RTW_HEADER_Autopilot_types_h_
-#define RTW_HEADER_Autopilot_types_h_
+#ifndef RTW_HEADER_AutopilotStateMachine_types_h_
+#define RTW_HEADER_AutopilotStateMachine_types_h_
 #include "rtwtypes.h"
-#ifndef DEFINED_TYPEDEF_FOR_base_raw_mode_
-#define DEFINED_TYPEDEF_FOR_base_raw_mode_
-
-typedef struct {
-  real_T lateral_mode;
-  real_T vertical_mode;
-} base_raw_mode;
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_raw_input_
-#define DEFINED_TYPEDEF_FOR_base_raw_input_
-
-typedef struct {
-  boolean_T AP_1_push;
-  boolean_T AP_2_push;
-  boolean_T AP_DISCONNECT_push;
-  boolean_T HDG_push;
-  boolean_T HDG_pull;
-  boolean_T ALT_push;
-  boolean_T ALT_pull;
-  boolean_T VS_push;
-  boolean_T VS_pull;
-  boolean_T LOC_push;
-  boolean_T APPR_push;
-  real_T Psi_fcu_deg;
-  real_T H_fcu_ft;
-  real_T H_dot_fcu_fpm;
-  real_T FPA_fcu_deg;
-} base_raw_input;
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_raw_time_
-#define DEFINED_TYPEDEF_FOR_base_raw_time_
+#include "multiword_types.h"
+#ifndef DEFINED_TYPEDEF_FOR_ap_raw_time_
+#define DEFINED_TYPEDEF_FOR_ap_raw_time_
 
 typedef struct {
   real_T dt;
   real_T simulation_time;
-} base_raw_time;
+} ap_raw_time;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_raw_data_
-#define DEFINED_TYPEDEF_FOR_base_raw_data_
+#ifndef DEFINED_TYPEDEF_FOR_ap_raw_data_
+#define DEFINED_TYPEDEF_FOR_ap_raw_data_
 
 typedef struct {
   real_T Theta_deg;
@@ -91,19 +59,41 @@ typedef struct {
   real_T zeta_pos;
   real_T throttle_lever_1_pos;
   real_T throttle_lever_2_pos;
-} base_raw_data;
+} ap_raw_data;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_ap_input_
-#define DEFINED_TYPEDEF_FOR_ap_input_
+#ifndef DEFINED_TYPEDEF_FOR_ap_raw_sm_input_
+#define DEFINED_TYPEDEF_FOR_ap_raw_sm_input_
 
 typedef struct {
-  base_raw_mode mode;
-  base_raw_input input;
-  base_raw_time time;
-  base_raw_data data;
-} ap_input;
+  boolean_T AP_1_push;
+  boolean_T AP_2_push;
+  boolean_T AP_DISCONNECT_push;
+  boolean_T HDG_push;
+  boolean_T HDG_pull;
+  boolean_T ALT_push;
+  boolean_T ALT_pull;
+  boolean_T VS_push;
+  boolean_T VS_pull;
+  boolean_T LOC_push;
+  boolean_T APPR_push;
+  real_T Psi_fcu_deg;
+  real_T H_fcu_ft;
+  real_T H_dot_fcu_fpm;
+  real_T FPA_fcu_deg;
+} ap_raw_sm_input;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_ap_sm_input_
+#define DEFINED_TYPEDEF_FOR_ap_sm_input_
+
+typedef struct {
+  ap_raw_time time;
+  ap_raw_data data;
+  ap_raw_sm_input input;
+} ap_sm_input;
 
 #endif
 
@@ -195,8 +185,8 @@ typedef enum {
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_data_
-#define DEFINED_TYPEDEF_FOR_base_data_
+#ifndef DEFINED_TYPEDEF_FOR_ap_data_
+#define DEFINED_TYPEDEF_FOR_ap_data_
 
 typedef struct {
   real_T Theta_deg;
@@ -241,12 +231,12 @@ typedef struct {
   real_T zeta_deg;
   real_T throttle_lever_1_pos;
   real_T throttle_lever_2_pos;
-} base_data;
+} ap_data;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_lateral_input_
-#define DEFINED_TYPEDEF_FOR_base_lateral_input_
+#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_input_
+#define DEFINED_TYPEDEF_FOR_ap_lateral_input_
 
 typedef struct {
   boolean_T HDG_push;
@@ -254,22 +244,22 @@ typedef struct {
   boolean_T LOC_push;
   boolean_T APPR_push;
   real_T Psi_fcu_deg;
-} base_lateral_input;
+} ap_lateral_input;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_lateral_armed_
-#define DEFINED_TYPEDEF_FOR_base_lateral_armed_
+#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_armed_
+#define DEFINED_TYPEDEF_FOR_ap_lateral_armed_
 
 typedef struct {
   boolean_T NAV;
   boolean_T LOC;
-} base_lateral_armed;
+} ap_lateral_armed;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_lateral_condition_
-#define DEFINED_TYPEDEF_FOR_base_lateral_condition_
+#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_condition_
+#define DEFINED_TYPEDEF_FOR_ap_lateral_condition_
 
 typedef struct {
   boolean_T NAV;
@@ -281,35 +271,35 @@ typedef struct {
   boolean_T GA_TRACK;
   boolean_T RWY;
   boolean_T RWY_TRACK;
-} base_lateral_condition;
+} ap_lateral_condition;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_lateral_output_
-#define DEFINED_TYPEDEF_FOR_base_lateral_output_
+#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_output_
+#define DEFINED_TYPEDEF_FOR_ap_lateral_output_
 
 typedef struct {
   lateral_mode mode;
   lateral_law law;
   real_T Psi_c_deg;
-} base_lateral_output;
+} ap_lateral_output;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_lateral_
-#define DEFINED_TYPEDEF_FOR_base_lateral_
+#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_
+#define DEFINED_TYPEDEF_FOR_ap_lateral_
 
 typedef struct {
-  base_lateral_input input;
-  base_lateral_armed armed;
-  base_lateral_condition condition;
-  base_lateral_output output;
-} base_lateral;
+  ap_lateral_input input;
+  ap_lateral_armed armed;
+  ap_lateral_condition condition;
+  ap_lateral_output output;
+} ap_lateral;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_vertical_input_
-#define DEFINED_TYPEDEF_FOR_base_vertical_input_
+#ifndef DEFINED_TYPEDEF_FOR_ap_vertical_input_
+#define DEFINED_TYPEDEF_FOR_ap_vertical_input_
 
 typedef struct {
   boolean_T ALT_push;
@@ -321,12 +311,12 @@ typedef struct {
   real_T H_fcu_ft;
   real_T H_dot_fcu_fpm;
   real_T FPA_fcu_deg;
-} base_vertical_input;
+} ap_vertical_input;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_vertical_armed_
-#define DEFINED_TYPEDEF_FOR_base_vertical_armed_
+#ifndef DEFINED_TYPEDEF_FOR_ap_vertical_armed_
+#define DEFINED_TYPEDEF_FOR_ap_vertical_armed_
 
 typedef struct {
   boolean_T ALT;
@@ -334,12 +324,12 @@ typedef struct {
   boolean_T CLB;
   boolean_T DES;
   boolean_T GS;
-} base_vertical_armed;
+} ap_vertical_armed;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_vertical_condition_
-#define DEFINED_TYPEDEF_FOR_base_vertical_condition_
+#ifndef DEFINED_TYPEDEF_FOR_ap_vertical_condition_
+#define DEFINED_TYPEDEF_FOR_ap_vertical_condition_
 
 typedef struct {
   boolean_T ALT;
@@ -355,12 +345,12 @@ typedef struct {
   boolean_T ROLL_OUT;
   boolean_T SRS;
   boolean_T THR_RED;
-} base_vertical_condition;
+} ap_vertical_condition;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_vertical_output_
-#define DEFINED_TYPEDEF_FOR_base_vertical_output_
+#ifndef DEFINED_TYPEDEF_FOR_ap_vertical_output_
+#define DEFINED_TYPEDEF_FOR_ap_vertical_output_
 
 typedef struct {
   vertical_mode mode;
@@ -369,102 +359,56 @@ typedef struct {
   real_T H_c_ft;
   real_T H_dot_c_fpm;
   real_T FPA_c_deg;
-} base_vertical_output;
+} ap_vertical_output;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_vertical_
-#define DEFINED_TYPEDEF_FOR_base_vertical_
+#ifndef DEFINED_TYPEDEF_FOR_ap_vertical_
+#define DEFINED_TYPEDEF_FOR_ap_vertical_
 
 typedef struct {
-  base_vertical_input input;
-  base_vertical_armed armed;
-  base_vertical_condition condition;
-  base_vertical_output output;
-} base_vertical;
+  ap_vertical_input input;
+  ap_vertical_armed armed;
+  ap_vertical_condition condition;
+  ap_vertical_output output;
+} ap_vertical;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_raw_output_command_
-#define DEFINED_TYPEDEF_FOR_base_raw_output_command_
+#ifndef DEFINED_TYPEDEF_FOR_ap_raw_laws_input_
+#define DEFINED_TYPEDEF_FOR_ap_raw_laws_input_
 
 typedef struct {
-  real_T Theta_c_deg;
-  real_T Phi_c_deg;
-  real_T Beta_c_deg;
-} base_raw_output_command;
+  real_T enabled;
+  real_T lateral_law;
+  real_T lateral_mode;
+  real_T lateral_mode_armed;
+  real_T vertical_law;
+  real_T vertical_mode;
+  real_T vertical_mode_armed;
+  real_T Psi_c_deg;
+  real_T H_c_ft;
+  real_T H_dot_c_fpm;
+  real_T FPA_c_deg;
+} ap_raw_laws_input;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_raw_output_
-#define DEFINED_TYPEDEF_FOR_base_raw_output_
+#ifndef DEFINED_TYPEDEF_FOR_ap_sm_output_
+#define DEFINED_TYPEDEF_FOR_ap_sm_output_
 
 typedef struct {
-  real_T ap_on;
-  base_raw_output_command flight_director;
-  base_raw_output_command autopilot;
-} base_raw_output;
+  ap_raw_time time;
+  ap_data data;
+  ap_raw_sm_input input;
+  ap_lateral lateral;
+  ap_vertical vertical;
+  ap_raw_laws_input output;
+} ap_sm_output;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_ap_output_
-#define DEFINED_TYPEDEF_FOR_ap_output_
-
-typedef struct {
-  base_raw_time time;
-  base_raw_mode mode;
-  base_raw_input input;
-  base_data data;
-  base_lateral lateral;
-  base_vertical vertical;
-  base_raw_output output;
-} ap_output;
-
-#endif
-
-#ifndef struct_tag_skA4KFEZ4HPkJJBOYCrevdH
-#define struct_tag_skA4KFEZ4HPkJJBOYCrevdH
-
-struct tag_skA4KFEZ4HPkJJBOYCrevdH
-{
-  uint32_T SafeEq;
-  uint32_T Absolute;
-  uint32_T NaNBias;
-  uint32_T NaNWithFinite;
-  uint32_T FiniteWithNaN;
-  uint32_T NaNWithNaN;
-};
-
-#endif
-
-#ifndef typedef_skA4KFEZ4HPkJJBOYCrevdH_Autopilot_T
-#define typedef_skA4KFEZ4HPkJJBOYCrevdH_Autopilot_T
-
-typedef struct tag_skA4KFEZ4HPkJJBOYCrevdH skA4KFEZ4HPkJJBOYCrevdH_Autopilot_T;
-
-#endif
-
-#ifndef struct_tag_sJCxfmxS8gBOONUZjbjUd9E
-#define struct_tag_sJCxfmxS8gBOONUZjbjUd9E
-
-struct tag_sJCxfmxS8gBOONUZjbjUd9E
-{
-  boolean_T CaseSensitivity;
-  boolean_T StructExpand;
-  char_T PartialMatching[6];
-  boolean_T IgnoreNulls;
-};
-
-#endif
-
-#ifndef typedef_sJCxfmxS8gBOONUZjbjUd9E_Autopilot_T
-#define typedef_sJCxfmxS8gBOONUZjbjUd9E_Autopilot_T
-
-typedef struct tag_sJCxfmxS8gBOONUZjbjUd9E sJCxfmxS8gBOONUZjbjUd9E_Autopilot_T;
-
-#endif
-
-typedef struct Parameters_Autopilot_T_ Parameters_Autopilot_T;
+typedef struct Parameters_AutopilotStateMachine_T_ Parameters_AutopilotStateMachine_T;
 
 #endif
 
