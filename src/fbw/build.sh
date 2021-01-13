@@ -79,6 +79,7 @@ clang++ \
   "${DIR}/src/model/FlyByWire_data.cpp" \
   "${DIR}/src/model/FlyByWire.cpp" \
   "${DIR}/src/model/look1_binlxpw.cpp" \
+  "${DIR}/src/model/mod_tnBo173x.cpp" \
   "${DIR}/src/model/MultiWordIor.cpp" \
   "${DIR}/src/model/rt_modd.cpp" \
   "${DIR}/src/model/uMultiWord2Double.cpp" \

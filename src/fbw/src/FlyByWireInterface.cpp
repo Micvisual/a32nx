@@ -225,6 +225,7 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachine.AutopilotStateMachine_U.in.data.gear_strut_compression_1 = simData.gear_animation_pos_1;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.gear_strut_compression_2 = simData.gear_animation_pos_2;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.zeta_pos = simData.zeta_pos;
+    autopilotStateMachine.AutopilotStateMachine_U.in.data.flaps_handle_index = simData.flaps_handle_index;
 
     // input ----------------------------------------------------------------------------------------------------------
     autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_1_push = simInputAutopilot.trigger_ap_master;
@@ -331,6 +332,7 @@ bool FlyByWireInterface::updateAutopilotLaws(double sampleTime) {
     autopilotLaws.AutopilotLaws_U.in.data.gear_strut_compression_1 = simData.gear_animation_pos_1;
     autopilotLaws.AutopilotLaws_U.in.data.gear_strut_compression_2 = simData.gear_animation_pos_2;
     autopilotLaws.AutopilotLaws_U.in.data.zeta_pos = simData.zeta_pos;
+    autopilotLaws.AutopilotLaws_U.in.data.flaps_handle_index = simData.flaps_handle_index;
 
     // input ----------------------------------------------------------------------------------------------------------
     autopilotLaws.AutopilotLaws_U.in.input = autopilotStateMachineOutput;

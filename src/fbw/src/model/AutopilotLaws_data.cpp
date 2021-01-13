@@ -51,6 +51,7 @@ Parameters_AutopilotLaws_T AutopilotLawsModelClass::AutopilotLaws_P = {
       0.0,
       0.0,
       0.0,
+      0.0,
       0.0
     },
 

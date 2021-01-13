@@ -51,6 +51,12 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
       0.0,
       0.0,
       0.0,
+      0.0,
+      0.0
+    },
+
+    {
+      0.0,
       0.0
     },
 
@@ -93,6 +99,35 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
         0,
         0,
         0,
+        0
+      },
+
+      {
+        lateral_mode_NONE,
+        lateral_law_NONE,
+        0.0
+      }
+    },
+
+    {
+      {
+        0,
+        0,
+        0,
+        0,
+        0.0
+      },
+
+      {
+        0,
+        0
+      },
+
+      {
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0
@@ -101,6 +136,53 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
       {
         lateral_mode_NONE,
         lateral_law_NONE,
+        0.0
+      }
+    },
+
+    {
+      {
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0.0,
+        0.0,
+        0.0
+      },
+
+      {
+        0,
+        0,
+        0,
+        0,
+        0
+      },
+
+      {
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      },
+
+      {
+        vertical_mode_NONE,
+        athr_mode_NONE,
+        vertical_law_NONE,
+        0.0,
+        0.0,
         0.0
       }
     },
@@ -270,50 +352,12 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
 
   {
     {
-      0.0,
-      0.0
-    },
-
-    {
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
       false,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
       false,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
       false,
-      0.0,
-      0.0,
-      0.0,
+      false,
+      false,
+      false,
       0.0,
       0.0,
       0.0
@@ -324,115 +368,66 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
       false,
       false,
       false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      0.0,
-      0.0,
-      0.0,
-      0.0
+      false
     },
 
     {
-      {
-        false,
-        false,
-        false,
-        false,
-        0.0
-      },
-
-      {
-        false,
-        false
-      },
-
-      {
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      },
-
-      {
-        lateral_mode_NONE,
-        lateral_law_NONE,
-        0.0
-      }
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
     },
 
     {
-      {
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        0.0,
-        0.0,
-        0.0
-      },
-
-      {
-        false,
-        false,
-        false,
-        false,
-        false
-      },
-
-      {
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      },
-
-      {
-        vertical_mode_NONE,
-        athr_mode_NONE,
-        vertical_law_NONE,
-        0.0,
-        0.0,
-        0.0
-      }
-    },
-
-    {
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
+      vertical_mode_NONE,
+      athr_mode_NONE,
+      vertical_law_NONE,
       0.0,
       0.0,
       0.0
     }
   },
 
-  0.0,
+
+  {
+    {
+      false,
+      false,
+      false,
+      false,
+      0.0
+    },
+
+    {
+      false,
+      false
+    },
+
+    {
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    },
+
+    {
+      lateral_mode_NONE,
+      lateral_law_NONE,
+      0.0
+    }
+  },
 
   0.0,
 
@@ -471,10 +466,6 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
   6.0,
 
   1,
-
-  0,
-
-  0,
 
   0,
 

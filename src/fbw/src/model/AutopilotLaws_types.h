@@ -58,6 +58,7 @@ typedef struct {
   real_T zeta_pos;
   real_T throttle_lever_1_pos;
   real_T throttle_lever_2_pos;
+  real_T flaps_handle_index;
 } ap_raw_data;
 
 #endif
@@ -138,6 +139,7 @@ typedef struct {
   real_T zeta_deg;
   real_T throttle_lever_1_pos;
   real_T throttle_lever_2_pos;
+  real_T flaps_handle_index;
 } ap_data;
 
 #endif

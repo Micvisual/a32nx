@@ -59,6 +59,7 @@ typedef struct {
   real_T zeta_pos;
   real_T throttle_lever_1_pos;
   real_T throttle_lever_2_pos;
+  real_T flaps_handle_index;
 } ap_raw_data;
 
 #endif
@@ -97,41 +98,6 @@ typedef struct {
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_lateral_mode_
-#define DEFINED_TYPEDEF_FOR_lateral_mode_
-
-typedef enum {
-  lateral_mode_NONE = 0,
-  lateral_mode_HDG = 10,
-  lateral_mode_TRACK = 11,
-  lateral_mode_NAV = 20,
-  lateral_mode_LOC_CPT = 30,
-  lateral_mode_LOC_TRACK = 31,
-  lateral_mode_LAND = 32,
-  lateral_mode_FLARE = 33,
-  lateral_mode_ROLL_OUT = 34,
-  lateral_mode_RWY = 40,
-  lateral_mode_RWY_TRACK = 41,
-  lateral_mode_GA_TRACK = 50
-} lateral_mode;
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_lateral_law_
-#define DEFINED_TYPEDEF_FOR_lateral_law_
-
-typedef enum {
-  lateral_law_NONE = 0,
-  lateral_law_HDG,
-  lateral_law_TRACK,
-  lateral_law_HPATH,
-  lateral_law_LOC_CPT,
-  lateral_law_LOC_TRACK,
-  lateral_law_ROLL_OUT
-} lateral_law;
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_vertical_mode_
 #define DEFINED_TYPEDEF_FOR_vertical_mode_
 
@@ -156,32 +122,61 @@ typedef enum {
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_athr_mode_
-#define DEFINED_TYPEDEF_FOR_athr_mode_
+#ifndef DEFINED_TYPEDEF_FOR_lateral_mode_
+#define DEFINED_TYPEDEF_FOR_lateral_mode_
 
 typedef enum {
-  athr_mode_NONE = 0,
-  athr_mode_SPEED,
-  athr_mode_THRUST_IDLE,
-  athr_mode_THRUST_CLB
-} athr_mode;
+  lateral_mode_NONE = 0,
+  lateral_mode_HDG = 10,
+  lateral_mode_TRACK = 11,
+  lateral_mode_NAV = 20,
+  lateral_mode_LOC_CPT = 30,
+  lateral_mode_LOC_TRACK = 31,
+  lateral_mode_LAND = 32,
+  lateral_mode_FLARE = 33,
+  lateral_mode_ROLL_OUT = 34,
+  lateral_mode_RWY = 40,
+  lateral_mode_RWY_TRACK = 41,
+  lateral_mode_GA_TRACK = 50
+} lateral_mode;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_vertical_law_
-#define DEFINED_TYPEDEF_FOR_vertical_law_
+#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_armed_
+#define DEFINED_TYPEDEF_FOR_ap_lateral_armed_
 
-typedef enum {
-  vertical_law_NONE = 0,
-  vertical_law_ALT_HOLD,
-  vertical_law_ALT_ACQ,
-  vertical_law_SPD_MACH,
-  vertical_law_VS,
-  vertical_law_FPA,
-  vertical_law_GS,
-  vertical_law_FLARE,
-  vertical_law_SRS
-} vertical_law;
+typedef struct {
+  boolean_T NAV;
+  boolean_T LOC;
+} ap_lateral_armed;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_condition_
+#define DEFINED_TYPEDEF_FOR_ap_lateral_condition_
+
+typedef struct {
+  boolean_T NAV;
+  boolean_T LOC_CPT;
+  boolean_T LOC_TRACK;
+  boolean_T LAND;
+  boolean_T FLARE;
+  boolean_T ROLL_OUT;
+  boolean_T GA_TRACK;
+} ap_lateral_condition;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_input_
+#define DEFINED_TYPEDEF_FOR_ap_lateral_input_
+
+typedef struct {
+  boolean_T HDG_push;
+  boolean_T HDG_pull;
+  boolean_T LOC_push;
+  boolean_T APPR_push;
+  real_T Psi_fcu_deg;
+} ap_lateral_input;
 
 #endif
 
@@ -231,47 +226,33 @@ typedef struct {
   real_T zeta_deg;
   real_T throttle_lever_1_pos;
   real_T throttle_lever_2_pos;
+  real_T flaps_handle_index;
 } ap_data;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_input_
-#define DEFINED_TYPEDEF_FOR_ap_lateral_input_
+#ifndef DEFINED_TYPEDEF_FOR_ap_sm_data_computed_
+#define DEFINED_TYPEDEF_FOR_ap_sm_data_computed_
 
 typedef struct {
-  boolean_T HDG_push;
-  boolean_T HDG_pull;
-  boolean_T LOC_push;
-  boolean_T APPR_push;
-  real_T Psi_fcu_deg;
-} ap_lateral_input;
+  real_T time_since_touchdown;
+  real_T time_since_lift_off;
+} ap_sm_data_computed;
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_armed_
-#define DEFINED_TYPEDEF_FOR_ap_lateral_armed_
+#ifndef DEFINED_TYPEDEF_FOR_lateral_law_
+#define DEFINED_TYPEDEF_FOR_lateral_law_
 
-typedef struct {
-  boolean_T NAV;
-  boolean_T LOC;
-} ap_lateral_armed;
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_ap_lateral_condition_
-#define DEFINED_TYPEDEF_FOR_ap_lateral_condition_
-
-typedef struct {
-  boolean_T NAV;
-  boolean_T LOC_CPT;
-  boolean_T LOC_TRACK;
-  boolean_T LAND;
-  boolean_T FLARE;
-  boolean_T ROLL_OUT;
-  boolean_T GA_TRACK;
-  boolean_T RWY;
-  boolean_T RWY_TRACK;
-} ap_lateral_condition;
+typedef enum {
+  lateral_law_NONE = 0,
+  lateral_law_HDG,
+  lateral_law_TRACK,
+  lateral_law_HPATH,
+  lateral_law_LOC_CPT,
+  lateral_law_LOC_TRACK,
+  lateral_law_ROLL_OUT
+} lateral_law;
 
 #endif
 
@@ -283,6 +264,35 @@ typedef struct {
   lateral_law law;
   real_T Psi_c_deg;
 } ap_lateral_output;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_athr_mode_
+#define DEFINED_TYPEDEF_FOR_athr_mode_
+
+typedef enum {
+  athr_mode_NONE = 0,
+  athr_mode_SPEED,
+  athr_mode_THRUST_IDLE,
+  athr_mode_THRUST_CLB
+} athr_mode;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_vertical_law_
+#define DEFINED_TYPEDEF_FOR_vertical_law_
+
+typedef enum {
+  vertical_law_NONE = 0,
+  vertical_law_ALT_HOLD,
+  vertical_law_ALT_ACQ,
+  vertical_law_SPD_MACH,
+  vertical_law_VS,
+  vertical_law_FPA,
+  vertical_law_GS,
+  vertical_law_FLARE,
+  vertical_law_SRS
+} vertical_law;
 
 #endif
 
@@ -400,9 +410,12 @@ typedef struct {
 typedef struct {
   ap_raw_time time;
   ap_data data;
+  ap_sm_data_computed data_computed;
   ap_raw_sm_input input;
   ap_lateral lateral;
+  ap_lateral lateral_previous;
   ap_vertical vertical;
+  ap_vertical vertical_previous;
   ap_raw_laws_input output;
 } ap_sm_output;
 
