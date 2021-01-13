@@ -295,7 +295,7 @@ Parameters_AutopilotLaws_T AutopilotLawsModelClass::AutopilotLaws_P = {
 
   20.0,
 
-  8.0,
+  6.0,
 
   0.00508,
 
@@ -315,7 +315,7 @@ Parameters_AutopilotLaws_T AutopilotLawsModelClass::AutopilotLaws_P = {
 
   196.85039370078741,
 
-  8.0,
+  6.0,
 
   500.0,
 
