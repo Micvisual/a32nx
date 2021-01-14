@@ -121,8 +121,8 @@ var Airbus_FMA;
         }
 
         static refresh() {
-            this.autoPilotActive[0] = Simplane.getAutoPilotActive(1);
-            this.autoPilotActive[1] = Simplane.getAutoPilotActive(2);
+            this.autoPilotActive[0] = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_1_ACTIVE", "number");
+            this.autoPilotActive[1] = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_2_ACTIVE", "number");
             this.anyAutoPilotsActive = (this.autoPilotActive[0] || this.autoPilotActive[1]);
             this.bothAutoPilotsActive = (this.autoPilotActive[0] && this.autoPilotActive[1]);
             this.bothAutoPilotsInactive = (!this.autoPilotActive[0] && !this.autoPilotActive[1]);

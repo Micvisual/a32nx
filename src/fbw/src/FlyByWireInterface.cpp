@@ -54,6 +54,10 @@ bool FlyByWireInterface::connect() {
   idFlightDirectorPitch = register_named_variable("A32NX_FLIGHT_DIRECTOR_PITCH");
   idFlightDirectorYaw = register_named_variable("A32NX_FLIGHT_DIRECTOR_YAW");
 
+  // register L variables for autopilot
+  idAutopilotActive_1 = register_named_variable("A32NX_AUTOPILOT_1_ACTIVE");
+  idAutopilotActive_2 = register_named_variable("A32NX_AUTOPILOT_2_ACTIVE");
+
   // register L variables for flight guidance
   idFlightPhase = register_named_variable("A32NX_FWC_FLIGHT_PHASE");
   idFmgcV2 = register_named_variable("AIRLINER_V2_SPEED");
@@ -264,6 +268,10 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachineOutput.H_dot_c_fpm = clientData.H_dot_c_fpm;
     autopilotStateMachineOutput.FPA_c_deg = clientData.FPA_c_deg;
   }
+
+  // update autopilot state
+  set_named_variable_value(idAutopilotActive_1, autopilotStateMachineOutput.enabled);
+  set_named_variable_value(idAutopilotActive_2, 0);
 
   // update FMA variables ---------------------------------------------------------------------------------------------
   set_named_variable_value(idFmaLateralMode, autopilotStateMachineOutput.lateral_mode);

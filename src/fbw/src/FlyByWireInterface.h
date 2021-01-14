@@ -89,6 +89,9 @@ class FlyByWireInterface {
   ID idFlightDirectorPitch;
   ID idFlightDirectorYaw;
 
+  ID idAutopilotActive_1;
+  ID idAutopilotActive_2;
+
   ID idFlightGuidanceCrossTrackError;
   ID idFlightGuidanceTrackAngleError;
 
