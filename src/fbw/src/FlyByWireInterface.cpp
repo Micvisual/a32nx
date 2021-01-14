@@ -219,7 +219,7 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
         get_named_variable_value(idFlightGuidanceTrackAngleError);
     autopilotStateMachine.AutopilotStateMachine_U.in.data.flight_phase = get_named_variable_value(idFlightPhase);
     autopilotStateMachine.AutopilotStateMachine_U.in.data.V2_kn = get_named_variable_value(idFmgcV2);
-    autopilotStateMachine.AutopilotStateMachine_U.in.data.is_flight_plan_available = 0;
+    autopilotStateMachine.AutopilotStateMachine_U.in.data.is_flight_plan_available = 1;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.thrust_reduction_altitude =
         get_named_variable_value(idFmgcThrustReductionAltitude);
     autopilotStateMachine.AutopilotStateMachine_U.in.data.thrust_reduction_altitude_go_around =
@@ -330,7 +330,7 @@ bool FlyByWireInterface::updateAutopilotLaws(double sampleTime) {
         get_named_variable_value(idFlightGuidanceTrackAngleError);
     autopilotLaws.AutopilotLaws_U.in.data.flight_phase = get_named_variable_value(idFlightPhase);
     autopilotLaws.AutopilotLaws_U.in.data.V2_kn = get_named_variable_value(idFmgcV2);
-    autopilotLaws.AutopilotLaws_U.in.data.is_flight_plan_available = 0;
+    autopilotLaws.AutopilotLaws_U.in.data.is_flight_plan_available = 1;
     autopilotLaws.AutopilotLaws_U.in.data.thrust_reduction_altitude =
         get_named_variable_value(idFmgcThrustReductionAltitude);
     autopilotLaws.AutopilotLaws_U.in.data.thrust_reduction_altitude_go_around =
