@@ -137,7 +137,6 @@ struct Parameters_AutopilotStateMachine_T_ {
   real_T Saturation1_LowerSat;
   real_T Gain2_Gain;
   real_T Constant10_Value;
-  boolean_T Constant1_Value_b;
   boolean_T Constant6_Value;
   boolean_T Constant2_Value;
   boolean_T Constant3_Value;
@@ -194,11 +193,11 @@ class AutopilotStateMachineModelClass {
   void AutopilotStateMachine_GS_CPT_entry(void);
   void AutopilotStateMachine_ALT_CPT_entry(void);
   void AutopilotStateMachine_ALT(void);
-  void AutopilotStateMachine_VS_entry(void);
   void AutopilotStateMachine_ALT_CPT(void);
   void AutopilotStateMachine_ALT_CST_entry(void);
   void AutopilotStateMachine_ALT_CST_CPT(void);
   void AutopilotStateMachine_CLB_during(void);
+  void AutopilotStateMachine_VS_entry(void);
   void AutopilotStateMachine_ALT_CST_CPT_entry(void);
   void AutopilotStateMachine_CLB(void);
   void AutopilotStateMachine_DES_during(void);
