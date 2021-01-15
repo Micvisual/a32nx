@@ -120,7 +120,7 @@ class AutopilotStateMachineModelClass {
   boolean_T AutopilotStateMachine_ON_TO_HDG(const ap_sm_output *BusAssignment);
   boolean_T AutopilotStateMachine_ON_TO_NAV(const ap_sm_output *BusAssignment);
   void AutopilotStateMachine_NAV_entry(void);
-  void AutopilotStateMachine_HDG_entry(void);
+  void AutopilotStateMachine_HDG_entry(const ap_sm_output *BusAssignment);
   boolean_T AutopilotStateMachine_ON_TO_LOC(const ap_sm_output *BusAssignment);
   void AutopilotStateMachine_HDG_during(const ap_sm_output *BusAssignment);
   void AutopilotStateMachine_LOC_CPT_entry(void);
@@ -148,6 +148,7 @@ class AutopilotStateMachineModelClass {
   void AutopilotStateMachine_GS_CPT_entry(void);
   void AutopilotStateMachine_ALT_CPT_entry(void);
   void AutopilotStateMachine_ALT(void);
+  void AutopilotStateMachine_ALT_CPT_during(void);
   void AutopilotStateMachine_ALT_CPT(void);
   void AutopilotStateMachine_ALT_CST_entry(void);
   void AutopilotStateMachine_ALT_CST_CPT(void);

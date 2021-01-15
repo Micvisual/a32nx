@@ -105,6 +105,10 @@ struct SimInputAutopilot {
   double trigger_vs_mode;
   double trigger_loc;
   double trigger_appr;
+  double AP_1_push;
+  double AP_2_push;
+  double LOC_push;
+  double APPR_push;
 };
 
 struct SimInputThrottles {
@@ -159,6 +163,9 @@ struct ClientDataLocalVariables {
   double flightPlanAvailable;
   double thrustReductionAltitude;
   double thrustReductionAltitudeGoAround;
+  double fcuTrkFpaModeActive;
+  double fcuSelectedAltitude;
+  double fcuSelectedFpa;
   double crossTrackError;
   double trackAngleError;
 };

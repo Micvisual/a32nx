@@ -92,6 +92,13 @@ class FlyByWireInterface {
   ID idAutopilotActive_1;
   ID idAutopilotActive_2;
 
+  ID idFcuTrkFpaModeActive;
+  ID idFcuSelectedAltitude;
+  ID idFcuSelectedFpa;
+
+  ID idFcuLocModeActive;
+  ID idFcuApprModeActive;
+
   ID idFlightGuidanceCrossTrackError;
   ID idFlightGuidanceTrackAngleError;
 

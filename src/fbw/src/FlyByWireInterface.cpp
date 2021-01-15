@@ -67,6 +67,13 @@ bool FlyByWireInterface::connect() {
   idFlightGuidanceCrossTrackError = register_named_variable("A32NX_FG_CROSS_TRACK_ERROR");
   idFlightGuidanceTrackAngleError = register_named_variable("A32NX_FG_TRACK_ANGLE_ERROR");
 
+  idFcuTrkFpaModeActive = register_named_variable("A32NX_TRK_FPA_MODE_ACTIVE");
+  idFcuSelectedAltitude = register_named_variable("HUD_AP_SELECTED_ALTITUDE");
+  idFcuSelectedFpa = register_named_variable("A32NX_AUTOPILOT_FPA_SELECTED");
+
+  idFcuLocModeActive = register_named_variable("A32NX_FCU_LOC_MODE_ACTIVE");
+  idFcuApprModeActive = register_named_variable("A32NX_FCU_APPR_MODE_ACTIVE");
+
   // initialize throttle system
   initializeThrottles();
 
@@ -147,14 +154,17 @@ bool FlyByWireInterface::readDataAndLocalVariables(double sampleTime) {
 
   // read local variables and update client data
   // update client data for flight guidance
-  ClientDataLocalVariables clientDataFlightGuidance = {get_named_variable_value(idFlightPhase),
+  ClientDataLocalVariables clientDataLocalVariables = {get_named_variable_value(idFlightPhase),
                                                        get_named_variable_value(idFmgcV2),
-                                                       0.0,
+                                                       1.0,
                                                        get_named_variable_value(idFmgcThrustReductionAltitude),
                                                        get_named_variable_value(idFmgcThrustReductionAltitudeGoAround),
+                                                       get_named_variable_value(idFcuTrkFpaModeActive),
+                                                       get_named_variable_value(idFcuSelectedAltitude),
+                                                       get_named_variable_value(idFcuSelectedFpa),
                                                        get_named_variable_value(idFlightGuidanceCrossTrackError),
                                                        get_named_variable_value(idFlightGuidanceTrackAngleError)};
-  simConnectInterface.setClientDataLocalVariables(clientDataFlightGuidance);
+  simConnectInterface.setClientDataLocalVariables(clientDataLocalVariables);
 
   // detect pause
   SimData simData = simConnectInterface.getSimData();
@@ -205,7 +215,7 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_fd_active =
         simData.ap_fd_1_active | simData.ap_fd_2_active;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_V_c_kn = simData.ap_V_c_kn;
-    autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_H_c_ft = simData.ap_H_c_ft;
+    autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_H_c_ft = get_named_variable_value(idFcuSelectedAltitude);
     autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_Psi_c_deg = simData.ap_Psi_c_deg;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_H_dot_c_ft_min = simData.ap_H_dot_c_ft_min;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.nav_valid = (simData.nav_valid != 0);
@@ -232,8 +242,8 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachine.AutopilotStateMachine_U.in.data.flaps_handle_index = simData.flaps_handle_index;
 
     // input ----------------------------------------------------------------------------------------------------------
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_1_push = simInputAutopilot.trigger_ap_master;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_2_push = simInputAutopilot.trigger_ap_master;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_1_push = simInputAutopilot.AP_1_push;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_2_push = simInputAutopilot.AP_2_push;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_DISCONNECT_push = simInputAutopilot.trigger_ap_off;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.HDG_push = (simInputAutopilot.trigger_hdg_mode == 2);
     autopilotStateMachine.AutopilotStateMachine_U.in.input.HDG_pull = (simInputAutopilot.trigger_hdg_mode == 1);
@@ -241,12 +251,14 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachine.AutopilotStateMachine_U.in.input.ALT_pull = simInputAutopilot.trigger_alt_mode == 1;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.VS_push = simInputAutopilot.trigger_vs_mode == 2;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.VS_pull = simInputAutopilot.trigger_vs_mode == 1;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.LOC_push = simInputAutopilot.trigger_loc;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.APPR_push = simInputAutopilot.trigger_appr;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.H_fcu_ft = simData.ap_H_c_ft;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.LOC_push = simInputAutopilot.LOC_push;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.APPR_push = simInputAutopilot.APPR_push;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.H_fcu_ft = get_named_variable_value(idFcuSelectedAltitude);
     autopilotStateMachine.AutopilotStateMachine_U.in.input.H_dot_fcu_fpm = simData.ap_H_dot_c_ft_min;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.FPA_fcu_deg = 0;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.FPA_fcu_deg = get_named_variable_value(idFcuSelectedFpa);
     autopilotStateMachine.AutopilotStateMachine_U.in.input.Psi_fcu_deg = simData.ap_Psi_c_deg;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.TRK_FPA_mode =
+        get_named_variable_value(idFcuTrkFpaModeActive);
 
     // step the model -------------------------------------------------------------------------------------------------
     autopilotStateMachine.step();
@@ -269,9 +281,16 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachineOutput.FPA_c_deg = clientData.FPA_c_deg;
   }
 
-  // update autopilot state
+  // update autopilot state -------------------------------------------------------------------------------------------
   set_named_variable_value(idAutopilotActive_1, autopilotStateMachineOutput.enabled);
   set_named_variable_value(idAutopilotActive_2, 0);
+
+  bool isLocArmed = static_cast<unsigned long long>(autopilotStateMachineOutput.lateral_mode_armed) >> 1 & 0x01;
+  bool isLocEngaged = autopilotStateMachineOutput.lateral_mode >= 30 && autopilotStateMachineOutput.lateral_mode <= 34;
+  bool isGsArmed = static_cast<unsigned long long>(autopilotStateMachineOutput.vertical_mode_armed) >> 4 & 0x01;
+  bool isGsEngaged = autopilotStateMachineOutput.lateral_mode >= 30 && autopilotStateMachineOutput.lateral_mode <= 34;
+  set_named_variable_value(idFcuLocModeActive, (isLocArmed || isLocEngaged) && !(isGsArmed || isGsEngaged));
+  set_named_variable_value(idFcuApprModeActive, (isLocArmed || isLocEngaged) && (isGsArmed || isGsEngaged));
 
   // update FMA variables ---------------------------------------------------------------------------------------------
   set_named_variable_value(idFmaLateralMode, autopilotStateMachineOutput.lateral_mode);
@@ -316,7 +335,7 @@ bool FlyByWireInterface::updateAutopilotLaws(double sampleTime) {
     autopilotLaws.AutopilotLaws_U.in.data.bz_m_s2 = simData.bz_m_s2;
     autopilotLaws.AutopilotLaws_U.in.data.ap_fd_active = simData.ap_fd_1_active | simData.ap_fd_2_active;
     autopilotLaws.AutopilotLaws_U.in.data.ap_V_c_kn = simData.ap_V_c_kn;
-    autopilotLaws.AutopilotLaws_U.in.data.ap_H_c_ft = simData.ap_H_c_ft;
+    autopilotLaws.AutopilotLaws_U.in.data.ap_H_c_ft = get_named_variable_value(idFcuSelectedAltitude);
     autopilotLaws.AutopilotLaws_U.in.data.ap_Psi_c_deg = simData.ap_Psi_c_deg;
     autopilotLaws.AutopilotLaws_U.in.data.ap_H_dot_c_ft_min = simData.ap_H_dot_c_ft_min;
     autopilotLaws.AutopilotLaws_U.in.data.nav_valid = (simData.nav_valid != 0);

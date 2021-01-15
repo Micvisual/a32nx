@@ -83,6 +83,7 @@ typedef struct {
   real_T H_fcu_ft;
   real_T H_dot_fcu_fpm;
   real_T FPA_fcu_deg;
+  boolean_T TRK_FPA_mode;
 } ap_raw_sm_input;
 
 #endif
@@ -132,6 +133,7 @@ typedef struct {
   boolean_T LOC_push;
   boolean_T APPR_push;
   real_T Psi_fcu_deg;
+  boolean_T TRK_FPA_mode;
 } ap_lateral_input;
 
 #endif
@@ -253,6 +255,7 @@ typedef enum {
   vertical_mode_OP_CLB = 12,
   vertical_mode_OP_DES = 13,
   vertical_mode_VS = 14,
+  vertical_mode_FPA = 15,
   vertical_mode_ALT_CST = 20,
   vertical_mode_ALT_CST_CPT = 21,
   vertical_mode_CLB = 22,
@@ -321,6 +324,7 @@ typedef struct {
   real_T H_fcu_ft;
   real_T H_dot_fcu_fpm;
   real_T FPA_fcu_deg;
+  boolean_T TRK_FPA_mode;
 } ap_vertical_input;
 
 #endif

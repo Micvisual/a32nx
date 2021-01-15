@@ -1191,6 +1191,8 @@ var Airbus_FMA;
                     return Column2.ROW_1_STATE.OP_DES;
                 case 14:
                     return Column2.ROW_1_STATE.VS;
+                case 15:
+                    return Column2.ROW_1_STATE.FPA;
                 case 20:
                     return Column2.ROW_1_STATE.ALT_CST_ENGAGED;
                 case 21:

@@ -75,7 +75,8 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
       0.0,
       0.0,
       0.0,
-      0.0
+      0.0,
+      0
     },
 
     {
@@ -84,7 +85,8 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
         0,
         0,
         0,
-        0.0
+        0.0,
+        0
       },
 
       {
@@ -115,7 +117,8 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
         0,
         0,
         0,
-        0.0
+        0.0,
+        0
       },
 
       {
@@ -150,7 +153,8 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
         0,
         0.0,
         0.0,
-        0.0
+        0.0,
+        0
       },
 
       {
@@ -197,7 +201,8 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
         0,
         0.0,
         0.0,
-        0.0
+        0.0,
+        0
       },
 
       {
@@ -282,7 +287,8 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
       false,
       0.0,
       0.0,
-      0.0
+      0.0,
+      false
     },
 
     {
@@ -326,7 +332,8 @@ Parameters_AutopilotStateMachine_T AutopilotStateMachineModelClass::AutopilotSta
       false,
       false,
       false,
-      0.0
+      0.0,
+      false
     },
 
     {

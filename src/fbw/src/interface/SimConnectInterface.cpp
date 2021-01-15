@@ -204,6 +204,11 @@ bool SimConnectInterface::prepareSimInputSimConnectDataDefinitions(bool isThrott
   result &= addInputDataDefinition(hSimConnect, 0, Events::AP_LOC_HOLD_OFF, "AP_LOC_HOLD_OFF", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::AP_APR_HOLD_ON, "AP_APR_HOLD_ON", false);
 
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_AP_1_PUSH, "A32NX.FCU_AP_1_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_AP_2_PUSH, "A32NX.FCU_AP_2_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_LOC_PUSH, "A32NX.FCU_LOC_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_APPR_PUSH, "A32NX.FCU_APPR_PUSH", false);
+
   if (isThrottleHandlingEnabled) {
     result &= addInputDataDefinition(hSimConnect, 0, Events::AUTO_THROTTLE_ARM, "AUTO_THROTTLE_ARM", false);
 
@@ -365,6 +370,12 @@ bool SimConnectInterface::prepareClientDataDefinitions() {
                                                  SIMCONNECT_CLIENTDATAOFFSET_AUTO, SIMCONNECT_CLIENTDATATYPE_FLOAT64);
   result &= SimConnect_AddToClientDataDefinition(hSimConnect, ClientData::LOCAL_VARIABLES,
                                                  SIMCONNECT_CLIENTDATAOFFSET_AUTO, SIMCONNECT_CLIENTDATATYPE_FLOAT64);
+  result &= SimConnect_AddToClientDataDefinition(hSimConnect, ClientData::LOCAL_VARIABLES,
+                                                 SIMCONNECT_CLIENTDATAOFFSET_AUTO, SIMCONNECT_CLIENTDATATYPE_FLOAT64);
+  result &= SimConnect_AddToClientDataDefinition(hSimConnect, ClientData::LOCAL_VARIABLES,
+                                                 SIMCONNECT_CLIENTDATAOFFSET_AUTO, SIMCONNECT_CLIENTDATATYPE_FLOAT64);
+  result &= SimConnect_AddToClientDataDefinition(hSimConnect, ClientData::LOCAL_VARIABLES,
+                                                 SIMCONNECT_CLIENTDATAOFFSET_AUTO, SIMCONNECT_CLIENTDATATYPE_FLOAT64);
 
   // ------------------------------------------------------------------------------------------------------------------
 
@@ -498,6 +509,10 @@ void SimConnectInterface::resetSimInputAutopilot() {
   simInputAutopilot.trigger_vs_mode = 0;
   simInputAutopilot.trigger_loc = 0;
   simInputAutopilot.trigger_appr = 0;
+  simInputAutopilot.AP_1_push = 0;
+  simInputAutopilot.AP_2_push = 0;
+  simInputAutopilot.LOC_push = 0;
+  simInputAutopilot.APPR_push = 0;
 }
 
 bool SimConnectInterface::setClientDataAutopilotLaws(ClientDataAutopilotLaws output) {
@@ -672,6 +687,30 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
     case Events::AP_LOC_HOLD_OFF:
     case Events::AP_APR_HOLD_ON: {
       simInputAutopilot.trigger_appr = 1;
+      break;
+    }
+
+    case Events::A32NX_FCU_AP_1_PUSH: {
+      cout << "WASM: A32NX_FCU_AP_1_PUSH" << endl;
+      simInputAutopilot.AP_1_push = 1;
+      break;
+    }
+
+    case Events::A32NX_FCU_AP_2_PUSH: {
+      cout << "WASM: A32NX_FCU_AP_2_PUSH" << endl;
+      simInputAutopilot.AP_2_push = 1;
+      break;
+    }
+
+    case Events::A32NX_FCU_LOC_PUSH: {
+      cout << "WASM: A32NX_FCU_LOC_PUSH" << endl;
+      simInputAutopilot.LOC_push = 1;
+      break;
+    }
+
+    case Events::A32NX_FCU_APPR_PUSH: {
+      cout << "WASM: A32NX_FCU_APPR_PUSH" << endl;
+      simInputAutopilot.APPR_push = 1;
       break;
     }
 
