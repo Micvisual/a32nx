@@ -98,50 +98,6 @@ typedef struct {
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_vertical_mode_
-#define DEFINED_TYPEDEF_FOR_vertical_mode_
-
-typedef enum {
-  vertical_mode_NONE = 0,
-  vertical_mode_ALT = 10,
-  vertical_mode_ALT_CPT = 11,
-  vertical_mode_OP_CLB = 12,
-  vertical_mode_OP_DES = 13,
-  vertical_mode_VS = 14,
-  vertical_mode_ALT_CST = 20,
-  vertical_mode_ALT_CST_CPT = 21,
-  vertical_mode_CLB = 22,
-  vertical_mode_DES = 23,
-  vertical_mode_GS_CPT = 30,
-  vertical_mode_GS_TRACK = 31,
-  vertical_mode_LAND = 32,
-  vertical_mode_FLARE = 33,
-  vertical_mode_ROLL_OUT = 34,
-  vertical_mode_SRS = 40
-} vertical_mode;
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_lateral_mode_
-#define DEFINED_TYPEDEF_FOR_lateral_mode_
-
-typedef enum {
-  lateral_mode_NONE = 0,
-  lateral_mode_HDG = 10,
-  lateral_mode_TRACK = 11,
-  lateral_mode_NAV = 20,
-  lateral_mode_LOC_CPT = 30,
-  lateral_mode_LOC_TRACK = 31,
-  lateral_mode_LAND = 32,
-  lateral_mode_FLARE = 33,
-  lateral_mode_ROLL_OUT = 34,
-  lateral_mode_RWY = 40,
-  lateral_mode_RWY_TRACK = 41,
-  lateral_mode_GA_TRACK = 50
-} lateral_mode;
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_ap_lateral_armed_
 #define DEFINED_TYPEDEF_FOR_ap_lateral_armed_
 
@@ -241,6 +197,26 @@ typedef struct {
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_lateral_mode_
+#define DEFINED_TYPEDEF_FOR_lateral_mode_
+
+typedef enum {
+  lateral_mode_NONE = 0,
+  lateral_mode_HDG = 10,
+  lateral_mode_TRACK = 11,
+  lateral_mode_NAV = 20,
+  lateral_mode_LOC_CPT = 30,
+  lateral_mode_LOC_TRACK = 31,
+  lateral_mode_LAND = 32,
+  lateral_mode_FLARE = 33,
+  lateral_mode_ROLL_OUT = 34,
+  lateral_mode_RWY = 40,
+  lateral_mode_RWY_TRACK = 41,
+  lateral_mode_GA_TRACK = 50
+} lateral_mode;
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_lateral_law_
 #define DEFINED_TYPEDEF_FOR_lateral_law_
 
@@ -264,6 +240,30 @@ typedef struct {
   lateral_law law;
   real_T Psi_c_deg;
 } ap_lateral_output;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_vertical_mode_
+#define DEFINED_TYPEDEF_FOR_vertical_mode_
+
+typedef enum {
+  vertical_mode_NONE = 0,
+  vertical_mode_ALT = 10,
+  vertical_mode_ALT_CPT = 11,
+  vertical_mode_OP_CLB = 12,
+  vertical_mode_OP_DES = 13,
+  vertical_mode_VS = 14,
+  vertical_mode_ALT_CST = 20,
+  vertical_mode_ALT_CST_CPT = 21,
+  vertical_mode_CLB = 22,
+  vertical_mode_DES = 23,
+  vertical_mode_GS_CPT = 30,
+  vertical_mode_GS_TRACK = 31,
+  vertical_mode_LAND = 32,
+  vertical_mode_FLARE = 33,
+  vertical_mode_ROLL_OUT = 34,
+  vertical_mode_SRS = 40
+} vertical_mode;
 
 #endif
 

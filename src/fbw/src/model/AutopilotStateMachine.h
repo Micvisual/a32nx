@@ -15,8 +15,6 @@ typedef struct {
   ap_sm_output BusAssignment_g;
   ap_vertical_output out;
   ap_lateral_output out_g;
-  real_T in;
-  real_T in_g;
 } BlockIO_AutopilotStateMachine_T;
 
 typedef struct {
@@ -24,6 +22,8 @@ typedef struct {
   ap_lateral Delay_DSTATE;
   real_T eventTime;
   real_T eventTime_a;
+  real_T eventTime_aq;
+  real_T eventTime_c;
   boolean_T DelayInput1_DSTATE;
   boolean_T DelayInput1_DSTATE_b;
   boolean_T DelayInput1_DSTATE_d;
@@ -47,14 +47,13 @@ typedef struct {
   uint8_T is_c1_AutopilotStateMachine;
   uint8_T is_ON_c;
   uint8_T is_LOC;
-  uint8_T is_active_c10_AutopilotStateMachine;
-  uint8_T is_c10_AutopilotStateMachine;
-  uint8_T is_active_c8_AutopilotStateMachine;
-  uint8_T is_c8_AutopilotStateMachine;
-  uint8_T is_active_c9_AutopilotStateMachine;
-  uint8_T is_c9_AutopilotStateMachine;
   boolean_T eventTime_not_empty;
   boolean_T eventTime_not_empty_k;
+  boolean_T eventTime_not_empty_m;
+  boolean_T eventTime_not_empty_e;
+  boolean_T state;
+  boolean_T state_d;
+  boolean_T state_j;
 } D_Work_AutopilotStateMachine_T;
 
 typedef struct {
@@ -67,45 +66,6 @@ typedef struct {
 
 struct Parameters_AutopilotStateMachine_T_ {
   ap_sm_output ap_sm_output_MATLABStruct;
-  real_T CompareToConstant35_const;
-  real_T CompareToConstant36_const;
-  real_T CompareToConstant_const;
-  real_T CompareToConstant1_const;
-  real_T CompareToConstant2_const;
-  real_T CompareToConstant13_const;
-  real_T CompareToConstant24_const;
-  real_T CompareToConstant34_const;
-  real_T CompareToConstant1_const_d;
-  real_T CompareToConstant2_const_d;
-  real_T CompareToConstant5_const;
-  real_T CompareToConstant19_const;
-  real_T CompareToConstant6_const;
-  real_T CompareToConstant7_const;
-  real_T CompareToConstant8_const;
-  real_T CompareToConstant33_const;
-  real_T CompareToConstant3_const;
-  real_T CompareToConstant4_const;
-  real_T CompareToConstant32_const;
-  lateral_mode CompareToConstant3_const_p;
-  lateral_mode CompareToConstant4_const_a;
-  lateral_mode CompareToConstant12_const;
-  lateral_mode CompareToConstant20_const;
-  lateral_mode CompareToConstant23_const;
-  lateral_mode CompareToConstant25_const;
-  lateral_mode CompareToConstant15_const;
-  lateral_mode CompareToConstant17_const;
-  vertical_mode CompareToConstant11_const;
-  vertical_mode CompareToConstant21_const;
-  vertical_mode CompareToConstant22_const;
-  vertical_mode CompareToConstant26_const;
-  vertical_mode CompareToConstant14_const;
-  vertical_mode CompareToConstant18_const;
-  vertical_mode CompareToConstant16_const;
-  vertical_mode CompareToConstant27_const;
-  vertical_mode CompareToConstant28_const;
-  vertical_mode CompareToConstant29_const;
-  vertical_mode CompareToConstant9_const;
-  vertical_mode CompareToConstant10_const;
   boolean_T DetectIncrease_vinit;
   boolean_T DetectIncrease1_vinit;
   boolean_T DetectIncrease2_vinit;
@@ -119,8 +79,6 @@ struct Parameters_AutopilotStateMachine_T_ {
   boolean_T DetectIncrease10_vinit;
   ap_vertical Delay1_InitialCondition;
   ap_lateral Delay_InitialCondition;
-  real_T out_Y0;
-  real_T out_Y0_j;
   real_T GainTheta_Gain;
   real_T GainTheta1_Gain;
   real_T Gain_Gain;
@@ -136,7 +94,6 @@ struct Parameters_AutopilotStateMachine_T_ {
   real_T Saturation1_UpperSat;
   real_T Saturation1_LowerSat;
   real_T Gain2_Gain;
-  real_T Constant10_Value;
   boolean_T Constant6_Value;
   boolean_T Constant2_Value;
   boolean_T Constant3_Value;
@@ -159,8 +116,6 @@ class AutopilotStateMachineModelClass {
   D_Work_AutopilotStateMachine_T AutopilotStateMachine_DWork;
   void AutopilotStateMachine_BitShift(real_T rtu_u, real_T *rty_y);
   void AutopilotStateMachine_BitShift1(real_T rtu_u, real_T *rty_y);
-  boolean_T AutopilotStateMachine_ON_TO_OFF(const ap_sm_output *BusAssignment1);
-  boolean_T AutopilotStateMachine_OFF_TO_ON(const ap_sm_output *BusAssignment1);
   boolean_T AutopilotStateMachine_X_TO_OFF(const ap_sm_output *BusAssignment);
   boolean_T AutopilotStateMachine_ON_TO_HDG(const ap_sm_output *BusAssignment);
   boolean_T AutopilotStateMachine_ON_TO_NAV(const ap_sm_output *BusAssignment);
