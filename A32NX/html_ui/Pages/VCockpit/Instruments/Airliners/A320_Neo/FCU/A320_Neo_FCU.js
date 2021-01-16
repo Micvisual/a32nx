@@ -567,7 +567,8 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         const isFPAMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
         const verticalMode = SimVar.GetSimVarValue("L:A32NX_FMA_VERTICAL_MODE", "Number");
 
-        if (this.currentState === A320_Neo_FCU_VSpeed_State.Flying
+        if ((this.currentState === A320_Neo_FCU_VSpeed_State.Flying
+             || this.currentState === A320_Neo_FCU_VSpeed_State.Zeroing)
             && (verticalMode !== 14 && verticalMode !== 15)) {
             this._enterIdleState();
         }
