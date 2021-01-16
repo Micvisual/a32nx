@@ -98,15 +98,15 @@ struct SimInput {
 };
 
 struct SimInputAutopilot {
-  double trigger_ap_master;
-  double trigger_ap_off;
-  double trigger_hdg_mode;
-  double trigger_alt_mode;
-  double trigger_vs_mode;
-  double trigger_loc;
-  double trigger_appr;
   double AP_1_push;
   double AP_2_push;
+  double AP_disconnect;
+  double HDG_push;
+  double HDG_pull;
+  double ALT_push;
+  double ALT_pull;
+  double VS_push;
+  double VS_pull;
   double LOC_push;
   double APPR_push;
 };

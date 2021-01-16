@@ -197,15 +197,14 @@ bool SimConnectInterface::prepareSimInputSimConnectDataDefinitions(bool isThrott
 
   result &= addInputDataDefinition(hSimConnect, 0, Events::AP_MASTER, "AP_MASTER", autopilotStateMachineEnabled);
   result &= addInputDataDefinition(hSimConnect, 0, Events::AUTOPILOT_OFF, "AUTOPILOT_OFF", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::HEADING_SLOT_INDEX_SET, "HEADING_SLOT_INDEX_SET", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::ALTITUDE_SLOT_INDEX_SET, "ALTITUDE_SLOT_INDEX_SET", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::AP_PANEL_VS_ON, "AP_PANEL_VS_ON", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::AP_LOC_HOLD, "AP_LOC_HOLD", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::AP_LOC_HOLD_OFF, "AP_LOC_HOLD_OFF", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::AP_APR_HOLD_ON, "AP_APR_HOLD_ON", false);
-
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_AP_1_PUSH, "A32NX.FCU_AP_1_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_AP_2_PUSH, "A32NX.FCU_AP_2_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_HDG_PUSH, "A32NX.FCU_HDG_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_HDG_PULL, "A32NX.FCU_HDG_PULL", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ALT_PUSH, "A32NX.FCU_ALT_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ALT_PULL, "A32NX.FCU_ALT_PULL", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_VS_PUSH, "A32NX.FCU_VS_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_VS_PULL, "A32NX.FCU_VS_PULL", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_LOC_PUSH, "A32NX.FCU_LOC_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_APPR_PUSH, "A32NX.FCU_APPR_PUSH", false);
 
@@ -502,15 +501,15 @@ SimInputThrottles SimConnectInterface::getSimInputThrottles() {
 }
 
 void SimConnectInterface::resetSimInputAutopilot() {
-  simInputAutopilot.trigger_ap_master = 0;
-  simInputAutopilot.trigger_ap_off = 0;
-  simInputAutopilot.trigger_hdg_mode = 0;
-  simInputAutopilot.trigger_alt_mode = 0;
-  simInputAutopilot.trigger_vs_mode = 0;
-  simInputAutopilot.trigger_loc = 0;
-  simInputAutopilot.trigger_appr = 0;
   simInputAutopilot.AP_1_push = 0;
   simInputAutopilot.AP_2_push = 0;
+  simInputAutopilot.AP_disconnect = 0;
+  simInputAutopilot.HDG_push = 0;
+  simInputAutopilot.HDG_pull = 0;
+  simInputAutopilot.ALT_push = 0;
+  simInputAutopilot.ALT_pull = 0;
+  simInputAutopilot.VS_push = 0;
+  simInputAutopilot.VS_pull = 0;
   simInputAutopilot.LOC_push = 0;
   simInputAutopilot.APPR_push = 0;
 }
@@ -655,38 +654,11 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       break;
 
     case Events::AP_MASTER: {
-      simInputAutopilot.trigger_ap_master = 1;
       break;
     }
 
     case Events::AUTOPILOT_OFF: {
-      simInputAutopilot.trigger_ap_off = 1;
-      break;
-    }
-
-    case Events::HEADING_SLOT_INDEX_SET: {
-      simInputAutopilot.trigger_hdg_mode = event->dwData;
-      break;
-    }
-
-    case Events::ALTITUDE_SLOT_INDEX_SET: {
-      simInputAutopilot.trigger_alt_mode = event->dwData;
-      break;
-    }
-
-    case Events::AP_PANEL_VS_ON: {
-      simInputAutopilot.trigger_vs_mode = 1;
-      break;
-    }
-
-    case Events::AP_LOC_HOLD: {
-      simInputAutopilot.trigger_loc = 1;
-      break;
-    }
-
-    case Events::AP_LOC_HOLD_OFF:
-    case Events::AP_APR_HOLD_ON: {
-      simInputAutopilot.trigger_appr = 1;
+      simInputAutopilot.AP_disconnect = 1;
       break;
     }
 
@@ -699,6 +671,39 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
     case Events::A32NX_FCU_AP_2_PUSH: {
       cout << "WASM: A32NX_FCU_AP_2_PUSH" << endl;
       simInputAutopilot.AP_2_push = 1;
+      break;
+    }
+
+    case Events::A32NX_FCU_HDG_PUSH: {
+      cout << "WASM: A32NX_FCU_HDG_PUSH" << endl;
+      simInputAutopilot.HDG_push = 1;
+      break;
+    }
+    case Events::A32NX_FCU_HDG_PULL: {
+      cout << "WASM: A32NX_FCU_HDG_PULL" << endl;
+      simInputAutopilot.HDG_pull = 1;
+      break;
+    }
+
+    case Events::A32NX_FCU_ALT_PUSH: {
+      cout << "WASM: A32NX_FCU_ALT_PUSH" << endl;
+      simInputAutopilot.ALT_push = 1;
+      break;
+    }
+    case Events::A32NX_FCU_ALT_PULL: {
+      cout << "WASM: A32NX_FCU_ALT_PULL" << endl;
+      simInputAutopilot.ALT_pull = 1;
+      break;
+    }
+
+    case Events::A32NX_FCU_VS_PUSH: {
+      cout << "WASM: A32NX_FCU_VS_PUSH" << endl;
+      simInputAutopilot.VS_push = 1;
+      break;
+    }
+    case Events::A32NX_FCU_VS_PULL: {
+      cout << "WASM: A32NX_FCU_VS_PULL" << endl;
+      simInputAutopilot.VS_pull = 1;
       break;
     }
 

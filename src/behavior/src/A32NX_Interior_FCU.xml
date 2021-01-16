@@ -139,9 +139,11 @@
                 </CLOCKWISE_CODE>
 
                 <PULL_CODE>
+                    (&gt;K:A32NX.FCU_ALT_PULL)
                     (&gt;H:A320_Neo_CDU_MODE_SELECTED_ALTITUDE)
                 </PULL_CODE>
                 <PUSH_CODE>
+                    (&gt;K:A32NX.FCU_ALT_PUSH)
                     (&gt;H:A320_Neo_CDU_MODE_MANAGED_ALTITUDE)
                 </PUSH_CODE> <!-- TODO - Change - Should be managed climb/descent (comment from Asobo) -->
 
@@ -232,9 +234,11 @@
                     }
                 </ANTICLOCKWISE_CODE>
                 <PULL_CODE>
+                    (&gt;K:A32NX.FCU_HDG_PULL)
                     (&gt;H:A320_Neo_CDU_MODE_SELECTED_HEADING)
                 </PULL_CODE>
                 <PUSH_CODE>
+                    (&gt;K:A32NX.FCU_HDG_PUSH)
                     (&gt;H:A320_Neo_CDU_MODE_MANAGED_HEADING)
                     (&gt;H:A320_Neo_FCU_MODE_MANAGED_HEADING)
                 </PUSH_CODE>
@@ -300,9 +304,11 @@
                     }
                 </ANTICLOCKWISE_CODE>
                 <PULL_CODE>
+                    (&gt;K:A32NX.FCU_VS_PULL)
                     (&gt;H:A320_Neo_FCU_VS_HOLD)
                 </PULL_CODE>
                 <PUSH_CODE>
+                    (&gt;K:A32NX.FCU_VS_PUSH)
                     (&gt;H:A320_Neo_FCU_VS_ZERO)
                 </PUSH_CODE>
                 <CENTER_RADIUS>0</CENTER_RADIUS>

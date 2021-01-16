@@ -244,13 +244,13 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     // input ----------------------------------------------------------------------------------------------------------
     autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_1_push = simInputAutopilot.AP_1_push;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_2_push = simInputAutopilot.AP_2_push;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_DISCONNECT_push = simInputAutopilot.trigger_ap_off;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.HDG_push = (simInputAutopilot.trigger_hdg_mode == 2);
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.HDG_pull = (simInputAutopilot.trigger_hdg_mode == 1);
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.ALT_push = simInputAutopilot.trigger_alt_mode == 2;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.ALT_pull = simInputAutopilot.trigger_alt_mode == 1;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.VS_push = simInputAutopilot.trigger_vs_mode == 2;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.VS_pull = simInputAutopilot.trigger_vs_mode == 1;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.AP_DISCONNECT_push = simInputAutopilot.AP_disconnect;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.HDG_push = simInputAutopilot.HDG_push;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.HDG_pull = simInputAutopilot.HDG_pull;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.ALT_push = simInputAutopilot.ALT_push;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.ALT_pull = simInputAutopilot.ALT_pull;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.VS_push = simInputAutopilot.VS_push;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.VS_pull = simInputAutopilot.VS_pull;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.LOC_push = simInputAutopilot.LOC_push;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.APPR_push = simInputAutopilot.APPR_push;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.H_fcu_ft = get_named_variable_value(idFcuSelectedAltitude);
