@@ -93,8 +93,8 @@ class FlyByWireInterface {
   ID idAutopilotActive_2;
 
   ID idFcuTrkFpaModeActive;
-  ID idFcuSelectedAltitude;
   ID idFcuSelectedFpa;
+  ID idFcuSelectedVs;
 
   ID idFcuLocModeActive;
   ID idFcuApprModeActive;

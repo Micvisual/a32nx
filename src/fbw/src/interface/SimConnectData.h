@@ -164,7 +164,7 @@ struct ClientDataLocalVariables {
   double thrustReductionAltitude;
   double thrustReductionAltitudeGoAround;
   double fcuTrkFpaModeActive;
-  double fcuSelectedAltitude;
+  double fcuSelectedVs;
   double fcuSelectedFpa;
   double crossTrackError;
   double trackAngleError;

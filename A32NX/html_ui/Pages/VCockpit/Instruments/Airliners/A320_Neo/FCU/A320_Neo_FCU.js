@@ -484,6 +484,7 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         this._currentState = v;
         SimVar.SetSimVarValue("L:A320_NE0_FCU_STATE", "number", this.currentState);
     }
+
     init() {
         this.textVS = this.getTextElement("VS");
         this.textFPA = this.getTextElement("FPA");
@@ -493,151 +494,103 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         this._enterIdleState();
         this.refresh(false, false, 0, 0, true);
     }
+
     onFlightStart() {
         super.onFlightStart();
-        const selectedValue = Simplane.getAutoPilotSelectedVerticalSpeedHoldValue();
+        const selectedValue = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
         if (selectedValue == 0) {
             this._enterIdleState(0);
         } else {
             this.onPull();
         }
     }
+
     onPush() {
         this.currentState = A320_Neo_FCU_VSpeed_State.Zeroing;
-        SimVar.SetSimVarValue("K:AP_PANEL_ALTITUDE_HOLD", "Number", 1);
-        SimVar.SetSimVarValue("K:AP_PANEL_VS_ON", "Number", 1);
+
         SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", 0);
+        SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", 0);
+
         clearTimeout(this._resetSelectionTimeout);
         this.forceUpdate = true;
     }
+
     onRotate() {
         if (this.currentState === A320_Neo_FCU_VSpeed_State.Idle || this.currentState === A320_Neo_FCU_VSpeed_State.Selecting) {
             if (this.currentState === A320_Neo_FCU_VSpeed_State.Idle) {
-                const currentVSpeed = Simplane.getVerticalSpeed();
-                Coherent.call("AP_VS_VAR_SET_ENGLISH", 2, currentVSpeed);
-                const currentAngle = this.calculateAngleForVerticalSpeed(currentVSpeed);
+                const currentValue = Simplane.getVerticalSpeed();
+                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", Math.round(currentValue / 100) * 100);
+                const currentAngle = this.calculateAngleForVerticalSpeed(currentValue);
                 SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", currentAngle);
             }
+
             this.currentState = A320_Neo_FCU_VSpeed_State.Selecting;
             clearTimeout(this._resetSelectionTimeout);
-            this.currentState = A320_Neo_FCU_VSpeed_State.Selecting;
             this.forceUpdate = true;
+
             this._resetSelectionTimeout = setTimeout(() => {
+                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", 0);
+                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", 0);
                 this.currentState = A320_Neo_FCU_VSpeed_State.Idle;
                 this.forceUpdate = true;
             }, 10000);
-        } else if (this.currentState === A320_Neo_FCU_VSpeed_State.Flying || this.currentState === A320_Neo_FCU_VSpeed_State.Zeroing) {
-            this.gps.requestCall(() => {
-                this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
-                if (!this.isFPAMode) {
-                    const selectedValue = Simplane.getAutoPilotSelectedVerticalSpeedHoldValue();
-                    Coherent.call("AP_VS_VAR_SET_ENGLISH", 1, selectedValue);
-                }
-                SimVar.SetSimVarValue("K:VS_SLOT_INDEX_SET", "number", 1);
-                SimVar.SetSimVarValue("K:AP_PANEL_VS_ON", "Number", 1);
-            });
+        } else if (this.currentState === A320_Neo_FCU_VSpeed_State.Zeroing) {
+            this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
+            this.forceUpdate = true;
         }
     }
+
     onPull() {
-        if (this.currentState != A320_Neo_FCU_VSpeed_State.Idle) {
-            this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
-            if (!this.isFPAMode) {
-                const selectedValue = Simplane.getAutoPilotSelectedVerticalSpeedHoldValue();
-                Coherent.call("AP_VS_VAR_SET_ENGLISH", 1, selectedValue);
-            }
-            SimVar.SetSimVarValue("K:VS_SLOT_INDEX_SET", "number", 1);
-            SimVar.SetSimVarValue("K:AP_PANEL_VS_ON", "Number", 1);
-            clearTimeout(this._resetSelectionTimeout);
-            this.forceUpdate = true;
-        } else {
-            this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
+        if (this.currentState === A320_Neo_FCU_VSpeed_State.Idle) {
             const currentValue = Simplane.getVerticalSpeed();
             if (this.isFPAMode) {
                 const angle = this.calculateAngleForVerticalSpeed(currentValue);
                 SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", angle);
             } else {
-                Coherent.call("AP_VS_VAR_SET_ENGLISH", 1, currentValue);
-                Coherent.call("AP_VS_VAR_SET_ENGLISH", 2, currentValue);
+                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", Math.round(currentValue / 100) * 100);
             }
-            SimVar.SetSimVarValue("K:AP_PANEL_VS_ON", "Number", 1);
-            SimVar.SetSimVarValue("L:A320_NEO_FCU_FORCE_SELECTED_ALT", "Number", 0);
+        }
+
+        clearTimeout(this._resetSelectionTimeout);
+        this.forceUpdate = true;
+    }
+
+    _enterIdleState(idleVSpeed) {
+        SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", 0);
+        SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", 0);
+        this.currentState = A320_Neo_FCU_VSpeed_State.Idle;
+        this.forceUpdate = true;
+    }
+
+    update(_deltaTime) {
+        const verticalMode = SimVar.GetSimVarValue("L:A32NX_FMA_VERTICAL_MODE", "Number");
+
+        if (this.currentState === A320_Neo_FCU_VSpeed_State.Flying
+            && (verticalMode !== 14 && verticalMode !== 15)) {
+            this._enterIdleState();
+        }
+
+        if (this.currentState !== A320_Neo_FCU_VSpeed_State.Flying
+            && this.currentState !== A320_Neo_FCU_VSpeed_State.Zeroing
+            && (verticalMode === 14 || verticalMode === 15)) {
             clearTimeout(this._resetSelectionTimeout);
             this.forceUpdate = true;
         }
-    }
-    _enterIdleState(idleVSpeed) {
-        SimVar.SetSimVarValue("L:A320_NEO_FCU_FORCE_IDLE_VS", "Number", 0);
-        if (isNaN(idleVSpeed)) {
-            const targetAltitude = Simplane.getAutoPilotAltitudeLockValue("feet");
-            const altitude = Simplane.getAltitude();
-            const deltaAltitude = targetAltitude - altitude;
-            if (isFinite(deltaAltitude)) {
-                if (deltaAltitude > 100) {
-                    idleVSpeed = 1500;
-                } else if (deltaAltitude < -100) {
-                    idleVSpeed = -1500;
-                }
-            }
-        }
-        Coherent.call("AP_VS_VAR_SET_ENGLISH", 1, idleVSpeed);
-        this.currentState = A320_Neo_FCU_VSpeed_State.Idle;
-        this.forceUpdate = true;
-        const currentAirspeedHold = Simplane.getAutoPilotAirspeedHoldValue();
-        this.gps.requestCall(() => {
-            if (Simplane.getAutoPilotAirspeedManaged()) {
-                Coherent.call("AP_SPD_VAR_SET", 2, currentAirspeedHold);
-            } else {
-                Coherent.call("AP_SPD_VAR_SET", 1, currentAirspeedHold);
-            }
-            SimVar.SetSimVarValue("K:FLIGHT_LEVEL_CHANGE_ON", "Number", 1);
-        });
-    }
-    update(_deltaTime) {
-        if (SimVar.GetSimVarValue("L:A320_NEO_FCU_FORCE_IDLE_VS", "number") === 1) {
-            this._enterIdleState();
-        }
-        const isFPAMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
-        if (this.currentState === A320_Neo_FCU_VSpeed_State.Flying) {
-            const altitude = Simplane.getAltitude();
-            const targetAltitude = Simplane.getAutoPilotAltitudeLockValue("feet");
-            const deltaAltitude = targetAltitude - altitude;
-            if (isFPAMode && this.currentState === A320_Neo_FCU_VSpeed_State.Flying) {
-                this.timeSinceVerticalSpeedForAngleRecalculation = (this.timeSinceVerticalSpeedForAngleRecalculation + _deltaTime) || 0;
-                if (this.timeSinceVerticalSpeedForAngleRecalculation > this.verticalSpeedForAngleRecalculationPeriod) {
-                    const angle = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
-                    const verticalSpeed = this.calculateVerticalSpeedForAngle(angle);
-                    Coherent.call("AP_VS_VAR_SET_ENGLISH", 1, verticalSpeed);
-                    Coherent.call("AP_VS_VAR_SET_ENGLISH", 2, verticalSpeed);
-                    this.timeSinceVerticalSpeedForAngleRecalculation = 0;
-                }
-            }
-            const targetVerticalSpeed = Simplane.getAutoPilotVerticalSpeedHoldValue();
-            if (deltaAltitude * targetVerticalSpeed < 1) {
-                this.currentState = A320_Neo_FCU_VSpeed_State.Idle;
-                this._enterIdleState();
-                this.forceUpdate = true;
-            }
-            if (Math.abs(deltaAltitude) < 200) {
-                this.currentState = A320_Neo_FCU_VSpeed_State.Idle;
-                this._enterIdleState();
-                this.forceUpdate = true;
-            }
-        } else if (this.currentState === A320_Neo_FCU_VSpeed_State.Zeroing) {
-            Coherent.call("AP_VS_VAR_SET_ENGLISH", 1, 5);
-            SimVar.SetSimVarValue("K:VS_SLOT_INDEX_SET", "number", 1);
-        }
-        if (this._debug-- < 0 || this.forceUpdate) {
-            this._debug = 300;
-        }
+
         const lightsTest = SimVar.GetSimVarValue("L:XMLVAR_LTS_Test", "Bool");
+        const isFPAMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
+
         if (isFPAMode) {
             const angle = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
             this.refresh(true, true, angle, lightsTest, this.forceUpdate);
         } else {
-            this.refresh(true, false, Simplane.getAutoPilotSelectedVerticalSpeedHoldValue(), lightsTest, this.forceUpdate);
+            const vspeed = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
+            this.refresh(true, false, vspeed, lightsTest, this.forceUpdate);
         }
+
         this.forceUpdate = false;
     }
+
     refresh(_isActive, _isFPAMode, _value, _lightsTest, _force = false) {
         if ((_isActive != this.isActive) || (_isFPAMode != this.isFPAMode) || (_value != this.currentValue) || (_lightsTest !== this.lightsTest) || _force) {
             if (this.isFPAMode != _isFPAMode) {
@@ -678,10 +631,17 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
             }
         }
     }
+
     onEvent(_event) {
         if (_event === "VS_INC") {
+            const currentVs = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
+            const newVS = Utils.Clamp(Math.round(currentVs + 100), -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
+            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", newVS);
             this.onRotate();
         } else if (_event === "VS_DEC") {
+            const currentVs = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
+            const newVS = Utils.Clamp(Math.round(currentVs - 100), -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
+            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", newVS);
             this.onRotate();
         } else if (_event === "VS_ZERO") {
             this.onPush();
@@ -692,25 +652,23 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
             const currentFpa = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
             const newFpa = Utils.Clamp(Math.round((currentFpa - 0.1) * 10) / 10, -this.ABS_MINMAX_FPA, this.ABS_MINMAX_FPA);
             SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", newFpa);
-            const verticalSpeed = this.calculateVerticalSpeedForAngle(newFpa);
-            Coherent.call("AP_VS_VAR_SET_ENGLISH", 1, verticalSpeed);
-            Coherent.call("AP_VS_VAR_SET_ENGLISH", 2, verticalSpeed);
             this.onRotate();
         } else if (_event === "AP_INC_FPA") {
             const currentFpa = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
             const newFpa = Utils.Clamp(Math.round((currentFpa + 0.1) * 10) / 10, -this.ABS_MINMAX_FPA, this.ABS_MINMAX_FPA);
             SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", newFpa);
-            const verticalSpeed = this.calculateVerticalSpeedForAngle(newFpa);
-            Coherent.call("AP_VS_VAR_SET_ENGLISH", 1, verticalSpeed);
-            Coherent.call("AP_VS_VAR_SET_ENGLISH", 2, verticalSpeed);
             this.onRotate();
         }
     }
     onFPAModeChanged(_newValue) {
         if (_newValue) {
-            const verticalSpeed = Simplane.getAutoPilotVerticalSpeedHoldValue();
+            const verticalSpeed = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
             const angle = this.calculateAngleForVerticalSpeed(verticalSpeed);
             SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", angle);
+        } else {
+            const angle = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
+            const verticalSpeed = this.calculateVerticalSpeedForAngle(angle);
+            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", verticalSpeed);
         }
     }
     /**
@@ -726,7 +684,7 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         const groundSpeed = _groundSpeed * 3.28084 * 60; // Now in feet per minute.
         const angle = _angle * Math.PI / 180; // Now in radians.
         const verticalSpeed = Math.tan(angle) * groundSpeed;
-        return Utils.Clamp(verticalSpeed, -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
+        return Utils.Clamp(Math.round(verticalSpeed / 100) * 100, -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
     }
     /**
      * Calculates the flight path angle for a given vertical speed, assuming it is flown at the current ground speed.
@@ -741,7 +699,7 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         const groundSpeed = _groundSpeed * 3.28084 * 60; // Now in feet per minute.
         const angle = Math.atan(verticalSpeed / groundSpeed);
         const _angle = angle * 180 / Math.PI;
-        return Utils.Clamp(_angle, -this.ABS_MINMAX_FPA, this.ABS_MINMAX_FPA);
+        return Utils.Clamp(Math.round(_angle * 10) / 10, -this.ABS_MINMAX_FPA, this.ABS_MINMAX_FPA);
     }
 }
 

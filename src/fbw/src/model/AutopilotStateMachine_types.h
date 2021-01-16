@@ -195,6 +195,7 @@ typedef struct {
 typedef struct {
   real_T time_since_touchdown;
   real_T time_since_lift_off;
+  boolean_T H_fcu_in_selection;
 } ap_sm_data_computed;
 
 #endif

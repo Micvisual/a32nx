@@ -68,8 +68,8 @@ bool FlyByWireInterface::connect() {
   idFlightGuidanceTrackAngleError = register_named_variable("A32NX_FG_TRACK_ANGLE_ERROR");
 
   idFcuTrkFpaModeActive = register_named_variable("A32NX_TRK_FPA_MODE_ACTIVE");
-  idFcuSelectedAltitude = register_named_variable("HUD_AP_SELECTED_ALTITUDE");
   idFcuSelectedFpa = register_named_variable("A32NX_AUTOPILOT_FPA_SELECTED");
+  idFcuSelectedVs = register_named_variable("A32NX_AUTOPILOT_VS_SELECTED");
 
   idFcuLocModeActive = register_named_variable("A32NX_FCU_LOC_MODE_ACTIVE");
   idFcuApprModeActive = register_named_variable("A32NX_FCU_APPR_MODE_ACTIVE");
@@ -160,7 +160,7 @@ bool FlyByWireInterface::readDataAndLocalVariables(double sampleTime) {
                                                        get_named_variable_value(idFmgcThrustReductionAltitude),
                                                        get_named_variable_value(idFmgcThrustReductionAltitudeGoAround),
                                                        get_named_variable_value(idFcuTrkFpaModeActive),
-                                                       get_named_variable_value(idFcuSelectedAltitude),
+                                                       get_named_variable_value(idFcuSelectedVs),
                                                        get_named_variable_value(idFcuSelectedFpa),
                                                        get_named_variable_value(idFlightGuidanceCrossTrackError),
                                                        get_named_variable_value(idFlightGuidanceTrackAngleError)};
@@ -215,7 +215,7 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_fd_active =
         simData.ap_fd_1_active | simData.ap_fd_2_active;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_V_c_kn = simData.ap_V_c_kn;
-    autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_H_c_ft = get_named_variable_value(idFcuSelectedAltitude);
+    autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_H_c_ft = simData.ap_H_c_ft;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_Psi_c_deg = simData.ap_Psi_c_deg;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.ap_H_dot_c_ft_min = simData.ap_H_dot_c_ft_min;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.nav_valid = (simData.nav_valid != 0);
@@ -253,8 +253,8 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachine.AutopilotStateMachine_U.in.input.VS_pull = simInputAutopilot.VS_pull;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.LOC_push = simInputAutopilot.LOC_push;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.APPR_push = simInputAutopilot.APPR_push;
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.H_fcu_ft = get_named_variable_value(idFcuSelectedAltitude);
-    autopilotStateMachine.AutopilotStateMachine_U.in.input.H_dot_fcu_fpm = simData.ap_H_dot_c_ft_min;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.H_fcu_ft = simData.ap_H_c_ft;
+    autopilotStateMachine.AutopilotStateMachine_U.in.input.H_dot_fcu_fpm = get_named_variable_value(idFcuSelectedVs);
     autopilotStateMachine.AutopilotStateMachine_U.in.input.FPA_fcu_deg = get_named_variable_value(idFcuSelectedFpa);
     autopilotStateMachine.AutopilotStateMachine_U.in.input.Psi_fcu_deg = simData.ap_Psi_c_deg;
     autopilotStateMachine.AutopilotStateMachine_U.in.input.TRK_FPA_mode =
@@ -335,7 +335,7 @@ bool FlyByWireInterface::updateAutopilotLaws(double sampleTime) {
     autopilotLaws.AutopilotLaws_U.in.data.bz_m_s2 = simData.bz_m_s2;
     autopilotLaws.AutopilotLaws_U.in.data.ap_fd_active = simData.ap_fd_1_active | simData.ap_fd_2_active;
     autopilotLaws.AutopilotLaws_U.in.data.ap_V_c_kn = simData.ap_V_c_kn;
-    autopilotLaws.AutopilotLaws_U.in.data.ap_H_c_ft = get_named_variable_value(idFcuSelectedAltitude);
+    autopilotLaws.AutopilotLaws_U.in.data.ap_H_c_ft = simData.ap_H_c_ft;
     autopilotLaws.AutopilotLaws_U.in.data.ap_Psi_c_deg = simData.ap_Psi_c_deg;
     autopilotLaws.AutopilotLaws_U.in.data.ap_H_dot_c_ft_min = simData.ap_H_dot_c_ft_min;
     autopilotLaws.AutopilotLaws_U.in.data.nav_valid = (simData.nav_valid != 0);

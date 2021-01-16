@@ -136,7 +136,7 @@ var Airbus_FMA;
             this.autoPilotThrottleArmed = Simplane.getAutoPilotThrottleArmed();
             this.autoPilotAirspeedHoldActive = Simplane.getAutoPilotAirspeedHoldActive();
             this.autoPilotVerticalSpeedHoldActive = Simplane.getAutoPilotVerticalSpeedHoldActive();
-            this.autoPilotVerticalSpeedHoldValue = Simplane.getAutoPilotVerticalSpeedHoldValue();
+            this.autoPilotVerticalSpeedHoldValue = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
             this.autoPilotFlightPathAngle = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
             this.autoPilotAltitudeLockActive = Simplane.getAutoPilotAltitudeLockActive();
             this.autoPilotAltitudeArmed = Simplane.getAutoPilotAltitudeArmed();

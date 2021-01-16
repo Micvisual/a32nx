@@ -20,10 +20,12 @@ typedef struct {
 typedef struct {
   ap_vertical Delay1_DSTATE;
   ap_lateral Delay_DSTATE;
+  real_T Delay_DSTATE_d[100];
   real_T eventTime;
   real_T eventTime_a;
   real_T eventTime_aq;
   real_T eventTime_c;
+  real_T newFcuAltitudeSelected;
   boolean_T DelayInput1_DSTATE;
   boolean_T DelayInput1_DSTATE_b;
   boolean_T DelayInput1_DSTATE_d;
@@ -94,6 +96,8 @@ struct Parameters_AutopilotStateMachine_T_ {
   real_T Saturation1_UpperSat;
   real_T Saturation1_LowerSat;
   real_T Gain2_Gain;
+  real_T Constant_Value;
+  real_T Delay_InitialCondition_i;
   boolean_T Constant6_Value;
   boolean_T Constant2_Value;
   boolean_T Constant3_Value;
@@ -140,22 +144,22 @@ class AutopilotStateMachineModelClass {
   boolean_T AutopilotStateMachine_OFF_TO_RWY_TRK(const ap_sm_output *BusAssignment);
   void AutopilotStateMachine_RWY_entry(void);
   void AutopilotStateMachine_VS_during(void);
-  void AutopilotStateMachine_ALT_entry(void);
   void AutopilotStateMachine_DES_entry(void);
   void AutopilotStateMachine_CLB_entry(void);
   void AutopilotStateMachine_OP_CLB_entry(void);
   void AutopilotStateMachine_OP_DES_entry(void);
   void AutopilotStateMachine_GS_CPT_entry(void);
   void AutopilotStateMachine_ALT_CPT_entry(void);
+  void AutopilotStateMachine_VS_entry(void);
   void AutopilotStateMachine_ALT(void);
   void AutopilotStateMachine_ALT_CPT_during(void);
+  void AutopilotStateMachine_ALT_entry(void);
   void AutopilotStateMachine_ALT_CPT(void);
+  void AutopilotStateMachine_ALT_CST(void);
   void AutopilotStateMachine_ALT_CST_entry(void);
   void AutopilotStateMachine_ALT_CST_CPT(void);
   void AutopilotStateMachine_CLB_during(void);
-  void AutopilotStateMachine_VS_entry(void);
   void AutopilotStateMachine_ALT_CST_CPT_entry(void);
-  void AutopilotStateMachine_CLB(void);
   void AutopilotStateMachine_DES_during(void);
   void AutopilotStateMachine_OFF_entry_p(void);
   void AutopilotStateMachine_ROLL_OUT_entry_o(void);
