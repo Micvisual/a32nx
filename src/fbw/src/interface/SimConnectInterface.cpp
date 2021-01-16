@@ -653,68 +653,55 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       simInput.inputs[AXIS_ELEVATOR_SET] = max(-1.0, simInput.inputs[AXIS_ELEVATOR_SET] - 0.02);
       break;
 
-    case Events::AP_MASTER: {
-      break;
-    }
-
     case Events::AUTOPILOT_OFF: {
       simInputAutopilot.AP_disconnect = 1;
       break;
     }
 
+    case Events::AP_MASTER:
     case Events::A32NX_FCU_AP_1_PUSH: {
-      cout << "WASM: A32NX_FCU_AP_1_PUSH" << endl;
       simInputAutopilot.AP_1_push = 1;
       break;
     }
 
     case Events::A32NX_FCU_AP_2_PUSH: {
-      cout << "WASM: A32NX_FCU_AP_2_PUSH" << endl;
       simInputAutopilot.AP_2_push = 1;
       break;
     }
 
     case Events::A32NX_FCU_HDG_PUSH: {
-      cout << "WASM: A32NX_FCU_HDG_PUSH" << endl;
       simInputAutopilot.HDG_push = 1;
       break;
     }
     case Events::A32NX_FCU_HDG_PULL: {
-      cout << "WASM: A32NX_FCU_HDG_PULL" << endl;
       simInputAutopilot.HDG_pull = 1;
       break;
     }
 
     case Events::A32NX_FCU_ALT_PUSH: {
-      cout << "WASM: A32NX_FCU_ALT_PUSH" << endl;
       simInputAutopilot.ALT_push = 1;
       break;
     }
     case Events::A32NX_FCU_ALT_PULL: {
-      cout << "WASM: A32NX_FCU_ALT_PULL" << endl;
       simInputAutopilot.ALT_pull = 1;
       break;
     }
 
     case Events::A32NX_FCU_VS_PUSH: {
-      cout << "WASM: A32NX_FCU_VS_PUSH" << endl;
       simInputAutopilot.VS_push = 1;
       break;
     }
     case Events::A32NX_FCU_VS_PULL: {
-      cout << "WASM: A32NX_FCU_VS_PULL" << endl;
       simInputAutopilot.VS_pull = 1;
       break;
     }
 
     case Events::A32NX_FCU_LOC_PUSH: {
-      cout << "WASM: A32NX_FCU_LOC_PUSH" << endl;
       simInputAutopilot.LOC_push = 1;
       break;
     }
 
     case Events::A32NX_FCU_APPR_PUSH: {
-      cout << "WASM: A32NX_FCU_APPR_PUSH" << endl;
       simInputAutopilot.APPR_push = 1;
       break;
     }
