@@ -563,6 +563,8 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
     }
 
     update(_deltaTime) {
+        const lightsTest = SimVar.GetSimVarValue("L:XMLVAR_LTS_Test", "Bool");
+        const isFPAMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
         const verticalMode = SimVar.GetSimVarValue("L:A32NX_FMA_VERTICAL_MODE", "Number");
 
         if (this.currentState === A320_Neo_FCU_VSpeed_State.Flying
@@ -573,12 +575,24 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         if (this.currentState !== A320_Neo_FCU_VSpeed_State.Flying
             && this.currentState !== A320_Neo_FCU_VSpeed_State.Zeroing
             && (verticalMode === 14 || verticalMode === 15)) {
+            if (isFPAMode) {
+                const current = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
+                if (current !== 0) {
+                    this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
+                } else {
+                    this.currentState = A320_Neo_FCU_VSpeed_State.Zeroing;
+                }
+            } else {
+                const current = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
+                if (current !== 0) {
+                    this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
+                } else {
+                    this.currentState = A320_Neo_FCU_VSpeed_State.Zeroing;
+                }
+            }
             clearTimeout(this._resetSelectionTimeout);
             this.forceUpdate = true;
         }
-
-        const lightsTest = SimVar.GetSimVarValue("L:XMLVAR_LTS_Test", "Bool");
-        const isFPAMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
 
         if (isFPAMode) {
             const angle = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
