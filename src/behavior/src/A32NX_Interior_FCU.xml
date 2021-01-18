@@ -293,7 +293,7 @@
                     (L:A32NX_TRK_FPA_MODE_ACTIVE, bool) 1 == if{
                         (&gt;H:A320_Neo_FCU_DEC_FPA)
                     } els{
-                        (&gt;H:A320_Neo_FCU_DEC_FS)
+                        (&gt;H:A320_Neo_FCU_DEC_VS)
                     }
                 </ANTICLOCKWISE_CODE>
                 <PULL_CODE>
