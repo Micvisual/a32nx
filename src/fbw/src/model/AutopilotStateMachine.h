@@ -21,6 +21,7 @@ typedef struct {
   ap_vertical Delay1_DSTATE;
   ap_lateral Delay_DSTATE;
   real_T Delay_DSTATE_d[100];
+  real_T Delay_DSTATE_c[100];
   real_T eventTime;
   real_T eventTime_a;
   real_T eventTime_aq;
@@ -68,6 +69,7 @@ typedef struct {
 
 struct Parameters_AutopilotStateMachine_T_ {
   ap_sm_output ap_sm_output_MATLABStruct;
+  real_T CompareToConstant_const;
   boolean_T DetectIncrease_vinit;
   boolean_T DetectIncrease1_vinit;
   boolean_T DetectIncrease2_vinit;
@@ -98,6 +100,8 @@ struct Parameters_AutopilotStateMachine_T_ {
   real_T Gain2_Gain;
   real_T Constant_Value;
   real_T Delay_InitialCondition_i;
+  real_T Constant_Value_j;
+  real_T Delay_InitialCondition_m;
   boolean_T Constant6_Value;
   boolean_T Constant2_Value;
   boolean_T Constant3_Value;

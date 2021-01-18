@@ -166,6 +166,7 @@ struct ClientDataLocalVariables {
   double fcuTrkFpaModeActive;
   double fcuSelectedVs;
   double fcuSelectedFpa;
+  double fcuSelectedHeading;
   double crossTrackError;
   double trackAngleError;
 };

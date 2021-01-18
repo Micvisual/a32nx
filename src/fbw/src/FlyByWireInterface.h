@@ -95,6 +95,7 @@ class FlyByWireInterface {
   ID idFcuTrkFpaModeActive;
   ID idFcuSelectedFpa;
   ID idFcuSelectedVs;
+  ID idFcuSelectedHeading;
 
   ID idFcuLocModeActive;
   ID idFcuApprModeActive;

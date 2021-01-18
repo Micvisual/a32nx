@@ -715,7 +715,6 @@ class A320_Neo_CDU_MainDisplay extends FMCMainDisplay {
             SimVar.SetSimVarValue("K:AP_PANEL_HEADING_HOLD", "Number", 1);
         }
         SimVar.SetSimVarValue("K:HEADING_SLOT_INDEX_SET", "number", 2);
-        SimVar.SetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number", 0);
     }
     _onModeSelectedAltitude() {
         if (!Simplane.getAutoPilotGlideslopeHold()) {
@@ -756,7 +755,7 @@ class A320_Neo_CDU_MainDisplay extends FMCMainDisplay {
             if (Simplane.getAutoPilotHeadingManaged()) {
                 if (SimVar.GetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number") === 0) {
                     const currentHeading = Simplane.getHeadingMagnetic();
-                    Coherent.call("HEADING_BUG_SET", 1, currentHeading);
+                    //Coherent.call("HEADING_BUG_SET", 1, currentHeading);
                 }
             }
             this._onModeSelectedHeading();
@@ -781,13 +780,6 @@ class A320_Neo_CDU_MainDisplay extends FMCMainDisplay {
                 this.setAPSelectedSpeed(currentSpeed, Aircraft.A320_NEO);
             }
             SimVar.SetSimVarValue("L:A320_FCU_SHOW_SELECTED_SPEED", "number", 1);
-        }
-        if (_event === "AP_DEC_HEADING" || _event === "AP_INC_HEADING") {
-            if (SimVar.GetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number") === 0) {
-                const currentHeading = Simplane.getHeadingMagnetic();
-                Coherent.call("HEADING_BUG_SET", 1, currentHeading);
-            }
-            SimVar.SetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number", 1);
         }
     }
     onFlightPhaseChanged() {
@@ -1050,7 +1042,7 @@ class A320_Neo_CDU_MainDisplay extends FMCMainDisplay {
             if (this.isHeadingManaged()) {
                 const heading = SimVar.GetSimVarValue("GPS COURSE TO STEER", "degree", "FMC");
                 if (isFinite(heading)) {
-                    Coherent.call("HEADING_BUG_SET", 2, heading);
+                    //Coherent.call("HEADING_BUG_SET", 2, heading);
                 }
             }
         }

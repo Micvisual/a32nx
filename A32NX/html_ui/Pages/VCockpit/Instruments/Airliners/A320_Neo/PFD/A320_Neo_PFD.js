@@ -371,11 +371,9 @@ class A320_Neo_PFD_Attitude extends NavSystemElement {
             this.hsi.update(_deltaTime);
 
             const flightDirectorActive = SimVar.GetSimVarValue(`AUTOPILOT FLIGHT DIRECTOR ACTIVE:1`, "bool");
-            const apHeadingModeSelected = Simplane.getAutoPilotHeadingSelected();
-            const fcuShowHdg = SimVar.GetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number");
-            const showSelectedHdg = !flightDirectorActive && (fcuShowHdg || apHeadingModeSelected);
+            const showSelectedHdg = SimVar.GetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number") === 1;
 
-            const selectedHeading = Simplane.getAutoPilotSelectedHeadingLockValue(false);
+            const selectedHeading = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_HEADING_SELECTED", "Degrees");
             const compass = SimVar.GetSimVarValue("PLANE HEADING DEGREES MAGNETIC", "degree");
             const xyz = Simplane.getOrientationAxis();
 

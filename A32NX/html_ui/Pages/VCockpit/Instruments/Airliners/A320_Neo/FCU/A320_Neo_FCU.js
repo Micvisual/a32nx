@@ -200,69 +200,115 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
         this.idleCountdown = 5; // in seconds
         this.trueAirspeedThreshold = 50; // in knots
         this.headingForTrackRecalculationPeriod = 1500; // in ms
+        this.inSelection = false;
     }
+
     init() {
         this.textHDG = this.getTextElement("HDG");
         this.textTRK = this.getTextElement("TRK");
         this.textLAT = this.getTextElement("LAT");
         this.illuminator = this.getElement("circle", "Illuminator");
         this.refresh(false, false, true, false, 0, 0, true);
+        this.selectedValue = -1;
+        this.isSelectedValueActive = false;
+        this.isPreselectionModeActive = false;
     }
+
     onFlightStart() {
         super.onFlightStart();
-        const showSelectedHeading = SimVar.GetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number") === 1;
-        if (!showSelectedHeading) {
-            const simHeading = SimVar.GetSimVarValue("PLANE HEADING DEGREES MAGNETIC", "degree");
-            Coherent.call("HEADING_BUG_SET", 1, Math.round(simHeading));
-        }
     }
-    update(_deltaTime) {
-        const isLateralModeActive = Simplane.getAutoPilotLateralModeActive();
+
+    onRotate() {
+        const lateralMode = SimVar.GetSimVarValue("L:A32NX_FMA_LATERAL_MODE", "Number");
+        const lateralArmed = SimVar.GetSimVarValue("L:A32NX_FMA_LATERAL_ARMED", "Number");
         const isTRKMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
-        let showSelectedHeading = SimVar.GetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number") === 1;
-        if (SimVar.GetSimVarValue("AUTOPILOT GLIDESLOPE HOLD", "boolean")) {
-            showSelectedHeading = false;
-        }
-        const isManaged = Simplane.getAutoPilotHeadingManaged() || SimVar.GetSimVarValue("AUTOPILOT APPROACH HOLD", "boolean");
-        if (isManaged && this.backToIdleTimeout > 0) {
-            this.backToIdleTimeout -= _deltaTime / 1000;
-            if (this.backToIdleTimeout <= 0) {
-                SimVar.SetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number", 0);
-                showSelectedHeading = false;
-            }
-        }
-        const lightsTest = SimVar.GetSimVarValue("L:XMLVAR_LTS_Test", "Bool");
-        if (isLateralModeActive) {
-            this.refresh(false, isManaged, isTRKMode, showSelectedHeading, 0, lightsTest);
-        } else if (isTRKMode) {
-            const track = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_TRACK_SELECTED:1", "Degrees");
-            if (!this.isManaged) {
-                this.timeSinceHeadingForTrackRecalculation = (this.timeSinceHeadingForTrackRecalculation + _deltaTime) || 0;
-                if (this.timeSinceHeadingForTrackRecalculation > this.headingForTrackRecalculationPeriod) {
-                    const heading = this.calculateHeadingForTrack(track);
-                    Coherent.call("HEADING_BUG_SET", 1, heading);
-                    this.timeSinceHeadingForTrackRecalculation = 0;
+        const radioHeight = SimVar.GetSimVarValue("RADIO HEIGHT", "feet");
+
+        if (!this.inSelection
+            && (this.isManagedModeActive(lateralMode, lateralArmed)
+                || this.isPreselectionAvailable(radioHeight, lateralMode))) {
+            this.inSelection = true;
+            if (!this.isSelectedValueActive) {
+                if (isTRKMode) {
+                    this.selectedValue = this.getCurrentTrack();
+                } else {
+                    this.selectedValue = this.getCurrentHeading();
                 }
             }
+        }
 
-            this.refresh(true, isManaged, true, showSelectedHeading, track, lightsTest);
+        this.isSelectedValueActive = true;
+
+        if (this.inSelection && !this.isPreselectionAvailable(radioHeight, lateralMode)) {
+            this.isPreselectionModeActive = false;
+            clearTimeout(this._resetSelectionTimeout);
+            this._resetSelectionTimeout = setTimeout(() => {
+                this.selectedValue = -1;
+                this.isSelectedValueActive = false;
+                this.inSelection = false;
+            }, 5000);
         } else {
-            this.refresh(true, isManaged, false, showSelectedHeading, Simplane.getAutoPilotSelectedHeadingLockValue(false), lightsTest);
+            this.isPreselectionModeActive = true;
         }
     }
+
+    getCurrentHeading() {
+        return ((Math.round(SimVar.GetSimVarValue("PLANE HEADING DEGREES MAGNETIC", "degree")) % 360) + 360) % 360;
+    }
+
+    getCurrentTrack() {
+        return ((Math.round(SimVar.GetSimVarValue("GPS GROUND MAGNETIC TRACK", "degree")) % 360) + 360) % 360;
+    }
+
+    onPush() {
+        clearTimeout(this._resetSelectionTimeout);
+        this.isSelectedValueActive = false;
+        this.isPreselectionModeActive = false;
+        this.inSelection = false;
+        SimVar.SetSimVarValue("K:A32NX.FCU_HDG_PUSH", "number", 0);
+    }
+
+    onPull() {
+        clearTimeout(this._resetSelectionTimeout);
+        const isTRKMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
+        if (!this.isSelectedValueActive) {
+            if (isTRKMode) {
+                this.selectedValue = this.getCurrentTrack();
+            } else {
+                this.selectedValue = this.getCurrentHeading();
+            }
+        }
+        this.inSelection = false;
+        this.isSelectedValueActive = true;
+        this.isPreselectionModeActive = false;
+        SimVar.SetSimVarValue("K:A32NX.FCU_HDG_PULL", "number", 0);
+    }
+
+    update(_deltaTime) {
+        const lateralMode = SimVar.GetSimVarValue("L:A32NX_FMA_LATERAL_MODE", "Number");
+        const lateralArmed = SimVar.GetSimVarValue("L:A32NX_FMA_LATERAL_ARMED", "Number");
+        const isTRKMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
+        const lightsTest = SimVar.GetSimVarValue("L:XMLVAR_LTS_Test", "Bool");
+        const showSelectedValue = (this.isSelectedValueActive || this.inSelection || this.isPreselectionModeActive);
+        const isManaged = this.isManagedModeActiveOrArmed(lateralMode, lateralArmed);
+
+        this.refresh(true, isManaged, isTRKMode, showSelectedValue, this.selectedValue, lightsTest);
+    }
+
     refresh(_isActive, _isManaged, _isTRKMode, _showSelectedHeading, _value, _lightsTest, _force = false) {
         if ((_isActive != this.isActive) || _isManaged != this.isManaged || (_isTRKMode != this.isTRKMode) || (_showSelectedHeading != this.showSelectedHeading) || (_value != this.currentValue) || (_lightsTest !== this.lightsTest) || _force) {
             if (_isTRKMode != this.isTRKMode) {
                 this.onTRKModeChanged(_isTRKMode);
             }
-            if (_isManaged != this.isManaged) {
-                this.onManagedChanged(_isManaged);
+            if (_showSelectedHeading !== this.showSelectedHeading) {
+                SimVar.SetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number", _showSelectedHeading == true ? 1 : 0);
             }
-            if (_value != this.currentValue) {
-                this.onValueChanged(_value);
+            if (_isManaged !== this.isManaged && _isManaged) {
+                this.selectedValue = -1;
             }
-            if (_showSelectedHeading != this.showSelectedHeading) {
-                this.onShowSelectedHeadingChanged(_showSelectedHeading);
+            if (_value !== this.currentValue) {
+                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_HEADING_SELECTED", "Degrees", _value);
+                Coherent.call("HEADING_BUG_SET", 1, Math.max(0, _value));
             }
             this.isActive = _isActive;
             this.isManaged = _isManaged;
@@ -294,6 +340,30 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
             this.setElementVisibility(this.illuminator, this.isManaged);
         }
     }
+
+    isManagedModeActive(mode) {
+        return (mode !== 0 && mode !== 10 && mode !== 11 && mode !== 40 && mode !== 41);
+    }
+
+    isManagedModeActiveOrArmed(mode, armed) {
+        return (armed > 0) || this.isManagedModeActive(mode);
+    }
+
+    isPreselectionAvailable(radioHeight, mode) {
+        return (
+            radioHeight < 30
+            || ((mode >= 30 && mode <= 34) || mode === 50)
+        );
+    }
+
+    onTRKModeChanged(_newValue) {
+        if (_newValue) {
+            this.selectedValue = this.calculateTrackForHeading(this.selectedValue);
+        } else {
+            this.selectedValue = this.calculateHeadingForTrack(this.selectedValue);
+        }
+    }
+
     /**
      * Calculates the corresponding track for a given heading, assuming it is flown in the current conditions (TAS + wind).
      * @param {number} _heading The heading in degrees.
@@ -313,6 +383,7 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
         const track = heading + wca % (2 * Math.PI);
         return (((track * 180 / Math.PI) % 360) + 360) % 360;
     }
+
     /**
      * Calculates the heading needed to fly a given track in the current conditions (TAS + wind).
      * @param {number} _track The track in degrees.
@@ -333,47 +404,24 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
         const _heading = (((heading * 180 / Math.PI) % 360) + 360) % 360;
         return _heading == NaN ? _track : _heading;
     }
-    onTRKModeChanged(_newValue) {
-        if (_newValue) {
-            const heading = Simplane.getAutoPilotSelectedHeadingLockValue(false);
-            const track = this.calculateTrackForHeading(heading);
-            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_TRACK_SELECTED:1", "Degrees", track);
-        }
-    }
-    onManagedChanged(_newValue) {
-        const simHeading = SimVar.GetSimVarValue("PLANE HEADING DEGREES MAGNETIC", "degree");
-        Coherent.call("HEADING_BUG_SET", 1, simHeading);
-        SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_TRACK_SELECTED:1", "Degrees", this.calculateTrackForHeading(simHeading));
-        if (!_newValue) {
-            this.backToIdleTimeout = 0;
-        }
-    }
-    onValueChanged(_newValue) {
-        if (this.isManaged && this.showSelectedHeading) {
-            this.backToIdleTimeout = this.idleCountdown;
-        }
-    }
-    onShowSelectedHeadingChanged(_newValue) {
-        if (this.isManaged && _newValue) {
-            this.backToIdleTimeout = this.idleCountdown;
-        }
-    }
+
     onEvent(_event) {
-        // TODO: increments of more than 1 if rolling quickly.
-        if (_event === "AP_INC_TRACK") {
-            const currentTrack = Math.round(SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_TRACK_SELECTED:1", "Degrees"));
-            const newTrack = ((currentTrack + 1 % 360) + 360) % 360;
-            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_TRACK_SELECTED:1", "Degrees", newTrack);
-            SimVar.SetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number", 1);
-            Coherent.call("HEADING_BUG_SET", 1, this.calculateHeadingForTrack(newTrack));
-        } else if (_event === "AP_DEC_TRACK") {
-            const currentTrack = Math.round(SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_TRACK_SELECTED:1", "Degrees"));
-            const newTrack = ((currentTrack - 1 % 360) + 360) % 360;
-            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_TRACK_SELECTED:1", "Degrees", newTrack);
-            SimVar.SetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number", 1);
-            Coherent.call("HEADING_BUG_SET", 1, this.calculateHeadingForTrack(newTrack));
-        } else if (_event === "MODE_MANAGED_HEADING" && this.isManaged) {
-            this.backToIdleTimeout = 0;
+        if (_event === "INC_HEADING") {
+            this.selectedValue = (((this.selectedValue + 1) % 360) + 360) % 360;
+            this.onRotate();
+        } else if (_event === "DEC_HEADING") {
+            this.selectedValue = (((this.selectedValue - 1) % 360) + 360) % 360;
+            this.onRotate();
+        } else if (_event === "INC_TRACK") {
+            this.selectedValue = (((this.selectedValue + 1) % 360) + 360) % 360;
+            this.onRotate();
+        } else if (_event === "DEC_TRACK") {
+            this.selectedValue = (((this.selectedValue - 1) % 360) + 360) % 360;
+            this.onRotate();
+        } else if (_event === "HEADING_PUSH") {
+            this.onPush();
+        } else if (_event === "HEADING_PULL") {
+            this.onPull();
         }
     }
 }
@@ -472,10 +520,8 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
     constructor() {
         super(...arguments);
         this.forceUpdate = true;
-        this._debug = 300;
         this.ABS_MINMAX_FPA = 9.9;
         this.ABS_MINMAX_VS = 6000;
-        this.verticalSpeedForAngleRecalculationPeriod = 1500;
     }
     get currentState() {
         return this._currentState;
@@ -492,24 +538,20 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         this.isActive = false;
         this.isFPAMode = false;
         this._enterIdleState();
+        this.selectedVs = 0;
+        this.selectedFpa = 0;
         this.refresh(false, false, 0, 0, true);
     }
 
     onFlightStart() {
         super.onFlightStart();
-        const selectedValue = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
-        if (selectedValue == 0) {
-            this._enterIdleState(0);
-        } else {
-            this.onPull();
-        }
     }
 
     onPush() {
         this.currentState = A320_Neo_FCU_VSpeed_State.Zeroing;
 
-        SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", 0);
-        SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", 0);
+        this.selectedVs = 0;
+        this.selectedFpa = 0;
 
         clearTimeout(this._resetSelectionTimeout);
         this.forceUpdate = true;
@@ -518,10 +560,8 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
     onRotate() {
         if (this.currentState === A320_Neo_FCU_VSpeed_State.Idle || this.currentState === A320_Neo_FCU_VSpeed_State.Selecting) {
             if (this.currentState === A320_Neo_FCU_VSpeed_State.Idle) {
-                const currentValue = Simplane.getVerticalSpeed();
-                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", Math.round(currentValue / 100) * 100);
-                const currentAngle = this.calculateAngleForVerticalSpeed(currentValue);
-                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", currentAngle);
+                this.selectedVs = this.getCurrentVerticalSpeed();
+                this.selectedFpa = this.getCurrentFlightPathAngle();
             }
 
             this.currentState = A320_Neo_FCU_VSpeed_State.Selecting;
@@ -529,8 +569,8 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
             this.forceUpdate = true;
 
             this._resetSelectionTimeout = setTimeout(() => {
-                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", 0);
-                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", 0);
+                this.selectedVs = 0;
+                this.selectedFpa = 0;
                 this.currentState = A320_Neo_FCU_VSpeed_State.Idle;
                 this.forceUpdate = true;
             }, 10000);
@@ -542,12 +582,10 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
 
     onPull() {
         if (this.currentState === A320_Neo_FCU_VSpeed_State.Idle) {
-            const currentValue = Simplane.getVerticalSpeed();
             if (this.isFPAMode) {
-                const angle = this.calculateAngleForVerticalSpeed(currentValue);
-                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", angle);
+                this.selectedFpa = this.getCurrentFlightPathAngle();
             } else {
-                SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", Math.round(currentValue / 100) * 100);
+                this.selectedVs = this.getCurrentVerticalSpeed();
             }
         }
 
@@ -555,9 +593,17 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         this.forceUpdate = true;
     }
 
+    getCurrentFlightPathAngle() {
+        return this.calculateAngleForVerticalSpeed(Simplane.getVerticalSpeed());
+    }
+
+    getCurrentVerticalSpeed() {
+        return Utils.Clamp(Math.round(Simplane.getVerticalSpeed() / 100) * 100, -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
+    }
+
     _enterIdleState(idleVSpeed) {
-        SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", 0);
-        SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", 0);
+        this.selectedVs = 0;
+        this.selectedFpa = 0;
         this.currentState = A320_Neo_FCU_VSpeed_State.Idle;
         this.forceUpdate = true;
     }
@@ -577,15 +623,13 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
             && this.currentState !== A320_Neo_FCU_VSpeed_State.Zeroing
             && (verticalMode === 14 || verticalMode === 15)) {
             if (isFPAMode) {
-                const current = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
-                if (current !== 0) {
+                if (this.selectedFpa !== 0) {
                     this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
                 } else {
                     this.currentState = A320_Neo_FCU_VSpeed_State.Zeroing;
                 }
             } else {
-                const current = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
-                if (current !== 0) {
+                if (this.currentVs !== 0) {
                     this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
                 } else {
                     this.currentState = A320_Neo_FCU_VSpeed_State.Zeroing;
@@ -596,11 +640,9 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         }
 
         if (isFPAMode) {
-            const angle = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
-            this.refresh(true, true, angle, lightsTest, this.forceUpdate);
+            this.refresh(true, true, this.selectedFpa, lightsTest, this.forceUpdate);
         } else {
-            const vspeed = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
-            this.refresh(true, false, vspeed, lightsTest, this.forceUpdate);
+            this.refresh(true, false, this.selectedVs, lightsTest, this.forceUpdate);
         }
 
         this.forceUpdate = false;
@@ -610,6 +652,16 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         if ((_isActive != this.isActive) || (_isFPAMode != this.isFPAMode) || (_value != this.currentValue) || (_lightsTest !== this.lightsTest) || _force) {
             if (this.isFPAMode != _isFPAMode) {
                 this.onFPAModeChanged(_isFPAMode);
+            }
+            if (this.currentValue !== _value) {
+                if (_isFPAMode) {
+                    SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", this.selectedFpa);
+                    SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", this.calculateVerticalSpeedForAngle(this.selectedFpa));
+
+                } else {
+                    SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", this.calculateAngleForVerticalSpeed(this.selectedVs));
+                    SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", this.selectedVs);
+                }
             }
             this.isActive = _isActive;
             this.isFPAMode = _isFPAMode;
@@ -648,42 +700,29 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
     }
 
     onEvent(_event) {
-        if (_event === "VS_INC") {
-            const currentVs = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
-            const newVS = Utils.Clamp(Math.round(currentVs + 100), -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
-            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", newVS);
+        if (_event === "INC_VS") {
+            this.selectedVs = Utils.Clamp(Math.round(this.selectedVs + 100), -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
             this.onRotate();
-        } else if (_event === "VS_DEC") {
-            const currentVs = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
-            const newVS = Utils.Clamp(Math.round(currentVs - 100), -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
-            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", newVS);
+        } else if (_event === "DEC_VS") {
+            this.selectedVs = Utils.Clamp(Math.round(this.selectedVs - 100), -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
             this.onRotate();
-        } else if (_event === "VS_ZERO") {
+        } else if (_event === "INC_FPA") {
+            this.selectedFpa = Utils.Clamp(Math.round((this.selectedFpa + 0.1) * 10) / 10, -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
+            this.onRotate();
+        } else if (_event === "DEC_FPA") {
+            this.selectedFpa = Utils.Clamp(Math.round((this.selectedFpa - 0.1) * 10) / 10, -this.ABS_MINMAX_VS, this.ABS_MINMAX_VS);
+            this.onRotate();
+        } else if (_event === "VS_PUSH") {
             this.onPush();
-        } else if (_event === "VS_HOLD") {
+        } else if (_event === "VS_PULL") {
             this.onPull();
-        } else if (_event === "AP_DEC_FPA") {
-            // TODO: increments of more than 0.1 if rolling quickly.
-            const currentFpa = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
-            const newFpa = Utils.Clamp(Math.round((currentFpa - 0.1) * 10) / 10, -this.ABS_MINMAX_FPA, this.ABS_MINMAX_FPA);
-            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", newFpa);
-            this.onRotate();
-        } else if (_event === "AP_INC_FPA") {
-            const currentFpa = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
-            const newFpa = Utils.Clamp(Math.round((currentFpa + 0.1) * 10) / 10, -this.ABS_MINMAX_FPA, this.ABS_MINMAX_FPA);
-            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", newFpa);
-            this.onRotate();
         }
     }
     onFPAModeChanged(_newValue) {
         if (_newValue) {
-            const verticalSpeed = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute");
-            const angle = this.calculateAngleForVerticalSpeed(verticalSpeed);
-            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree", angle);
+            this.selectedFpa = this.calculateAngleForVerticalSpeed(this.selectedVs);
         } else {
-            const angle = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_FPA_SELECTED", "Degree");
-            const verticalSpeed = this.calculateVerticalSpeedForAngle(angle);
-            SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_VS_SELECTED", "feet per minute", verticalSpeed);
+            this.selectedVs = this.calculateVerticalSpeedForAngle(this.selectedFpa);
         }
     }
     /**
