@@ -42,14 +42,15 @@ typedef struct {
   uint8_T is_c6_AutopilotStateMachine;
   uint8_T is_ON;
   uint8_T is_GS;
-  uint8_T is_active_c3_AutopilotStateMachine;
-  uint8_T is_c3_AutopilotStateMachine;
   uint8_T is_active_c5_AutopilotStateMachine;
   uint8_T is_c5_AutopilotStateMachine;
   uint8_T is_active_c1_AutopilotStateMachine;
   uint8_T is_c1_AutopilotStateMachine;
   uint8_T is_ON_c;
   uint8_T is_LOC;
+  boolean_T sAP1;
+  boolean_T sAP2;
+  boolean_T sLandModeArmedOrActive;
   boolean_T eventTime_not_empty;
   boolean_T eventTime_not_empty_k;
   boolean_T eventTime_not_empty_m;

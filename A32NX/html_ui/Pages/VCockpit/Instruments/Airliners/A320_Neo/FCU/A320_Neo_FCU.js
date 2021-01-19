@@ -225,7 +225,7 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
         const radioHeight = SimVar.GetSimVarValue("RADIO HEIGHT", "feet");
 
         if (!this.inSelection
-            && (this.isManagedModeActive(lateralMode, lateralArmed)
+            && (this.isManagedModeActive(lateralMode)
                 || this.isPreselectionAvailable(radioHeight, lateralMode))) {
             this.inSelection = true;
             if (!this.isSelectedValueActive) {
@@ -289,29 +289,56 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
         const lateralArmed = SimVar.GetSimVarValue("L:A32NX_FMA_LATERAL_ARMED", "Number");
         const isTRKMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
         const lightsTest = SimVar.GetSimVarValue("L:XMLVAR_LTS_Test", "Bool");
+        const isManagedActive = this.isManagedModeActive(lateralMode);
+        const isManagedActiveOrArmed = this.isManagedModeActiveOrArmed(lateralMode, lateralArmed);
         const showSelectedValue = (this.isSelectedValueActive || this.inSelection || this.isPreselectionModeActive);
-        const isManaged = this.isManagedModeActiveOrArmed(lateralMode, lateralArmed);
 
-        this.refresh(true, isManaged, isTRKMode, showSelectedValue, this.selectedValue, lightsTest);
+        this.refresh(true, isManagedActiveOrArmed, isManagedActive, isTRKMode, showSelectedValue, this.selectedValue, lightsTest);
     }
 
-    refresh(_isActive, _isManaged, _isTRKMode, _showSelectedHeading, _value, _lightsTest, _force = false) {
-        if ((_isActive != this.isActive) || _isManaged != this.isManaged || (_isTRKMode != this.isTRKMode) || (_showSelectedHeading != this.showSelectedHeading) || (_value != this.currentValue) || (_lightsTest !== this.lightsTest) || _force) {
+    refresh(_isActive, _isManagedArmedActive, _isManagedActive, _isTRKMode, _showSelectedHeading, _value, _lightsTest, _force = false) {
+        if ((_isActive != this.isActive)
+            || (_isManagedArmedActive != this.isManagedArmedActive)
+            || (_isManagedActive != this.isManagedActive)
+            || (_isTRKMode != this.isTRKMode)
+            || (_showSelectedHeading != this.showSelectedHeading)
+            || (_value != this.currentValue)
+            || (_lightsTest !== this.lightsTest)
+            || _force) {
             if (_isTRKMode != this.isTRKMode) {
                 this.onTRKModeChanged(_isTRKMode);
             }
+            if (_isManagedActive !== this.isManagedActive) {
+                if (_isManagedActive) {
+                    _value = -1;
+                    _showSelectedHeading = false;
+                    this.selectedValue = _value;
+                    this.isSelectedValueActive = false;
+                    this.isPreselectionModeActive = false;
+                } else {
+                    _showSelectedHeading = true;
+                    if (!this.isSelectedValueActive) {
+                        this.isSelectedValueActive = true;
+                        if (_isTRKMode) {
+                            _value = this.getCurrentTrack();
+                            this.selectedValue = _value;
+                        } else {
+                            _value = this.getCurrentHeading();
+                            this.selectedValue = _value;
+                        }
+                    }
+                }
+            }
             if (_showSelectedHeading !== this.showSelectedHeading) {
                 SimVar.SetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number", _showSelectedHeading == true ? 1 : 0);
-            }
-            if (_isManaged !== this.isManaged && _isManaged) {
-                this.selectedValue = -1;
             }
             if (_value !== this.currentValue) {
                 SimVar.SetSimVarValue("L:A32NX_AUTOPILOT_HEADING_SELECTED", "Degrees", _value);
                 Coherent.call("HEADING_BUG_SET", 1, Math.max(0, _value));
             }
             this.isActive = _isActive;
-            this.isManaged = _isManaged;
+            this.isManagedActive = _isManagedActive;
+            this.isManagedArmedActive = _isManagedArmedActive;
             this.isTRKMode = _isTRKMode;
             this.showSelectedHeading = _showSelectedHeading;
             this.currentValue = _value;
@@ -326,10 +353,10 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
                 this.setElementVisibility(this.illuminator, true);
                 return;
             }
-            if (!this.isManaged) {
+            if (!this.isManagedArmedActive) {
                 var value = Math.round(Math.max(this.currentValue, 0)) % 360;
                 this.textValueContent = value.toString().padStart(3, "0");
-            } else if (this.isManaged) {
+            } else if (this.isManagedArmedActive) {
                 if (this.showSelectedHeading) {
                     var value = Math.round(Math.max(this.currentValue, 0)) % 360;
                     this.textValueContent = value.toString().padStart(3, "0");
@@ -337,7 +364,7 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
                     this.textValueContent = "---";
                 }
             }
-            this.setElementVisibility(this.illuminator, this.isManaged);
+            this.setElementVisibility(this.illuminator, this.isManagedArmedActive);
         }
     }
 

@@ -254,7 +254,8 @@ class Jet_NDCompass extends HTMLElement {
             if (this.aircraft == Aircraft.A320_NEO) {
                 var selectedHeading = simSelectedHeading;
                 const showSelectedHeading = SimVar.GetSimVarValue("L:A320_FCU_SHOW_SELECTED_HEADING", "number") === 1;
-                const showTrackLine = showSelectedHeading;
+                const lateralMode = SimVar.GetSimVarValue("L:A32NX_FMA_LATERAL_MODE", "Number");
+                const showTrackLine = (lateralMode === 10 || lateralMode === 11);
                 if (showSelectedHeading) {
                     selectedHeading = SimVar.GetSimVarValue("L:A32NX_AUTOPILOT_HEADING_SELECTED", "Degrees");
                 }

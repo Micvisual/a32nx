@@ -58,6 +58,8 @@ bool FlyByWireInterface::connect() {
   idAutopilotActive_1 = register_named_variable("A32NX_AUTOPILOT_1_ACTIVE");
   idAutopilotActive_2 = register_named_variable("A32NX_AUTOPILOT_2_ACTIVE");
 
+  idAutothrustMode = register_named_variable("A32NX_AUTOPILOT_AUTOTHRUST_MODE");
+
   // register L variables for flight guidance
   idFlightPhase = register_named_variable("A32NX_FWC_FLIGHT_PHASE");
   idFmgcV2 = register_named_variable("AIRLINER_V2_SPEED");
@@ -270,13 +272,15 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
   } else {
     // read client data written by simulink
     ClientDataAutopilotStateMachine clientData = simConnectInterface.getClientDataAutopilotStateMachine();
-    autopilotStateMachineOutput.enabled = clientData.enabled;
+    autopilotStateMachineOutput.enabled_AP1 = clientData.enabled_AP1;
+    autopilotStateMachineOutput.enabled_AP2 = clientData.enabled_AP2;
     autopilotStateMachineOutput.lateral_law = clientData.lateral_law;
     autopilotStateMachineOutput.lateral_mode = clientData.lateral_mode;
     autopilotStateMachineOutput.lateral_mode_armed = clientData.lateral_mode_armed;
     autopilotStateMachineOutput.vertical_law = clientData.vertical_law;
     autopilotStateMachineOutput.vertical_mode = clientData.vertical_mode;
     autopilotStateMachineOutput.vertical_mode_armed = clientData.vertical_mode_armed;
+    autopilotStateMachineOutput.autothrust_mode = clientData.autothrust_mode;
     autopilotStateMachineOutput.Psi_c_deg = clientData.Psi_c_deg;
     autopilotStateMachineOutput.H_c_ft = clientData.H_c_ft;
     autopilotStateMachineOutput.H_dot_c_fpm = clientData.H_dot_c_fpm;
@@ -284,8 +288,8 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
   }
 
   // update autopilot state -------------------------------------------------------------------------------------------
-  set_named_variable_value(idAutopilotActive_1, autopilotStateMachineOutput.enabled);
-  set_named_variable_value(idAutopilotActive_2, 0);
+  set_named_variable_value(idAutopilotActive_1, autopilotStateMachineOutput.enabled_AP1);
+  set_named_variable_value(idAutopilotActive_2, autopilotStateMachineOutput.enabled_AP2);
 
   bool isLocArmed = static_cast<unsigned long long>(autopilotStateMachineOutput.lateral_mode_armed) >> 1 & 0x01;
   bool isLocEngaged = autopilotStateMachineOutput.lateral_mode >= 30 && autopilotStateMachineOutput.lateral_mode <= 34;
@@ -293,6 +297,9 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
   bool isGsEngaged = autopilotStateMachineOutput.lateral_mode >= 30 && autopilotStateMachineOutput.lateral_mode <= 34;
   set_named_variable_value(idFcuLocModeActive, (isLocArmed || isLocEngaged) && !(isGsArmed || isGsEngaged));
   set_named_variable_value(idFcuApprModeActive, (isLocArmed || isLocEngaged) && (isGsArmed || isGsEngaged));
+
+  // update autothrust mode -------------------------------------------------------------------------------------------
+  set_named_variable_value(idAutothrustMode, autopilotStateMachineOutput.autothrust_mode);
 
   // update FMA variables ---------------------------------------------------------------------------------------------
   set_named_variable_value(idFmaLateralMode, autopilotStateMachineOutput.lateral_mode);
@@ -375,13 +382,15 @@ bool FlyByWireInterface::updateAutopilotLaws(double sampleTime) {
     if (autopilotStateMachineEnabled) {
       // send data to client data to be read by simulink
       ClientDataAutopilotStateMachine clientDataStateMachine = {
-          autopilotStateMachineOutput.enabled,
+          autopilotStateMachineOutput.enabled_AP1,
+          autopilotStateMachineOutput.enabled_AP2,
           autopilotStateMachineOutput.lateral_law,
           autopilotStateMachineOutput.lateral_mode,
           autopilotStateMachineOutput.lateral_mode_armed,
           autopilotStateMachineOutput.vertical_law,
           autopilotStateMachineOutput.vertical_mode,
           autopilotStateMachineOutput.vertical_mode_armed,
+          autopilotStateMachineOutput.autothrust_mode,
           autopilotStateMachineOutput.Psi_c_deg,
           autopilotStateMachineOutput.H_c_ft,
           autopilotStateMachineOutput.H_dot_c_fpm,

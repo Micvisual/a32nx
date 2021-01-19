@@ -395,13 +395,15 @@ typedef struct {
 #define DEFINED_TYPEDEF_FOR_ap_raw_laws_input_
 
 typedef struct {
-  real_T enabled;
+  real_T enabled_AP1;
+  real_T enabled_AP2;
   real_T lateral_law;
   real_T lateral_mode;
   real_T lateral_mode_armed;
   real_T vertical_law;
   real_T vertical_mode;
   real_T vertical_mode_armed;
+  real_T autothrust_mode;
   real_T Psi_c_deg;
   real_T H_c_ft;
   real_T H_dot_c_fpm;
