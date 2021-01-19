@@ -58,6 +58,8 @@ typedef struct {
   boolean_T state;
   boolean_T state_d;
   boolean_T state_j;
+  boolean_T sDES;
+  boolean_T sCLB;
 } D_Work_AutopilotStateMachine_T;
 
 typedef struct {
@@ -104,7 +106,6 @@ struct Parameters_AutopilotStateMachine_T_ {
   real_T Constant_Value_j;
   real_T Delay_InitialCondition_m;
   boolean_T Constant6_Value;
-  boolean_T Constant2_Value;
   boolean_T Constant3_Value;
 };
 
@@ -149,12 +150,12 @@ class AutopilotStateMachineModelClass {
   boolean_T AutopilotStateMachine_OFF_TO_RWY_TRK(const ap_sm_output *BusAssignment);
   void AutopilotStateMachine_RWY_entry(void);
   void AutopilotStateMachine_VS_during(void);
+  void AutopilotStateMachine_ALT_CPT_entry(void);
   void AutopilotStateMachine_DES_entry(void);
   void AutopilotStateMachine_CLB_entry(void);
   void AutopilotStateMachine_OP_CLB_entry(void);
   void AutopilotStateMachine_OP_DES_entry(void);
   void AutopilotStateMachine_GS_CPT_entry(void);
-  void AutopilotStateMachine_ALT_CPT_entry(void);
   void AutopilotStateMachine_VS_entry(void);
   void AutopilotStateMachine_ALT(void);
   void AutopilotStateMachine_ALT_CPT_during(void);
@@ -162,7 +163,6 @@ class AutopilotStateMachineModelClass {
   void AutopilotStateMachine_ALT_CPT(void);
   void AutopilotStateMachine_ALT_CST(void);
   void AutopilotStateMachine_ALT_CST_entry(void);
-  void AutopilotStateMachine_ALT_CST_CPT(void);
   void AutopilotStateMachine_CLB_during(void);
   void AutopilotStateMachine_ALT_CST_CPT_entry(void);
   void AutopilotStateMachine_DES_during(void);

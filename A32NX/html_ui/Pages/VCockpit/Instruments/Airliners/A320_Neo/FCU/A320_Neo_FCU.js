@@ -290,15 +290,15 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
         const isTRKMode = SimVar.GetSimVarValue("L:A32NX_TRK_FPA_MODE_ACTIVE", "Bool");
         const lightsTest = SimVar.GetSimVarValue("L:XMLVAR_LTS_Test", "Bool");
         const isManagedActive = this.isManagedModeActive(lateralMode);
-        const isManagedActiveOrArmed = this.isManagedModeActiveOrArmed(lateralMode, lateralArmed);
+        const isManagedArmed = this.isManagedModeArmed(lateralArmed);
         const showSelectedValue = (this.isSelectedValueActive || this.inSelection || this.isPreselectionModeActive);
 
-        this.refresh(true, isManagedActiveOrArmed, isManagedActive, isTRKMode, showSelectedValue, this.selectedValue, lightsTest);
+        this.refresh(true, isManagedArmed, isManagedActive, isTRKMode, showSelectedValue, this.selectedValue, lightsTest);
     }
 
-    refresh(_isActive, _isManagedArmedActive, _isManagedActive, _isTRKMode, _showSelectedHeading, _value, _lightsTest, _force = false) {
+    refresh(_isActive, _isManagedArmed, _isManagedActive, _isTRKMode, _showSelectedHeading, _value, _lightsTest, _force = false) {
         if ((_isActive != this.isActive)
-            || (_isManagedArmedActive != this.isManagedArmedActive)
+            || (_isManagedArmed != this.isManagedArmed)
             || (_isManagedActive != this.isManagedActive)
             || (_isTRKMode != this.isTRKMode)
             || (_showSelectedHeading != this.showSelectedHeading)
@@ -307,6 +307,15 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
             || _force) {
             if (_isTRKMode != this.isTRKMode) {
                 this.onTRKModeChanged(_isTRKMode);
+            }
+            if (_isManagedArmed
+                && _isManagedArmed !== this.isManagedArmed
+                && SimVar.GetSimVarValue("RADIO HEIGHT", "feet") < 30) {
+                _value = -1;
+                _showSelectedHeading = false;
+                this.selectedValue = _value;
+                this.isSelectedValueActive = false;
+                this.isPreselectionModeActive = false;
             }
             if (_isManagedActive !== this.isManagedActive) {
                 if (_isManagedActive) {
@@ -338,7 +347,7 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
             }
             this.isActive = _isActive;
             this.isManagedActive = _isManagedActive;
-            this.isManagedArmedActive = _isManagedArmedActive;
+            this.isManagedArmed = _isManagedArmed;
             this.isTRKMode = _isTRKMode;
             this.showSelectedHeading = _showSelectedHeading;
             this.currentValue = _value;
@@ -353,18 +362,13 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
                 this.setElementVisibility(this.illuminator, true);
                 return;
             }
-            if (!this.isManagedArmedActive) {
+            if ((this.isManagedArmed || this.isManagedActive) && !this.showSelectedHeading) {
+                this.textValueContent = "---";
+            } else {
                 var value = Math.round(Math.max(this.currentValue, 0)) % 360;
                 this.textValueContent = value.toString().padStart(3, "0");
-            } else if (this.isManagedArmedActive) {
-                if (this.showSelectedHeading) {
-                    var value = Math.round(Math.max(this.currentValue, 0)) % 360;
-                    this.textValueContent = value.toString().padStart(3, "0");
-                } else {
-                    this.textValueContent = "---";
-                }
             }
-            this.setElementVisibility(this.illuminator, this.isManagedArmedActive);
+            this.setElementVisibility(this.illuminator, this.isManagedArmed || this.isManagedActive);
         }
     }
 
@@ -372,8 +376,8 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
         return (_mode !== 0 && _mode !== 10 && _mode !== 11 && _mode !== 40 && _mode !== 41);
     }
 
-    isManagedModeActiveOrArmed(_mode, _armed) {
-        return (_armed > 0) || this.isManagedModeActive(_mode);
+    isManagedModeArmed(_armed) {
+        return (_armed > 0);
     }
 
     isPreselectionAvailable(_radioHeight, _mode) {
