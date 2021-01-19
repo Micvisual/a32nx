@@ -341,18 +341,18 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
         }
     }
 
-    isManagedModeActive(mode) {
-        return (mode !== 0 && mode !== 10 && mode !== 11 && mode !== 40 && mode !== 41);
+    isManagedModeActive(_mode) {
+        return (_mode !== 0 && _mode !== 10 && _mode !== 11 && _mode !== 40 && _mode !== 41);
     }
 
-    isManagedModeActiveOrArmed(mode, armed) {
-        return (armed > 0) || this.isManagedModeActive(mode);
+    isManagedModeActiveOrArmed(_mode, _armed) {
+        return (_armed > 0) || this.isManagedModeActive(_mode);
     }
 
-    isPreselectionAvailable(radioHeight, mode) {
+    isPreselectionAvailable(_radioHeight, _mode) {
         return (
-            radioHeight < 30
-            || ((mode >= 30 && mode <= 34) || mode === 50)
+            _radioHeight < 30
+            || ((_mode >= 30 && _mode <= 34) || _mode === 50)
         );
     }
 
@@ -475,8 +475,22 @@ class A320_Neo_FCU_Altitude extends A320_Neo_FCU_Component {
     reboot() {
         this.init();
     }
+    isManagedModeActiveOrArmed(_mode, _armed) {
+        return (
+            (_mode >= 20 && _mode <= 34)
+            || (_armed >> 1 & 1
+                || _armed >> 2 & 1
+                || _armed >> 3 & 1
+                || _armed >> 4 & 1
+            )
+        );
+    }
     update(_deltaTime) {
-        this.refresh(Simplane.getAutoPilotActive(), Simplane.getAutoPilotAltitudeManaged(), Simplane.getAutoPilotDisplayedAltitudeLockValue(Simplane.getAutoPilotAltitudeLockUnits()), SimVar.GetSimVarValue("L:XMLVAR_LTS_Test", "Bool"));
+        const verticalMode = SimVar.GetSimVarValue("L:A32NX_FMA_VERTICAL_MODE", "Number");
+        const verticalArmed = SimVar.GetSimVarValue("L:A32NX_FMA_VERTICAL_ARMED", "Number");
+        const isManaged = this.isManagedModeActiveOrArmed(verticalMode, verticalArmed);
+
+        this.refresh(Simplane.getAutoPilotActive(), isManaged, Simplane.getAutoPilotDisplayedAltitudeLockValue(Simplane.getAutoPilotAltitudeLockUnits()), SimVar.GetSimVarValue("L:XMLVAR_LTS_Test", "Bool"));
     }
     refresh(_isActive, _isManaged, _value, _lightsTest, _force = false) {
         if ((_isActive != this.isActive) || (_isManaged != this.isManaged) || (_value != this.currentValue) || (_lightsTest !== this.lightsTest) || _force) {
@@ -492,19 +506,6 @@ class A320_Neo_FCU_Altitude extends A320_Neo_FCU_Component {
             const value = Math.floor(Math.max(this.currentValue, 100));
             this.textValueContent = value.toString().padStart(5, "0");
             this.setElementVisibility(this.illuminator, this.isManaged);
-            if (!_isManaged) {
-                if ((Simplane.getAutoPilotAltitudeSelected() || Simplane.getAutoPilotAltitudeArmed()) && (Simplane.getAutoPilotFlightDirectorActive(1) || Simplane.getAutoPilotFlightDirectorActive(2)) && (Simplane.getAutoPilotActive(1) || Simplane.getAutoPilotActive(2))) {
-                    const targetAltitude = Simplane.getAutoPilotAltitudeLockValue("feets");
-                    const altitude = Simplane.getAltitude();
-                    if (altitude > targetAltitude + 100 || altitude < targetAltitude - 100) {
-                        if (!Simplane.getAutoPilotGlideslopeHold()) {
-                            SimVar.SetSimVarValue("L:A320_NEO_FCU_FORCE_IDLE_VS", "Number", 1);
-                        }
-                        Coherent.call("AP_ALT_VAR_SET_ENGLISH", 1, Simplane.getAutoPilotDisplayedAltitudeLockValue(), true);
-                        SimVar.SetSimVarValue("K:ALTITUDE_SLOT_INDEX_SET", "number", 1);
-                    }
-                }
-            }
         }
     }
 }
