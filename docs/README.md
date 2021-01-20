@@ -156,3 +156,22 @@ DetentTakeOffGoAround = 1.00
 - :heavy_check_mark: after landing sometimes a slight pitch up moment is introduced, needs to be investigated
 - :heavy_check_mark: strange interaction with default auto thrust system -> thrust lever sometimes does not move, fix is to manually disable ATHR
 - :heavy_check_mark: after a longer pause the fbw system goes crazy
+
+### Known issues Autopilot
+
+⚠️ The custom autopilot system is not yet on study level. In order to achieve this level a longer effort is needed. The system is a large improvement over the default implementation and there is no reason to hold it back longer than necessary.
+
+ℹ️ Tuning is a large effort to be done for differnt flight conditions like speed, configuration, weight and center-of-gravity (CG). You can help by reporting issues in certain flight conditions. Please take note of important conditions mentioned before.
+
+#### Not solved or missing
+
+- :x: custom ATHR system is not yet available
+- :x: due to missing custom ATHR system, the (OP) CLB/DES modes might need manual thrust control; a simple and hacky workaround has been added though
+- :x: after a longer pause the custom autopilot system can goes crazy
+- :x: due to lack of VNAV, CLB and DES mode are currently using V/S submode with +/- 1500 fpm
+- :x: Go Around modes are missing
+- :x: Transitions might not be as they should
+
+#### Considered solved
+
+- :heavy_check_mark: nothing yet ;-)
