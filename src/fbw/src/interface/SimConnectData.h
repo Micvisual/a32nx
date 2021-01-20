@@ -143,6 +143,7 @@ struct ClientDataAutopilotStateMachine {
   double vertical_law;
   double vertical_mode;
   double vertical_mode_armed;
+  double mode_reversion;
   double autothrust_mode;
   double Psi_c_deg;
   double H_c_ft;
@@ -165,6 +166,9 @@ struct ClientDataLocalVariables {
   double flightPlanAvailable;
   double thrustReductionAltitude;
   double thrustReductionAltitudeGoAround;
+  double accelerationAltitude;
+  double accelerationAltitudeEngineOut;
+  double accelerationAltitudeGoAround;
   double fcuTrkFpaModeActive;
   double fcuSelectedVs;
   double fcuSelectedFpa;

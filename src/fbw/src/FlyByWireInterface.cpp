@@ -66,6 +66,10 @@ bool FlyByWireInterface::connect() {
   // idFmgcFlightPlanAvailable = register_named_variable("X");
   idFmgcThrustReductionAltitude = register_named_variable("AIRLINER_THR_RED_ALT");
   idFmgcThrustReductionAltitudeGoAround = register_named_variable("AIRLINER_THR_RED_ALT_GOAROUND");
+  idFmgcAccelerationAltitude = register_named_variable("AIRLINER_ACC_ALT");
+  idFmgcAccelerationAltitudeEngineOut = register_named_variable("AIRLINER_ACC_ALT_ENGINEOUT");
+  idFmgcAccelerationAltitudeGoAround = register_named_variable("AIRLINER_ACC_ALT_GOAROUND");
+
   idFlightGuidanceCrossTrackError = register_named_variable("A32NX_FG_CROSS_TRACK_ERROR");
   idFlightGuidanceTrackAngleError = register_named_variable("A32NX_FG_TRACK_ANGLE_ERROR");
 
@@ -76,6 +80,7 @@ bool FlyByWireInterface::connect() {
 
   idFcuLocModeActive = register_named_variable("A32NX_FCU_LOC_MODE_ACTIVE");
   idFcuApprModeActive = register_named_variable("A32NX_FCU_APPR_MODE_ACTIVE");
+  idFcuModeReversionActive = register_named_variable("A32NX_FCU_MODE_REVERSION_ACTIVE");
 
   // initialize throttle system
   initializeThrottles();
@@ -162,6 +167,9 @@ bool FlyByWireInterface::readDataAndLocalVariables(double sampleTime) {
                                                        1.0,
                                                        get_named_variable_value(idFmgcThrustReductionAltitude),
                                                        get_named_variable_value(idFmgcThrustReductionAltitudeGoAround),
+                                                       get_named_variable_value(idFmgcAccelerationAltitude),
+                                                       get_named_variable_value(idFmgcAccelerationAltitudeEngineOut),
+                                                       get_named_variable_value(idFmgcAccelerationAltitudeGoAround),
                                                        get_named_variable_value(idFcuTrkFpaModeActive),
                                                        get_named_variable_value(idFcuSelectedVs),
                                                        get_named_variable_value(idFcuSelectedFpa),
@@ -238,6 +246,12 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
         get_named_variable_value(idFmgcThrustReductionAltitude);
     autopilotStateMachine.AutopilotStateMachine_U.in.data.thrust_reduction_altitude_go_around =
         get_named_variable_value(idFmgcThrustReductionAltitudeGoAround);
+    autopilotStateMachine.AutopilotStateMachine_U.in.data.acceleration_altitude =
+        get_named_variable_value(idFmgcAccelerationAltitude);
+    autopilotStateMachine.AutopilotStateMachine_U.in.data.acceleration_altitude_engine_out =
+        get_named_variable_value(idFmgcAccelerationAltitudeEngineOut);
+    autopilotStateMachine.AutopilotStateMachine_U.in.data.acceleration_altitude_go_around =
+        get_named_variable_value(idFmgcAccelerationAltitudeGoAround);
     autopilotStateMachine.AutopilotStateMachine_U.in.data.throttle_lever_1_pos = simData.throttle_lever_1_pos;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.throttle_lever_2_pos = simData.throttle_lever_2_pos;
     autopilotStateMachine.AutopilotStateMachine_U.in.data.gear_strut_compression_1 = simData.gear_animation_pos_1;
@@ -280,6 +294,7 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachineOutput.vertical_law = clientData.vertical_law;
     autopilotStateMachineOutput.vertical_mode = clientData.vertical_mode;
     autopilotStateMachineOutput.vertical_mode_armed = clientData.vertical_mode_armed;
+    autopilotStateMachineOutput.mode_reversion = clientData.mode_reversion;
     autopilotStateMachineOutput.autothrust_mode = clientData.autothrust_mode;
     autopilotStateMachineOutput.Psi_c_deg = clientData.Psi_c_deg;
     autopilotStateMachineOutput.H_c_ft = clientData.H_c_ft;
@@ -294,9 +309,10 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
   bool isLocArmed = static_cast<unsigned long long>(autopilotStateMachineOutput.lateral_mode_armed) >> 1 & 0x01;
   bool isLocEngaged = autopilotStateMachineOutput.lateral_mode >= 30 && autopilotStateMachineOutput.lateral_mode <= 34;
   bool isGsArmed = static_cast<unsigned long long>(autopilotStateMachineOutput.vertical_mode_armed) >> 4 & 0x01;
-  bool isGsEngaged = autopilotStateMachineOutput.lateral_mode >= 30 && autopilotStateMachineOutput.lateral_mode <= 34;
+  bool isGsEngaged = autopilotStateMachineOutput.vertical_mode >= 30 && autopilotStateMachineOutput.vertical_mode <= 34;
   set_named_variable_value(idFcuLocModeActive, (isLocArmed || isLocEngaged) && !(isGsArmed || isGsEngaged));
   set_named_variable_value(idFcuApprModeActive, (isLocArmed || isLocEngaged) && (isGsArmed || isGsEngaged));
+  set_named_variable_value(idFcuModeReversionActive, autopilotStateMachineOutput.mode_reversion);
 
   // update autothrust mode -------------------------------------------------------------------------------------------
   set_named_variable_value(idAutothrustMode, autopilotStateMachineOutput.autothrust_mode);
@@ -363,6 +379,11 @@ bool FlyByWireInterface::updateAutopilotLaws(double sampleTime) {
         get_named_variable_value(idFmgcThrustReductionAltitude);
     autopilotLaws.AutopilotLaws_U.in.data.thrust_reduction_altitude_go_around =
         get_named_variable_value(idFmgcThrustReductionAltitudeGoAround);
+    autopilotLaws.AutopilotLaws_U.in.data.acceleration_altitude = get_named_variable_value(idFmgcAccelerationAltitude);
+    autopilotLaws.AutopilotLaws_U.in.data.acceleration_altitude_engine_out =
+        get_named_variable_value(idFmgcAccelerationAltitudeEngineOut);
+    autopilotLaws.AutopilotLaws_U.in.data.acceleration_altitude_go_around =
+        get_named_variable_value(idFmgcAccelerationAltitudeGoAround);
     autopilotLaws.AutopilotLaws_U.in.data.throttle_lever_1_pos = simData.throttle_lever_1_pos;
     autopilotLaws.AutopilotLaws_U.in.data.throttle_lever_2_pos = simData.throttle_lever_2_pos;
     autopilotLaws.AutopilotLaws_U.in.data.gear_strut_compression_1 = simData.gear_animation_pos_1;

@@ -101,6 +101,7 @@ class FlyByWireInterface {
 
   ID idFcuLocModeActive;
   ID idFcuApprModeActive;
+  ID idFcuModeReversionActive;
 
   ID idFlightGuidanceCrossTrackError;
   ID idFlightGuidanceTrackAngleError;
@@ -110,6 +111,9 @@ class FlyByWireInterface {
   ID idFmgcV2;
   ID idFmgcThrustReductionAltitude;
   ID idFmgcThrustReductionAltitudeGoAround;
+  ID idFmgcAccelerationAltitude;
+  ID idFmgcAccelerationAltitudeEngineOut;
+  ID idFmgcAccelerationAltitudeGoAround;
 
   ap_raw_laws_input autopilotStateMachineOutput;
   ap_raw_output autopilotLawsOutput;

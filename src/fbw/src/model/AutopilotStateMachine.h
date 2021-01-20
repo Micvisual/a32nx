@@ -15,6 +15,7 @@ typedef struct {
   ap_sm_output BusAssignment_g;
   ap_vertical_output out;
   ap_lateral_output out_g;
+  boolean_T In1;
 } BlockIO_AutopilotStateMachine_T;
 
 typedef struct {
@@ -22,6 +23,7 @@ typedef struct {
   ap_lateral Delay_DSTATE;
   real_T Delay_DSTATE_d[100];
   real_T Delay_DSTATE_c[100];
+  real_T local_H_fcu_ft;
   real_T eventTime;
   real_T eventTime_a;
   real_T eventTime_aq;
@@ -38,6 +40,7 @@ typedef struct {
   boolean_T DelayInput1_DSTATE_a;
   boolean_T DelayInput1_DSTATE_fn;
   boolean_T DelayInput1_DSTATE_h;
+  boolean_T Delay_DSTATE_co[100];
   uint8_T is_active_c6_AutopilotStateMachine;
   uint8_T is_c6_AutopilotStateMachine;
   uint8_T is_ON;
@@ -72,6 +75,7 @@ typedef struct {
 
 struct Parameters_AutopilotStateMachine_T_ {
   ap_sm_output ap_sm_output_MATLABStruct;
+  real_T Debounce_Value;
   real_T CompareToConstant_const;
   boolean_T DetectIncrease_vinit;
   boolean_T DetectIncrease1_vinit;
@@ -105,8 +109,10 @@ struct Parameters_AutopilotStateMachine_T_ {
   real_T Delay_InitialCondition_i;
   real_T Constant_Value_j;
   real_T Delay_InitialCondition_m;
+  boolean_T Out1_Y0;
   boolean_T Constant6_Value;
   boolean_T Constant3_Value;
+  boolean_T Delay_InitialCondition_ib;
 };
 
 extern const ap_sm_input AutopilotStateMachine_rtZap_sm_input;
@@ -161,8 +167,8 @@ class AutopilotStateMachineModelClass {
   void AutopilotStateMachine_ALT_CPT_during(void);
   void AutopilotStateMachine_ALT_entry(void);
   void AutopilotStateMachine_ALT_CPT(void);
-  void AutopilotStateMachine_ALT_CST(void);
   void AutopilotStateMachine_ALT_CST_entry(void);
+  void AutopilotStateMachine_ALT_CST_CPT(void);
   void AutopilotStateMachine_CLB_during(void);
   void AutopilotStateMachine_ALT_CST_CPT_entry(void);
   void AutopilotStateMachine_DES_during(void);

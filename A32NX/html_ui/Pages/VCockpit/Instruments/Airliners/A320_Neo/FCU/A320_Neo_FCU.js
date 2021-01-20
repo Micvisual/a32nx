@@ -654,14 +654,21 @@ class A320_Neo_FCU_VerticalSpeed extends A320_Neo_FCU_Component {
         if (this.currentState !== A320_Neo_FCU_VSpeed_State.Flying
             && this.currentState !== A320_Neo_FCU_VSpeed_State.Zeroing
             && (verticalMode === 14 || verticalMode === 15)) {
+            const isModeReversion = SimVar.GetSimVarValue("L:A32NX_FCU_MODE_REVERSION_ACTIVE", "Number");
             if (isFPAMode) {
-                if (this.selectedFpa !== 0) {
+                if (isModeReversion === 1) {
+                    this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
+                    this.selectedFpa = this.getCurrentFlightPathAngle();
+                } else if (this.selectedFpa !== 0) {
                     this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
                 } else {
                     this.currentState = A320_Neo_FCU_VSpeed_State.Zeroing;
                 }
             } else {
-                if (this.currentVs !== 0) {
+                if (isModeReversion === 1) {
+                    this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
+                    this.selectedVs = this.getCurrentVerticalSpeed();
+                } else if (this.currentVs !== 0) {
                     this.currentState = A320_Neo_FCU_VSpeed_State.Flying;
                 } else {
                     this.currentState = A320_Neo_FCU_VSpeed_State.Zeroing;

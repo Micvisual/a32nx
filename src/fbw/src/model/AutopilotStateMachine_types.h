@@ -54,6 +54,9 @@ typedef struct {
   boolean_T is_flight_plan_available;
   real_T thrust_reduction_altitude;
   real_T thrust_reduction_altitude_go_around;
+  real_T acceleration_altitude;
+  real_T acceleration_altitude_engine_out;
+  real_T acceleration_altitude_go_around;
   real_T gear_strut_compression_1;
   real_T gear_strut_compression_2;
   real_T zeta_pos;
@@ -180,6 +183,9 @@ typedef struct {
   boolean_T is_flight_plan_available;
   real_T thrust_reduction_altitude;
   real_T thrust_reduction_altitude_go_around;
+  real_T acceleration_altitude;
+  real_T acceleration_altitude_engine_out;
+  real_T acceleration_altitude_go_around;
   real_T on_ground;
   real_T zeta_deg;
   real_T throttle_lever_1_pos;
@@ -241,6 +247,7 @@ typedef enum {
 
 typedef struct {
   lateral_mode mode;
+  boolean_T mode_reversion;
   lateral_law law;
   real_T Psi_c_deg;
 } ap_lateral_output;
@@ -371,6 +378,7 @@ typedef struct {
 typedef struct {
   vertical_mode mode;
   athr_mode mode_autothrust;
+  boolean_T mode_reversion;
   vertical_law law;
   real_T H_c_ft;
   real_T H_dot_c_fpm;
@@ -403,6 +411,7 @@ typedef struct {
   real_T vertical_law;
   real_T vertical_mode;
   real_T vertical_mode_armed;
+  real_T mode_reversion;
   real_T autothrust_mode;
   real_T Psi_c_deg;
   real_T H_c_ft;
