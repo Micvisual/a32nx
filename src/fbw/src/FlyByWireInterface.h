@@ -26,6 +26,7 @@
 #include "FlightDataRecorder.h"
 #include "FlyByWire.h"
 #include "InterpolatingLookupTable.h"
+#include "RateLimiter.h"
 #include "SimConnectInterface.h"
 
 class FlyByWireInterface {
@@ -65,6 +66,9 @@ class FlyByWireInterface {
   AutopilotStateMachineModelClass autopilotStateMachine;
   AutopilotLawsModelClass autopilotLaws;
   InterpolatingLookupTable throttleLookupTable;
+
+  RateLimiter rateLimiterEngine_1;
+  RateLimiter rateLimiterEngine_2;
 
   ID idSideStickPositionX;
   ID idSideStickPositionY;

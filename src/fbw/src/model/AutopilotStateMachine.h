@@ -180,6 +180,7 @@ class AutopilotStateMachineModelClass {
   void AutopilotStateMachine_SRS_entry(void);
   void AutopilotStateMachine_GS(void);
   void AutopilotStateMachine_OP_CLB_during(void);
+  void AutopilotStateMachine_OP_DES_during(void);
   void AutopilotStateMachine_exit_internal_ON(void);
   void AutopilotStateMachine_ON(void);
 };

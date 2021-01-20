@@ -91,6 +91,9 @@ struct SimData {
   double nav_radial_error_deg;
   double nav_dme_nmi;
   double nav_gs_error_deg;
+  unsigned long long isAutoThrottleActive;
+  double engine_n1_1;
+  double engine_n1_2;
 };
 
 struct SimInput {
@@ -132,6 +135,11 @@ struct SimOutputZetaTrim {
 struct SimOutputThrottles {
   double throttleLeverPosition_1;
   double throttleLeverPosition_2;
+};
+
+struct SimOutputEngineOverride {
+  double engine_n1_1;
+  double engine_n1_2;
 };
 
 struct ClientDataAutopilotStateMachine {

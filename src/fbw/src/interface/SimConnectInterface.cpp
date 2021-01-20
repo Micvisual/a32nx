@@ -163,6 +163,9 @@ bool SimConnectInterface::prepareSimDataSimConnectDataDefinitions() {
   result &= addDataDefinition(hSimConnect, 0, SIMCONNECT_DATATYPE_FLOAT64, "NAV RADIAL ERROR:3", "DEGREES");
   result &= addDataDefinition(hSimConnect, 0, SIMCONNECT_DATATYPE_FLOAT64, "NAV DME:3", "NAUTICAL MILES");
   result &= addDataDefinition(hSimConnect, 0, SIMCONNECT_DATATYPE_FLOAT64, "NAV GLIDE SLOPE ERROR:3", "DEGREES");
+  result &= addDataDefinition(hSimConnect, 0, SIMCONNECT_DATATYPE_INT64, "AUTOTHROTTLE ACTIVE", "BOOL");
+  result &= addDataDefinition(hSimConnect, 0, SIMCONNECT_DATATYPE_FLOAT64, "TURB ENG CORRECTED N1:1", "PERCENT");
+  result &= addDataDefinition(hSimConnect, 0, SIMCONNECT_DATATYPE_FLOAT64, "TURB ENG CORRECTED N1:2", "PERCENT");
 
   return result;
 }
@@ -274,6 +277,9 @@ bool SimConnectInterface::prepareSimOutputSimConnectDataDefinitions() {
                               "PERCENT");
   result &= addDataDefinition(hSimConnect, 4, SIMCONNECT_DATATYPE_FLOAT64, "GENERAL ENG THROTTLE LEVER POSITION:2",
                               "PERCENT");
+
+  result &= addDataDefinition(hSimConnect, 5, SIMCONNECT_DATATYPE_FLOAT64, "TURB ENG CORRECTED N1:1", "PERCENT");
+  result &= addDataDefinition(hSimConnect, 5, SIMCONNECT_DATATYPE_FLOAT64, "TURB ENG CORRECTED N1:2", "PERCENT");
 
   return result;
 }
@@ -470,6 +476,11 @@ bool SimConnectInterface::sendData(SimOutputZetaTrim output) {
 bool SimConnectInterface::sendData(SimOutputThrottles output) {
   // write data and return result
   return sendData(4, sizeof(output), &output);
+}
+
+bool SimConnectInterface::sendData(SimOutputEngineOverride output) {
+  // write data and return result
+  return sendData(5, sizeof(output), &output);
 }
 
 bool SimConnectInterface::sendAutoThrustArmEvent() {

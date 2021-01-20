@@ -1011,6 +1011,17 @@ void AutopilotStateMachineModelClass::AutopilotStateMachine_OP_CLB_during(void)
   }
 }
 
+void AutopilotStateMachineModelClass::AutopilotStateMachine_OP_DES_during(void)
+{
+  AutopilotStateMachine_B.out.H_c_ft = AutopilotStateMachine_B.BusAssignment_g.vertical.input.H_fcu_ft;
+  if (std::abs(AutopilotStateMachine_B.BusAssignment_g.data.H_ind_ft -
+               AutopilotStateMachine_B.BusAssignment_g.vertical.input.H_fcu_ft) > 1200.0) {
+    AutopilotStateMachine_B.out.mode_autothrust = athr_mode_THRUST_IDLE;
+    AutopilotStateMachine_B.out.law = vertical_law_SPD_MACH;
+    AutopilotStateMachine_B.out.H_dot_c_fpm = 0.0;
+  }
+}
+
 void AutopilotStateMachineModelClass::AutopilotStateMachine_exit_internal_ON(void)
 {
   AutopilotStateMachine_DWork.is_GS = AutopilotStateMachine_IN_NO_ACTIVE_CHILD;
@@ -1197,7 +1208,7 @@ void AutopilotStateMachineModelClass::AutopilotStateMachine_ON(void)
         AutopilotStateMachine_B.out.mode_reversion = true;
         guard8 = true;
       } else {
-        AutopilotStateMachine_OP_CLB_during();
+        AutopilotStateMachine_OP_DES_during();
       }
       break;
 

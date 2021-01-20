@@ -82,6 +82,10 @@ bool FlyByWireInterface::connect() {
   idFcuApprModeActive = register_named_variable("A32NX_FCU_APPR_MODE_ACTIVE");
   idFcuModeReversionActive = register_named_variable("A32NX_FCU_MODE_REVERSION_ACTIVE");
 
+  // set rate for throttle override
+  rateLimiterEngine_1.setRate(3);
+  rateLimiterEngine_2.setRate(3);
+
   // initialize throttle system
   initializeThrottles();
 
@@ -316,6 +320,27 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
 
   // update autothrust mode -------------------------------------------------------------------------------------------
   set_named_variable_value(idAutothrustMode, autopilotStateMachineOutput.autothrust_mode);
+
+  if (simData.isAutoThrottleActive) {
+    if (autopilotStateMachineOutput.autothrust_mode == 2) {
+      // IDLE
+      rateLimiterEngine_1.update(25, sampleTime);
+      rateLimiterEngine_2.update(25, sampleTime);
+      SimOutputEngineOverride override = {rateLimiterEngine_1.getValue(), rateLimiterEngine_2.getValue()};
+      simConnectInterface.sendData(override);
+    } else if (autopilotStateMachineOutput.autothrust_mode == 3) {
+      // CLB
+      double target = min(95, 80 + ((15.0 / 30000.0) * simData.H_ft));
+      rateLimiterEngine_1.update(target, sampleTime);
+      rateLimiterEngine_2.update(target, sampleTime);
+      SimOutputEngineOverride override = {rateLimiterEngine_1.getValue(), rateLimiterEngine_2.getValue()};
+      simConnectInterface.sendData(override);
+    } else {
+      // NONE or SPEED (in our case -> tracking mode)
+      rateLimiterEngine_1.reset(simData.engine_n1_1);
+      rateLimiterEngine_2.reset(simData.engine_n1_2);
+    }
+  }
 
   // update FMA variables ---------------------------------------------------------------------------------------------
   set_named_variable_value(idFmaLateralMode, autopilotStateMachineOutput.lateral_mode);

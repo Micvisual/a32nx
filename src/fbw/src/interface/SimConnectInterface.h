@@ -54,6 +54,8 @@ class SimConnectInterface {
 
   bool sendData(SimOutputThrottles output);
 
+  bool sendData(SimOutputEngineOverride output);
+
   bool sendAutoThrustArmEvent();
 
   bool setClientDataLocalVariables(ClientDataLocalVariables output);
