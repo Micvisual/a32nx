@@ -20,7 +20,7 @@
                 "_MBCS"
             ],
             "windowsSdkVersion": "10.0.18362.0",
-            "compilerPath": "${MSFS_SDK}/WASM/llvm/bin/clang-cl.exe",
+            //"compilerPath": "${MSFS_SDK}/WASM/llvm/bin/clang-cl.exe",
             "compilerArgs": [
               "--sysroot ${MSFS_SDK}/WASM/wasi-sysroot",
               "-target wasm32-unknown-wasi"
