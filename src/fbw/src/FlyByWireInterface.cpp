@@ -428,19 +428,13 @@ bool FlyByWireInterface::updateAutopilotLaws(double sampleTime) {
     if (autopilotStateMachineEnabled) {
       // send data to client data to be read by simulink
       ClientDataAutopilotStateMachine clientDataStateMachine = {
-          autopilotStateMachineOutput.enabled_AP1,
-          autopilotStateMachineOutput.enabled_AP2,
-          autopilotStateMachineOutput.lateral_law,
-          autopilotStateMachineOutput.lateral_mode,
-          autopilotStateMachineOutput.lateral_mode_armed,
-          autopilotStateMachineOutput.vertical_law,
-          autopilotStateMachineOutput.vertical_mode,
-          autopilotStateMachineOutput.vertical_mode_armed,
-          autopilotStateMachineOutput.autothrust_mode,
-          autopilotStateMachineOutput.Psi_c_deg,
-          autopilotStateMachineOutput.H_c_ft,
-          autopilotStateMachineOutput.H_dot_c_fpm,
-          autopilotStateMachineOutput.FPA_c_deg,
+          autopilotStateMachineOutput.enabled_AP1,        autopilotStateMachineOutput.enabled_AP2,
+          autopilotStateMachineOutput.lateral_law,        autopilotStateMachineOutput.lateral_mode,
+          autopilotStateMachineOutput.lateral_mode_armed, autopilotStateMachineOutput.vertical_law,
+          autopilotStateMachineOutput.vertical_mode,      autopilotStateMachineOutput.vertical_mode_armed,
+          autopilotStateMachineOutput.mode_reversion,     autopilotStateMachineOutput.autothrust_mode,
+          autopilotStateMachineOutput.Psi_c_deg,          autopilotStateMachineOutput.H_c_ft,
+          autopilotStateMachineOutput.H_dot_c_fpm,        autopilotStateMachineOutput.FPA_c_deg,
       };
       simConnectInterface.setClientDataAutopilotStateMachine(clientDataStateMachine);
     }
