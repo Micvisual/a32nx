@@ -13,11 +13,21 @@
 #### Not solved or missing
 
 - :x: custom ATHR system is not yet available
-- :x: due to missing custom ATHR system, the (OP) CLB/DES modes might need manual thrust control; a simple and hacky workaround has been added though
+- :x: due to missing custom ATHR system, the (OP) CLB/DES modes might need manual thrust control
+      -> a simple and hacky workaround has been added though
 - :x: after a longer pause the custom autopilot system can goes crazy
-- :x: due to lack of VNAV, CLB and DES mode are currently using V/S submode with +/- 1500 fpm
+- :x: due to lack of VNAV, CLB and DES mode are currently only using SPD/MACH
+- :x: CLB and DES do not respect altitude constraints
 - :x: Go Around modes are missing
 - :x: Transitions might not be as they should
+- :x: FD off/on does not deactivate all FMA items
+- :x: Engagement of AP with FD off is incorrect
+- :x: In manual approach LOC and G/S might be lost too fast with mode reversion to HDG + V/S
+- :x: AP disconnect does not trigger master warning etc.
+- :x: AP does not disconnect with rudder or sidestick input
+- :x: NAV mode can always be armed or engaged
+- :x: NAV mode being armed might show dashes in the FCU instead of selected HDG
+- :x: Engine out operations are not yet considered
 
 #### Considered solved
 
