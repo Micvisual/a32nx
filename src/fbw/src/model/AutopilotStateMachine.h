@@ -168,10 +168,10 @@ class AutopilotStateMachineModelClass {
   void AutopilotStateMachine_ALT_entry(void);
   void AutopilotStateMachine_ALT_CPT(void);
   void AutopilotStateMachine_ALT_CST_entry(void);
-  void AutopilotStateMachine_ALT_CST_CPT(void);
-  void AutopilotStateMachine_CLB_during(void);
+  void AutopilotStateMachine_OP_CLB_during(void);
   void AutopilotStateMachine_ALT_CST_CPT_entry(void);
-  void AutopilotStateMachine_DES_during(void);
+  void AutopilotStateMachine_CLB(void);
+  void AutopilotStateMachine_OP_DES_during(void);
   void AutopilotStateMachine_OFF_entry_p(void);
   void AutopilotStateMachine_ROLL_OUT_entry_o(void);
   void AutopilotStateMachine_GS_TRACK_entry(void);
@@ -179,8 +179,6 @@ class AutopilotStateMachineModelClass {
   void AutopilotStateMachine_FLARE_entry_g(void);
   void AutopilotStateMachine_SRS_entry(void);
   void AutopilotStateMachine_GS(void);
-  void AutopilotStateMachine_OP_CLB_during(void);
-  void AutopilotStateMachine_OP_DES_during(void);
   void AutopilotStateMachine_exit_internal_ON(void);
   void AutopilotStateMachine_ON(void);
 };
