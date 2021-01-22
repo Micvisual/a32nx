@@ -15,6 +15,7 @@ pushd "${DIR}/obj"
 clang \
   -c \
   -Wno-unused-command-line-argument \
+  -Wno-implicit-function-declaration \
   --sysroot "${MSFS_SDK}/WASM/wasi-sysroot" \
   -target wasm32-unknown-wasi \
   -D_MSFS_WASM=1 \
@@ -47,6 +48,8 @@ popd
 # compile c++ code
 clang++ \
   -Wno-unused-command-line-argument \
+  -Wno-ignored-attributes \
+  -Wno-macro-redefined \
   --sysroot "${MSFS_SDK}/WASM/wasi-sysroot" \
   -target wasm32-unknown-wasi \
   -D_MSFS_WASM=1 \
